@@ -10,3 +10,4 @@ frames
 image_cache
 defaults/user.config
 personal/
+/.nb-gradle/

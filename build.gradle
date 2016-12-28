@@ -1,0 +1,30 @@
+// Apply the java plugin to add support for Java
+apply plugin: 'java'
+//apply plugin: 'application'
+
+task run(type: JavaExec) {
+  classpath = sourceSets.main.runtimeClasspath
+
+  main = 'code_swarm'
+
+  // arguments to pass to the application
+  args = ['/home/ivo/projects/java/code_swarm/data/sample.config']
+}
+
+sourceCompatibility = 1.8
+
+// In this section you declare where to find the dependencies of your project
+repositories {
+    // Use 'jcenter' for resolving your dependencies.
+    // You can declare any Maven/Ivy/file repository here.
+    jcenter()
+}
+
+// In this section you declare the dependencies for your production and test code
+dependencies {
+    // The production code uses the SLF4J logging API at compile time
+    compile 'org.slf4j:slf4j-api:1.7.21'
+    compile 'org.processing:core:3.2.3'
+    compile 'javax.vecmath:vecmath:1.5.2'
+    compile 'net.java.dev.swing-layout:swing-layout:1.0.2'
+}
