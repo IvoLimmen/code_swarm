@@ -5,10 +5,10 @@ apply plugin: 'java'
 task run(type: JavaExec) {
   classpath = sourceSets.main.runtimeClasspath
 
-  main = 'code_swarm'
+  main = 'org.github.codeswarm.CodeSwarm'
 
   // arguments to pass to the application
-  args = ['/home/ivo/projects/java/code_swarm/data/sample.config']
+  args = ['data/sample.config']
 }
 
 sourceCompatibility = 1.8
@@ -27,4 +27,5 @@ dependencies {
     compile 'org.processing:core:3.2.3'
     compile 'javax.vecmath:vecmath:1.5.2'
     compile 'net.java.dev.swing-layout:swing-layout:1.0.2'
+    compile 'org.apache.commons:commons-lang3:3.5'
 }

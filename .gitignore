@@ -1,13 +1,6 @@
-.classpath
-.DS_Store
-.project
-.svn
+.gradle
 build
-dist
 frames
-*.pyc
-*.proof
 image_cache
 defaults/user.config
-personal/
 /.nb-gradle/
