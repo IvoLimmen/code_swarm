@@ -52,7 +52,7 @@ public class FileNode extends Node implements Comparable<FileNode> {
     */
    @Override
    public void freshen() {
-      setLife(getInitialLife());
+      super.freshen();
       if (++touches > maxTouches) {
          maxTouches = touches;
       }

@@ -51,7 +51,7 @@ public class PersonNode extends Node {
 
    @Override
    public void freshen() {
-      setLife(getInitialLife());
+      super.freshen();
       touches++;
    }
 

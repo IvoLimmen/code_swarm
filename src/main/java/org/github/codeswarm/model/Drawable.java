@@ -64,7 +64,9 @@ public abstract class Drawable {
    /**
     * 6) reseting life as if new.
     */
-   public abstract void freshen();
+   public void freshen() {
+      setLife(getInitialLife());
+   }
 
    /**
     * @return true if life > 0

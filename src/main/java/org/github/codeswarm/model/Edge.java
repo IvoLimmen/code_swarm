@@ -5,9 +5,8 @@ package org.github.codeswarm.model;
  */
 public class Edge extends Drawable {
 
-   private FileNode nodeFrom;
-   private PersonNode nodeTo;
-   private float length;
+   private final FileNode nodeFrom;
+   private final PersonNode nodeTo;
 
    /**
     * 1) constructor.
@@ -19,7 +18,6 @@ public class Edge extends Drawable {
       super(initialLife, decrementLife);
       this.nodeFrom = from;
       this.nodeTo = to;
-      this.length = edgeLength;  // 25
    }
 
    public FileNode getNodeFrom() {
@@ -28,10 +26,5 @@ public class Edge extends Drawable {
 
    public PersonNode getNodeTo() {
       return nodeTo;
-   }
-
-   @Override
-   public void freshen() {
-      setLife(getInitialLife());
    }
 }

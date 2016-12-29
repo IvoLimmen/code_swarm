@@ -182,13 +182,13 @@ final public class Config {
    private Config() {
    }
 
-   public void init(String configFileName) throws IOException {
-      initPropStack();
+   public static void init(String configFileName) throws IOException {
+      CURRENT.initPropStack();
       addPropertiesLayer(configFileName);
    }
 
-   public void init(Iterable<String> configFileNames) throws IOException {
-      initPropStack();
+   public static void init(Iterable<String> configFileNames) throws IOException {
+      CURRENT.initPropStack();
       for (String filename : configFileNames) {
          if (new File(filename).exists()) {
             addPropertiesLayer(filename);
@@ -196,19 +196,19 @@ final public class Config {
       }
    }
 
-   public void addPropertiesLayer(Properties props) {
-      propStack.add(0, props);
+   public static void addPropertiesLayer(Properties props) {
+      CURRENT.propStack.add(0, props);
    }
 
-   public void addPropertiesLayer(String filename) throws IOException {
+   public static void addPropertiesLayer(String filename) throws IOException {
       Properties props = new Properties();
       props.load(new FileInputStream(filename));
       addPropertiesLayer(props);
    }
 
    protected void initPropStack() {
-      propStack = new LinkedList<>();
-      propStack.add(createDefaults());
+      CURRENT.propStack = new LinkedList<>();
+      CURRENT.propStack.add(createDefaults());
    }
 
    private Properties createDefaults() {
@@ -222,8 +222,8 @@ final public class Config {
     * @param key
     * @return Returns the first key found in the stack of config files.
     */
-   public String getStringProperty(String key) {
-      for (Properties props : propStack) {
+   public static String getStringProperty(String key) {
+      for (Properties props : CURRENT.propStack) {
          if (props.containsKey(key)) {
             return props.getProperty(key);
          }
@@ -231,7 +231,7 @@ final public class Config {
       return null;
    }
 
-   public Color getColorProperty(String key) {
+   public static Color getColorProperty(String key) {
       return stringToColor(getStringProperty(key));
    }
 
@@ -242,11 +242,11 @@ final public class Config {
     * @see EventList
     * @param filePath the path to the Xml-input file.
     */
-   public void setInputFile(String filePath) {
-      propStack.get(0).setProperty(INPUT_FILE_KEY, filePath);
+   public static void setInputFile(String filePath) {
+      CURRENT.propStack.get(0).setProperty(INPUT_FILE_KEY, filePath);
    }
 
-   public boolean getBooleanProperty(String key) {
+   public static boolean getBooleanProperty(String key) {
       return Boolean.valueOf(getStringProperty(key));
    }
 
@@ -255,7 +255,7 @@ final public class Config {
     * @param key
     * @return value of property if found, 0 if not found.
     */
-   public int getIntProperty(String key) {
+   public static int getIntProperty(String key) {
       return Integer.parseInt(getStringProperty(key));
    }
 
@@ -265,7 +265,7 @@ final public class Config {
     * @param defValue
     * @return value of property if found.
     */
-   public int getPositiveIntProperty(String key) {
+   public static int getPositiveIntProperty(String key) {
       int value = getIntProperty(key);
       if (value < 0) {
          throw new RuntimeException(key + " must be >0, found " + value);
@@ -279,7 +279,7 @@ final public class Config {
     * @param defValue
     * @return defValue if not found or found value isn't negative, Value of property if found.
     */
-   public int getNegativeIntProperty(String key) {
+   public static int getNegativeIntProperty(String key) {
       int value = getIntProperty(key);
       if (value > 0) {
          throw new RuntimeException(key + " must be >0, found " + value);
@@ -292,7 +292,7 @@ final public class Config {
     * @param key
     * @return value of property if found, 0 if not found.
     */
-   public long getLongProperty(String key) {
+   public static long getLongProperty(String key) {
       return Long.parseLong(getStringProperty(key));
    }
 
@@ -301,7 +301,7 @@ final public class Config {
     * @param key
     * @return value of property if found, 0 if not found.
     */
-   public float getFloatProperty(String key) {
+   public static float getFloatProperty(String key) {
       return Float.parseFloat(getStringProperty(key));
    }
 
@@ -310,7 +310,7 @@ final public class Config {
     * @param index
     * @return String containing the regex and rgb values used to colorcode nodes, null if not found
     */
-   public String getColorAssignProperty(Integer index) {
+   public static String getColorAssignProperty(Integer index) {
       return getStringProperty(COLOR_ASSIGN_KEY + index.toString());
    }
 
@@ -329,7 +329,7 @@ final public class Config {
       return new Color(values[0], values[1], values[2]);
    }
 
-   public double getDoubleProperty(String key) {
+   public static double getDoubleProperty(String key) {
       return Double.parseDouble(getStringProperty(key));
    }
 }

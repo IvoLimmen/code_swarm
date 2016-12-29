@@ -26,7 +26,7 @@ public class ColorAssigner {
 
    private final List<ColorTest> tests = new ArrayList<>();
 
-   private int defaultColor = Color.gray.getRGB();
+   private final int defaultColor = Color.gray.getRGB();
 
    public ColorAssigner() {
    }

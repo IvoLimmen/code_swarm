@@ -54,6 +54,7 @@ public class CodeSwarm extends PApplet implements EndOfFileEvent {
     * @remark needed for any serializable class
     */
    public static final long serialVersionUID = 0;
+   
    private static Map<String, FileNode> nodes;
    private static Map<Pair<FileNode, PersonNode>, Edge> edges;
    private static Map<String, PersonNode> people;
@@ -61,10 +62,6 @@ public class CodeSwarm extends PApplet implements EndOfFileEvent {
    static List<PersonNode> livingPeople = new ArrayList<>();
    static List<Edge> livingEdges = new ArrayList<>();
    static List<FileNode> livingNodes = new ArrayList<>();
-   // Edge Length
-   protected static int EDGE_LEN;
-   // Default Physics Engine (class) name
-   static final String PHYSICS_ENGINE_DEFAULT = "PhysicsEngineOrderly";
    //kinda a hack that these two are static
    protected static String userConfigFilename = null;
 
@@ -108,14 +105,14 @@ public class CodeSwarm extends PApplet implements EndOfFileEvent {
             userConfigFilename = args[0];
             List<String> configFileStack = Arrays.asList(new String[]{"defaults/CodeSwarm.config",
                "defaults/user.config", userConfigFilename});
-            Config.getInstance().init(configFileStack);
+            Config.init(configFileStack);
             PApplet.main(new String[]{"org.github.codeswarm.CodeSwarm"});
          } else {
             // FIXME: Temporary for testing in IDE
             userConfigFilename = "data/sample.config";
             List<String> configFileStack = Arrays.asList(new String[]{"defaults/CodeSwarm.config",
                "defaults/user.config", userConfigFilename});
-            Config.getInstance().init(configFileStack);
+            Config.init(configFileStack);
             PApplet.main(new String[]{"org.github.codeswarm.CodeSwarm"});
 
 //            System.err.println("Specify a config file.");
@@ -190,9 +187,7 @@ public class CodeSwarm extends PApplet implements EndOfFileEvent {
    private int maxFramesSaved;
 
    protected ExecutorService backgroundExecutor;
-   /**
-    * Used for utility functions current members: drawPoint: Pass coords and color drawLine: Pass coords and color
-    */
+
    public AvatarFetcher avatarFetcher;
 
    private int fontColor;
@@ -200,10 +195,10 @@ public class CodeSwarm extends PApplet implements EndOfFileEvent {
    @Override
    public void settings() {
 
-      this.width = Config.getInstance().getPositiveIntProperty(Config.WIDTH_KEY);
-      this.height = Config.getInstance().getPositiveIntProperty(Config.HEIGHT_KEY);
+      this.width = Config.getPositiveIntProperty(Config.WIDTH_KEY);
+      this.height = Config.getPositiveIntProperty(Config.HEIGHT_KEY);
 
-      if (Config.getInstance().getBooleanProperty(Config.USE_OPEN_GL)) {
+      if (Config.getBooleanProperty(Config.USE_OPEN_GL)) {
          size(width, height, FX2D);
       } else {
          size(width, height);
@@ -216,31 +211,31 @@ public class CodeSwarm extends PApplet implements EndOfFileEvent {
    @Override
    public void setup() {
 
-      int maxBackgroundThreads = Config.getInstance().getPositiveIntProperty(Config.MAX_THREADS_KEY);
+      int maxBackgroundThreads = Config.getPositiveIntProperty(Config.MAX_THREADS_KEY);
       backgroundExecutor = new ThreadPoolExecutor(1, maxBackgroundThreads, Long.MAX_VALUE, TimeUnit.NANOSECONDS, new ArrayBlockingQueue<>(4 * maxBackgroundThreads), new ThreadPoolExecutor.CallerRunsPolicy());
 
-      showLegend = Config.getInstance().getBooleanProperty(Config.SHOW_LEGEND);
-      showHistogram = Config.getInstance().getBooleanProperty(Config.SHOW_HISTORY);
-      showDate = Config.getInstance().getBooleanProperty(Config.SHOW_DATE);
-      showEdges = Config.getInstance().getBooleanProperty(Config.SHOW_EDGES);
-      showDebug = Config.getInstance().getBooleanProperty(Config.SHOW_DEBUG);
-      showPopular = Config.getInstance().getBooleanProperty(Config.SHOW_POPULAR);
-      takeSnapshots = Config.getInstance().getBooleanProperty(Config.TAKE_SNAPSHOTS_KEY);
-      drawNamesSharp = Config.getInstance().getBooleanProperty(Config.DRAW_NAMES_SHARP);
-      drawNamesHalos = Config.getInstance().getBooleanProperty(Config.DRAW_NAMES_HALOS);
-      drawFilesSharp = Config.getInstance().getBooleanProperty(Config.DRAW_FILES_SHARP);
-      drawFilesFuzzy = Config.getInstance().getBooleanProperty(Config.DRAW_FILES_FUZZY);
-      drawFilesJelly = Config.getInstance().getBooleanProperty(Config.DRAW_FILES_JELLY);
-      circularAvatars = Config.getInstance().getBooleanProperty(Config.DRAW_CIRCULAR_AVATARS);
+      showLegend = Config.getBooleanProperty(Config.SHOW_LEGEND);
+      showHistogram = Config.getBooleanProperty(Config.SHOW_HISTORY);
+      showDate = Config.getBooleanProperty(Config.SHOW_DATE);
+      showEdges = Config.getBooleanProperty(Config.SHOW_EDGES);
+      showDebug = Config.getBooleanProperty(Config.SHOW_DEBUG);
+      showPopular = Config.getBooleanProperty(Config.SHOW_POPULAR);
+      takeSnapshots = Config.getBooleanProperty(Config.TAKE_SNAPSHOTS_KEY);
+      drawNamesSharp = Config.getBooleanProperty(Config.DRAW_NAMES_SHARP);
+      drawNamesHalos = Config.getBooleanProperty(Config.DRAW_NAMES_HALOS);
+      drawFilesSharp = Config.getBooleanProperty(Config.DRAW_FILES_SHARP);
+      drawFilesFuzzy = Config.getBooleanProperty(Config.DRAW_FILES_FUZZY);
+      drawFilesJelly = Config.getBooleanProperty(Config.DRAW_FILES_JELLY);
+      circularAvatars = Config.getBooleanProperty(Config.DRAW_CIRCULAR_AVATARS);
 
-      background = Config.getInstance().getColorProperty(Config.BACKGROUND_KEY).getRGB();
-      fontColor = Config.getInstance().getColorProperty(Config.FONT_COLOR_KEY).getRGB();
+      background = Config.getColorProperty(Config.BACKGROUND_KEY).getRGB();
+      fontColor = Config.getColorProperty(Config.FONT_COLOR_KEY).getRGB();
 
-      double framesperday = Config.getInstance().getDoubleProperty(Config.FRAMES_PER_DAY_KEY);
+      double framesperday = Config.getDoubleProperty(Config.FRAMES_PER_DAY_KEY);
       UPDATE_DELTA = (long) (86400000 / framesperday);
 
-      isInputSorted = Config.getInstance().getBooleanProperty(Config.IS_INPUT_SORTED_KEY);
-      showUserName = Config.getInstance().getBooleanProperty(Config.SHOW_USER_NAME_KEY);
+      isInputSorted = Config.getBooleanProperty(Config.IS_INPUT_SORTED_KEY);
+      showUserName = Config.getBooleanProperty(Config.SHOW_USER_NAME_KEY);
 
       physicsEngine = new PhysicsEngineOrderly();
 
@@ -263,16 +258,16 @@ public class CodeSwarm extends PApplet implements EndOfFileEvent {
       // Init color map
       initColors();
 
-      avatarFetcher = getAvatarFetcher(Config.getInstance().getStringProperty("AvatarFetcher"));
-      avatarFetcher.setSize(Config.getInstance().getPositiveIntProperty("AvatarSize"));
+      avatarFetcher = getAvatarFetcher(Config.getStringProperty("AvatarFetcher"));
+      avatarFetcher.setSize(Config.getPositiveIntProperty("AvatarSize"));
       if (avatarFetcher.getClass().equals(LocalAvatar.class)) {
-         ((LocalAvatar) avatarFetcher).setLocalAvatarDefaultPic(Config.getInstance().getStringProperty("LocalAvatarDefaultPic"));
-         ((LocalAvatar) avatarFetcher).setLocalAvatarDirectory(Config.getInstance().getStringProperty("LocalAvatarDirectory"));
+         ((LocalAvatar) avatarFetcher).setLocalAvatarDefaultPic(Config.getStringProperty("LocalAvatarDefaultPic"));
+         ((LocalAvatar) avatarFetcher).setLocalAvatarDirectory(Config.getStringProperty("LocalAvatarDirectory"));
       } else if (avatarFetcher.getClass().equals(GravatarFetcher.class)) {
-         ((GravatarFetcher) avatarFetcher).setGravatarFallback(Config.getInstance().getStringProperty("GravatarFallback"));
+         ((GravatarFetcher) avatarFetcher).setGravatarFallback(Config.getStringProperty("GravatarFallback"));
       }
       
-      loadRepEvents(Config.getInstance().getStringProperty(Config.INPUT_FILE_KEY)); // event formatted (this is the standard)
+      loadRepEvents(Config.getStringProperty(Config.INPUT_FILE_KEY)); // event formatted (this is the standard)
       while (!finishedLoading && eventsQueue.isEmpty());
       if (eventsQueue.isEmpty()) {
          System.out.println("No events found in repository xml file.");
@@ -280,26 +275,25 @@ public class CodeSwarm extends PApplet implements EndOfFileEvent {
       }
       prevDate = eventsQueue.peek().getDate();
 
-      SCREENSHOT_FILE = Config.getInstance().getStringProperty(Config.SNAPSHOT_LOCATION_KEY);
-      EDGE_LEN = Config.getInstance().getPositiveIntProperty(Config.EDGE_LENGTH_KEY);
+      SCREENSHOT_FILE = Config.getStringProperty(Config.SNAPSHOT_LOCATION_KEY);
 
       maxFramesSaved = (int) Math.pow(10, SCREENSHOT_FILE.replaceAll("[^#]", "").length());
 
       // Create fonts
-      String fontName = Config.getInstance().getStringProperty(Config.FONT_KEY);
-      String boldFontName = Config.getInstance().getStringProperty(Config.FONT_KEY_BOLD);
-      Integer fontSize = Config.getInstance().getPositiveIntProperty(Config.FONT_SIZE);
-      Integer fontSizeBold = Config.getInstance().getPositiveIntProperty(Config.FONT_SIZE_BOLD);
+      String fontName = Config.getStringProperty(Config.FONT_KEY);
+      String boldFontName = Config.getStringProperty(Config.FONT_KEY_BOLD);
+      Integer fontSize = Config.getPositiveIntProperty(Config.FONT_SIZE);
+      Integer fontSizeBold = Config.getPositiveIntProperty(Config.FONT_SIZE_BOLD);
       font = createFont(fontName, fontSize);
       boldFont = createFont(boldFontName, fontSizeBold);
 
       textFont(font);
 
-      String SPRITE_FILE = Config.getInstance().getStringProperty(Config.SPRITE_FILE_KEY);
+      String SPRITE_FILE = Config.getStringProperty(Config.SPRITE_FILE_KEY);
       // Create the file particle image
       sprite = loadImage(SPRITE_FILE);
       avatarMask = loadImage(MASK_FILE);
-      avatarMask.resize(Config.getInstance().getPositiveIntProperty("AvatarSize"), Config.getInstance().getPositiveIntProperty("AvatarSize"));
+      avatarMask.resize(Config.getPositiveIntProperty("AvatarSize"), Config.getPositiveIntProperty("AvatarSize"));
       // Add translucency (using itself in this case)
       sprite.mask(sprite);
    }
@@ -322,7 +316,7 @@ public class CodeSwarm extends PApplet implements EndOfFileEvent {
       colorAssigner = new ColorAssigner();
       int i = 1;
       String property;
-      while ((property = Config.getInstance().getColorAssignProperty(i)) != null) {
+      while ((property = Config.getColorAssignProperty(i)) != null) {
          ColorTest ct = new ColorTest();
          ct.loadProperty(property);
          colorAssigner.addRule(ct);
@@ -721,10 +715,10 @@ public class CodeSwarm extends PApplet implements EndOfFileEvent {
 
          FileNode file = findNode(currentEvent.getPath() + currentEvent.getFilename());
          if (file == null) {
-            int dec = Config.getInstance().getIntProperty(Config.FILE_DECREMENT_KEY);
-            int life = Config.getInstance().getIntProperty(Config.FILE_LIFE_KEY);
-            int highlight = Config.getInstance().getIntProperty(Config.HIGHLIGHT_PCT_KEY);
-            float mass = Config.getInstance().getFloatProperty(Config.FILE_MASS_KEY);
+            int dec = Config.getIntProperty(Config.FILE_DECREMENT_KEY);
+            int life = Config.getIntProperty(Config.FILE_LIFE_KEY);
+            int highlight = Config.getIntProperty(Config.HIGHLIGHT_PCT_KEY);
+            float mass = Config.getFloatProperty(Config.FILE_MASS_KEY);
             file = new FileNode(currentEvent, life, dec, highlight, mass, colorAssigner.getColor(currentEvent.getPath() + currentEvent.getFilename()), maxTouches);
             physicsEngine.startLocation(file);
             physicsEngine.startVelocity(file);
@@ -739,10 +733,10 @@ public class CodeSwarm extends PApplet implements EndOfFileEvent {
 
          PersonNode person = findPerson(currentEvent.getAuthor());
          if (person == null) {
-            float mass = Config.getInstance().getFloatProperty(Config.PERSON_MASS_KEY);
-            int dec = Config.getInstance().getIntProperty(Config.PERSON_DECREMENT_KEY);
-            int life = Config.getInstance().getIntProperty(Config.PERSON_LIFE_KEY);
-            int highlight = Config.getInstance().getIntProperty(Config.HIGHLIGHT_PCT_KEY);
+            float mass = Config.getFloatProperty(Config.PERSON_MASS_KEY);
+            int dec = Config.getIntProperty(Config.PERSON_DECREMENT_KEY);
+            int life = Config.getIntProperty(Config.PERSON_LIFE_KEY);
+            int highlight = Config.getIntProperty(Config.HIGHLIGHT_PCT_KEY);
             person = new PersonNode(currentEvent.getAuthor(), life, dec, highlight, mass, color(0));
 
             String iconFile = avatarFetcher.fetchUserImage(person.getName());
@@ -767,9 +761,9 @@ public class CodeSwarm extends PApplet implements EndOfFileEvent {
 
          Edge edge = findEdge(file, person);
          if (edge == null) {
-            float length = Config.getInstance().getFloatProperty(Config.EDGE_LENGTH_KEY);
-            int dec = Config.getInstance().getIntProperty(Config.EDGE_DECREMENT_KEY);
-            int life = Config.getInstance().getIntProperty(Config.EDGE_LIFE_KEY);
+            float length = Config.getFloatProperty(Config.EDGE_LENGTH_KEY);
+            int dec = Config.getIntProperty(Config.EDGE_DECREMENT_KEY);
+            int life = Config.getIntProperty(Config.EDGE_LIFE_KEY);
             edge = new Edge(file, person, life, dec, length);
             edges.put(new MutablePair<>(file, person), edge);
          } else {
