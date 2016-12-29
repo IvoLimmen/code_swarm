@@ -63,6 +63,7 @@ public class FileEvent implements Comparable<Object> {
     * @param o
     * @return -1 if <, 0 if =, 1 if >
     */
+   @Override
    public int compareTo(Object o) {
       return date.compareTo(((FileEvent) o).date);
    }
