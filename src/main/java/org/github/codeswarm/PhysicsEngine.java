@@ -87,14 +87,15 @@ public abstract class PhysicsEngine {
     * @return Vector2f vector holding the starting location for a File Node
     */
    public void startLocation(Node node) {
-      node.setPosition(randomLocation());
+      node.getPosition().set(randomLocation());
+      //node.setPosition(randomLocation());
    }
 
    public void startVelocity(Node node) {
       Vector2f vec = new Vector2f(((float) Math.random() * 2 - 1), ((float) Math.random() * 2 - 1));
       vec.scale((1 / vec.length()) * (float) Math.random() * 15 / node.getMass());
       
-      node.setLastPosition(new Vector2f(node.getPosition()));
+      node.getLastPosition().set(new Vector2f(node.getPosition()));
       node.getLastPosition().add(vec);
    }
 

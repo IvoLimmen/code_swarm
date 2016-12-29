@@ -606,22 +606,19 @@ public class CodeSwarm extends PApplet implements EndOfFileEvent {
       textAlign(LEFT, TOP);
       fill(fontColor, 200);
       text("Help on keyboard commands:", 0, 10 * line++);
-      text("space bar : pause", 0, 10 * line++);
+      text("   space bar : pause", 0, 10 * line++);
       text("           a : show name halos", 0, 10 * line++);
       text("           b : show debug", 0, 10 * line++);
       text("           d : show date", 0, 10 * line++);
       text("           e : show edges", 0, 10 * line++);
-      text("           E : show physics engine name", 0, 10 * line++);
-      text("            f : draw files fuzzy", 0, 10 * line++);
+      text("           f : draw files fuzzy", 0, 10 * line++);
       text("           h : show histogram", 0, 10 * line++);
-      text("            j : draw files jelly", 0, 10 * line++);
-      text("            l : show legend", 0, 10 * line++);
+      text("           j : draw files jelly", 0, 10 * line++);
+      text("           l : show legend", 0, 10 * line++);
       text("           p : show popular", 0, 10 * line++);
       text("           q : quit code_swarm", 0, 10 * line++);
       text("           s : draw names sharp", 0, 10 * line++);
       text("           S : draw files sharp", 0, 10 * line++);
-      text("   minus : previous physics engine", 0, 10 * line++);
-      text("      plus : next physics engine", 0, 10 * line++);
       text("           ? : show help", 0, 10 * line++);
    }
 
@@ -757,8 +754,8 @@ public class CodeSwarm extends PApplet implements EndOfFileEvent {
                person.setIcon(icon);
             }
 
-            physicsEngine.startLocation(file);
-            physicsEngine.startVelocity(file);
+            physicsEngine.startLocation(person);
+            physicsEngine.startVelocity(person);
             people.put(currentEvent.getAuthor(), person);
          } else {
             person.freshen();
