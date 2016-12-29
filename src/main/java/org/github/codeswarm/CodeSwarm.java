@@ -22,7 +22,6 @@ import org.github.codeswarm.model.PersonNode;
 import org.github.codeswarm.model.FileNode;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Constructor;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -112,6 +111,7 @@ public class CodeSwarm extends PApplet implements EndOfFileEvent {
             Config.getInstance().init(configFileStack);
             PApplet.main(new String[]{"org.github.codeswarm.CodeSwarm"});
          } else {
+            // FIXME: Temporary for testing in IDE
             userConfigFilename = "data/sample.config";
             List<String> configFileStack = Arrays.asList(new String[]{"defaults/CodeSwarm.config",
                "defaults/user.config", userConfigFilename});
@@ -166,7 +166,6 @@ public class CodeSwarm extends PApplet implements EndOfFileEvent {
    boolean showLegend;
    boolean showPopular;
    boolean showEdges;
-   boolean showEngine;
    boolean showHelp;
    boolean takeSnapshots;
    boolean showDebug;
@@ -181,13 +180,7 @@ public class CodeSwarm extends PApplet implements EndOfFileEvent {
    int currentColor;
 
    // Physics engine configuration
-   String physicsEngineConfigDir;
-   String physicsEngineSelection;
-   LinkedList<peConfig> mPhysicsEngineChoices = new LinkedList<>();
    PhysicsEngine physicsEngine = null;
-   private boolean safeToToggle = false;
-   private boolean wantToToggle = false;
-   private boolean toggleDirection = false;
    private boolean circularAvatars = false;
 
    // Formats the date string nicely
@@ -378,11 +371,6 @@ public class CodeSwarm extends PApplet implements EndOfFileEvent {
       });
 
       textFont(font);
-
-      // Show the physics engine name
-      if (showEngine) {
-         drawEngine();
-      }
 
       // help, legend and debug information are exclusive
       if (showHelp) {
@@ -606,17 +594,7 @@ public class CodeSwarm extends PApplet implements EndOfFileEvent {
          fill(t.c1, 200);
          text(t.label, font.getSize(), 3 + ((i + 1) * (font.getSize() + 2)));
       }
-   }
-
-   /**
-    * Show physics engine name
-    */
-   public void drawEngine() {
-      fill(fontColor, 255);
-      textAlign(RIGHT, BASELINE);
-      textSize(10);
-      text(physicsEngineSelection, width - 1, height - (textDescent() * 5));
-   }
+   }   
 
    /**
     * Show short help on available commands
@@ -699,27 +677,7 @@ public class CodeSwarm extends PApplet implements EndOfFileEvent {
             break;
          }
       }
-   }
-
-   /**
-    * @param name
-    * @return physics engine instance
-    */
-   @SuppressWarnings("unchecked")
-   public PhysicsEngine getPhysicsEngine(String name) {
-      PhysicsEngine pe;
-      try {
-         Class<PhysicsEngine> c = (Class<PhysicsEngine>) Class.forName(name);
-         Constructor<PhysicsEngine> peConstructor = c.getConstructor();
-         pe = peConstructor.newInstance();
-      }
-      catch (Exception e) {
-         System.exit(1);
-         return null;
-      }
-
-      return pe;
-   }
+   }  
 
    /**
     * Take screenshot
@@ -848,9 +806,6 @@ public class CodeSwarm extends PApplet implements EndOfFileEvent {
          history.remove();
       }
 
-      // Do not allow toggle Physics Engine yet.
-      safeToToggle = false;
-
       // Init frame:
       physicsEngine.initializeFrame();
 
@@ -903,11 +858,6 @@ public class CodeSwarm extends PApplet implements EndOfFileEvent {
 
       // Finalize frame:
       physicsEngine.finalizeFrame();
-
-      safeToToggle = true;
-      if (wantToToggle == true) {
-         switchPhysicsEngine(toggleDirection);
-      }
    }
 
    /**
@@ -997,10 +947,6 @@ public class CodeSwarm extends PApplet implements EndOfFileEvent {
             showEdges = !showEdges;
             break;
          }
-         case 'E': {
-            showEngine = !showEngine;
-            break;
-         }
          case 'f': {
             drawFilesFuzzy = !drawFilesFuzzy;
             break;
@@ -1033,53 +979,9 @@ public class CodeSwarm extends PApplet implements EndOfFileEvent {
             drawFilesSharp = !drawFilesSharp;
             break;
          }
-         case '-': {
-            wantToToggle = true;
-            toggleDirection = false;
-            break;
-         }
-         case '+': {
-            wantToToggle = true;
-            toggleDirection = true;
-            break;
-         }
          case '?': {
             showHelp = !showHelp;
             break;
-         }
-      }
-   }
-
-   /**
-    * Method to switch between Physics Engines
-    *
-    * @param direction Indicates whether or not to go left or right on the list
-    */
-   private void switchPhysicsEngine(boolean direction) {
-      if (mPhysicsEngineChoices.size() > 1 && safeToToggle) {
-         boolean found = false;
-         for (int i = 0; i < mPhysicsEngineChoices.size() && !found; i++) {
-            if (mPhysicsEngineChoices.get(i).pe == physicsEngine) {
-               found = true;
-               wantToToggle = false;
-               if (direction == true) {
-                  if ((i + 1) < mPhysicsEngineChoices.size()) {
-                     physicsEngine = mPhysicsEngineChoices.get(i + 1).pe;
-                     physicsEngineSelection = mPhysicsEngineChoices.get(i + 1).name;
-                  } else {
-                     physicsEngine = mPhysicsEngineChoices.get(0).pe;
-                     physicsEngineSelection = mPhysicsEngineChoices.get(0).name;
-                  }
-               } else {
-                  if ((i - 1) >= 0) {
-                     physicsEngine = mPhysicsEngineChoices.get(i - 1).pe;
-                     physicsEngineSelection = mPhysicsEngineChoices.get(i - 1).name;
-                  } else {
-                     physicsEngine = mPhysicsEngineChoices.get(mPhysicsEngineChoices.size() - 1).pe;
-                     physicsEngineSelection = mPhysicsEngineChoices.get(mPhysicsEngineChoices.size() - 1).name;
-                  }
-               }
-            }
          }
       }
    }
@@ -1099,19 +1001,5 @@ public class CodeSwarm extends PApplet implements EndOfFileEvent {
    @Override
    public void endOfFile() {
       this.finishedLoading = true;
-   }
-
-   /**
-    * Class to associate the Physics Engine name to the Physics Engine interface
-    */
-   class peConfig {
-
-      protected String name;
-      protected PhysicsEngine pe;
-
-      peConfig(String n, PhysicsEngine p) {
-         name = n;
-         pe = p;
-      }
-   }
+   }   
 }
