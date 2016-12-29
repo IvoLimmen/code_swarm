@@ -142,7 +142,7 @@ public class CodeSwarm extends PApplet implements EndOfFileEvent {
    boolean isInputSorted = false;
    boolean showUserName = false;
 
-   LinkedList<ColorBins> history;
+   LinkedList<List<Integer>> history;
    boolean finishedLoading = false;
 
    // Temporary variables
@@ -224,6 +224,7 @@ public class CodeSwarm extends PApplet implements EndOfFileEvent {
       showDate = Config.getInstance().getBooleanProperty(Config.SHOW_DATE);
       showEdges = Config.getInstance().getBooleanProperty(Config.SHOW_EDGES);
       showDebug = Config.getInstance().getBooleanProperty(Config.SHOW_DEBUG);
+      showPopular = Config.getInstance().getBooleanProperty(Config.SHOW_POPULAR);
       takeSnapshots = Config.getInstance().getBooleanProperty(Config.TAKE_SNAPSHOTS_KEY);
       drawNamesSharp = Config.getInstance().getBooleanProperty(Config.DRAW_NAMES_SHARP);
       drawNamesHalos = Config.getInstance().getBooleanProperty(Config.DRAW_NAMES_HALOS);
@@ -559,12 +560,12 @@ public class CodeSwarm extends PApplet implements EndOfFileEvent {
    public void drawHistory() {
       int counter = 0;
       strokeWeight(PARTICLE_SIZE);
-      for (ColorBins cb : history) {
-         if (cb.num > 0) {
-            int color = cb.colorList[0];
+      for (List<Integer> list : history) {
+         if (!list.isEmpty()) {
+            int color = list.get(0);
             int start = 0;
             int end = 0;
-            for (int nextColor : cb.colorList) {
+            for (int nextColor : list) {
                if (nextColor == color) {
                   end++;
                } else {
@@ -589,10 +590,10 @@ public class CodeSwarm extends PApplet implements EndOfFileEvent {
       textFont(font);
       textAlign(LEFT, TOP);
       text("Legend:", 3, 3);
-      for (int i = 0; i < colorAssigner.tests.size(); i++) {
-         ColorTest t = colorAssigner.tests.get(i);
-         fill(t.c1, 200);
-         text(t.label, font.getSize(), 3 + ((i + 1) * (font.getSize() + 2)));
+      for (int i = 0; i < colorAssigner.getTests().size(); i++) {
+         ColorTest t = colorAssigner.getTests().get(i);
+         fill(t.getC1(), 200);
+         text(t.getLabel(), font.getSize(), 3 + ((i + 1) * (font.getSize() + 2)));
       }
    }   
 
@@ -696,8 +697,8 @@ public class CodeSwarm extends PApplet implements EndOfFileEvent {
     */
    public void update() {
       // Create a new histogram line
-      ColorBins cb = new ColorBins();
-      history.add(cb);
+      List<Integer> colorList = new ArrayList<>();
+      history.add(colorList);
 
       nextDate = new Date(prevDate.getTime() + UPDATE_DELTA);
       currentEvent = eventsQueue.peek();
@@ -734,7 +735,7 @@ public class CodeSwarm extends PApplet implements EndOfFileEvent {
          }
 
          // add to histogram
-         cb.add(file.getNodeHue());
+         colorList.add(file.getNodeHue());
 
          PersonNode person = findPerson(currentEvent.getAuthor());
          if (person == null) {
@@ -796,7 +797,7 @@ public class CodeSwarm extends PApplet implements EndOfFileEvent {
       prevDate = nextDate;
 
       // sort colorbins
-      cb.sort();
+      Collections.sort(colorList);
 
       // restrict history to drawable area
       while (history.size() > 320) {

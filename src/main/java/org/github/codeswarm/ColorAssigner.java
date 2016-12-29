@@ -20,23 +20,23 @@ package org.github.codeswarm;
  */
 import java.awt.Color;
 import java.util.*;
+import java.util.regex.Pattern;
 
 public class ColorAssigner {
 
-   ArrayList<ColorTest> tests;
-   //int defaultColor = PApplet.color(128, 128, 128);
-   int defaultColor = Color.gray.getRGB();
+   private final List<ColorTest> tests = new ArrayList<>();
+
+   private int defaultColor = Color.gray.getRGB();
 
    public ColorAssigner() {
-      tests = new ArrayList<>();
    }
 
    public void addRule(String label, String expr, int c1, int c2) {
       ColorTest t = new ColorTest();
-      t.expr = java.util.regex.Pattern.compile(expr);
-      t.label = label;
-      t.c1 = c1;
-      t.c2 = c2;
+      t.setExpr(Pattern.compile(expr));
+      t.setLabel(label);
+      t.setC1(c1);
+      t.setC2(c2);
       addRule(t);
    }
 
@@ -53,4 +53,9 @@ public class ColorAssigner {
 
       return defaultColor;
    }
+
+   public List<ColorTest> getTests() {
+      return tests;
+   }
+
 }

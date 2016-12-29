@@ -23,11 +23,44 @@ import java.util.regex.*;
 import processing.core.PApplet;
 import processing.core.PConstants;
 
-class ColorTest {
+public class ColorTest {
 
-   Pattern expr;
-   String label;
-   int c1, c2;
+   private Pattern expr;
+   private String label;
+   private int c1;
+   private int c2;
+
+   public Pattern getExpr() {
+      return expr;
+   }
+
+   public void setExpr(Pattern expr) {
+      this.expr = expr;
+   }
+
+   public String getLabel() {
+      return label;
+   }
+
+   public void setLabel(String label) {
+      this.label = label;
+   }
+
+   public int getC1() {
+      return c1;
+   }
+
+   public void setC1(int c1) {
+      this.c1 = c1;
+   }
+
+   public int getC2() {
+      return c2;
+   }
+
+   public void setC2(int c2) {
+      this.c2 = c2;
+   }
 
    public boolean passes(String s) {
       Matcher m = expr.matcher(s);
@@ -68,12 +101,4 @@ class ColorTest {
       c2 = new Color(components[3], components[4], components[5]).getRGB();
    }
 
-   public static void main(String[] args) {
-      ColorTest ct = new ColorTest();
-      System.out.println("input=" + args[0]);
-      ct.loadProperty(args[0]);
-      //System.out.println( "regex=" + ct.expr );
-      System.out.println("color1=" + Integer.toHexString(ct.c1));
-      System.out.println("color2=" + Integer.toHexString(ct.c2));
-   }
 }

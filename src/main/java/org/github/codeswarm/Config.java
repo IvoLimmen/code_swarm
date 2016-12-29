@@ -34,6 +34,8 @@ final public class Config {
    public static Config getInstance() {
       return CURRENT;
    }
+   public static final String SHOW_POPULAR = "ShowPopular";
+
    /**
     * The width of window
     */
