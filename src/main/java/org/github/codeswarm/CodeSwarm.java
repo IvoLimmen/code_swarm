@@ -99,7 +99,7 @@ public class CodeSwarm extends PApplet implements EndOfFileEvent {
     *
     * @param args : should be the path to the config file
     */
-   static public void main(String args[]) {
+   static public void main(String args[]) {           
       try {
          if (args.length > 0) {
             userConfigFilename = args[0];

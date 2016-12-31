@@ -27,4 +27,6 @@ dependencies {
     compile 'net.java.dev.swing-layout:swing-layout:1.0.2:sources'
     compile 'org.apache.commons:commons-lang3:3.5'
     compile 'org.apache.commons:commons-lang3:3.5:sources'
+    compile 'org.eclipse.jgit:org.eclipse.jgit:4.5.0.201609210915-r'
+    compile 'org.eclipse.jgit:org.eclipse.jgit:4.5.0.201609210915-r:sources'
 }
