@@ -9,22 +9,26 @@ task run(type: JavaExec) {
   args = ['data/sample.config']
 }
 
-sourceCompatibility = 1.8
+compileJava {
+  sourceCompatibility = 1.8
+  targetCompatibility = 1.8
+  options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
+}
 
 repositories {
-    jcenter()
+  jcenter()
 }
 
 // In this section you declare the dependencies for your production and test code
 dependencies {
-    compile 'org.slf4j:slf4j-api:1.7.21'
-    compile 'org.slf4j:slf4j-api:1.7.21:sources'
-    compile 'org.processing:core:3.2.3'
-    compile 'org.processing:core:3.2.3:sources'
-    compile 'javax.vecmath:vecmath:1.5.2'
-    compile 'javax.vecmath:vecmath:1.5.2:sources'
-    compile 'net.java.dev.swing-layout:swing-layout:1.0.2'
-    compile 'net.java.dev.swing-layout:swing-layout:1.0.2:sources'
-    compile 'org.apache.commons:commons-lang3:3.5'
-    compile 'org.apache.commons:commons-lang3:3.5:sources'
+  compile 'org.slf4j:slf4j-api:1.7.21'
+  compile 'org.slf4j:slf4j-api:1.7.21:sources'
+  compile 'org.processing:core:3.2.3'
+  compile 'org.processing:core:3.2.3:sources'
+  compile 'javax.vecmath:vecmath:1.5.2'
+  compile 'javax.vecmath:vecmath:1.5.2:sources'
+  compile 'net.java.dev.swing-layout:swing-layout:1.0.2'
+  compile 'net.java.dev.swing-layout:swing-layout:1.0.2:sources'
+  compile 'org.apache.commons:commons-lang3:3.5'
+  compile 'org.apache.commons:commons-lang3:3.5:sources'
 }

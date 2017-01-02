@@ -25,16 +25,36 @@ import processing.core.PConstants;
 
 public class ColorTest {
 
-   private Pattern expr;
+   private Pattern pattern;
+   private String expr;
    private String label;
-   private int c1;
-   private int c2;
+   private Color c1;
+   private Color c2;
 
-   public Pattern getExpr() {
+   public ColorTest() {
+   }
+
+   public ColorTest(String label, String expr, Color c1, Color c2) {
+      this.expr = expr;
+      this.pattern = Pattern.compile(expr);
+      this.label = label;
+      this.c1 = c1;
+      this.c2 = c2;
+   }
+
+   public Pattern getPattern() {
+      return pattern;
+   }
+
+   public void setPattern(Pattern pattern) {
+      this.pattern = pattern;
+   }
+
+   public String getExpr() {
       return expr;
    }
 
-   public void setExpr(Pattern expr) {
+   public void setExpr(String expr) {
       this.expr = expr;
    }
 
@@ -46,29 +66,29 @@ public class ColorTest {
       this.label = label;
    }
 
-   public int getC1() {
+   public Color getC1() {
       return c1;
    }
 
-   public void setC1(int c1) {
+   public void setC1(Color c1) {
       this.c1 = c1;
    }
 
-   public int getC2() {
+   public Color getC2() {
       return c2;
    }
 
-   public void setC2(int c2) {
+   public void setC2(Color c2) {
       this.c2 = c2;
    }
 
    public boolean passes(String s) {
-      Matcher m = expr.matcher(s);
+      Matcher m = pattern.matcher(s);
       return m.matches();
    }
 
    public int assign() {
-      return PApplet.lerpColor(c1, c2, (float) Math.random(), PConstants.RGB);
+      return PApplet.lerpColor(c1.getRGB(), c2.getRGB(), (float) Math.random(), PConstants.RGB);
    }
 
    public void loadProperty(String value) {
@@ -81,9 +101,11 @@ public class ColorTest {
       tokens = firstpart.split("\"");
       label = tokens[0];
       if (tokens.length == 3) {
-         expr = Pattern.compile(tokens[2]);
+         pattern = Pattern.compile(tokens[2]);
+         expr = tokens[2];
       } else {
-         expr = Pattern.compile(tokens[0]);
+         pattern = Pattern.compile(tokens[0]);
+         expr = tokens[0];
       }
       // then the comma delimited colors
       String rest = value.substring(lastQ + 1);
@@ -97,8 +119,8 @@ public class ColorTest {
             components[j++] = Integer.parseInt(tok);
          }
       }
-      c1 = new Color(components[0], components[1], components[2]).getRGB();
-      c2 = new Color(components[3], components[4], components[5]).getRGB();
+      c1 = new Color(components[0], components[1], components[2]);
+      c2 = new Color(components[3], components[4], components[5]);
    }
 
 }

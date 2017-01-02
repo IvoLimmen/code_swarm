@@ -44,6 +44,7 @@ import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.github.codeswarm.avatar.GravatarFetcher;
 import org.github.codeswarm.avatar.LocalAvatar;
+import org.github.codeswarm.gui.MainConfigPanel;
 import processing.core.PApplet;
 import processing.core.PFont;
 import processing.core.PImage;
@@ -54,7 +55,7 @@ public class CodeSwarm extends PApplet implements EndOfFileEvent {
     * @remark needed for any serializable class
     */
    public static final long serialVersionUID = 0;
-   
+
    private static Map<String, FileNode> nodes;
    private static Map<Pair<FileNode, PersonNode>, Edge> edges;
    private static Map<String, PersonNode> people;
@@ -113,7 +114,7 @@ public class CodeSwarm extends PApplet implements EndOfFileEvent {
             List<String> configFileStack = Arrays.asList(new String[]{"defaults/CodeSwarm.config",
                "defaults/user.config", userConfigFilename});
             Config.init(configFileStack);
-            PApplet.main(new String[]{"org.github.codeswarm.CodeSwarm"});
+            MainConfigPanel.start();
 
 //            System.err.println("Specify a config file.");
 //            System.exit(2);
@@ -125,6 +126,16 @@ public class CodeSwarm extends PApplet implements EndOfFileEvent {
       }
    }
 
+   static public void boot() {
+      PApplet.main(new String[]{"org.github.codeswarm.CodeSwarm"});
+   }
+
+   @Override
+   public void exitActual() {
+      // no no...
+      this.frame.setVisible(false);
+   }
+     
    // User-defined variables
    int FRAME_RATE = 24;
    long UPDATE_DELTA = -1;
@@ -195,8 +206,8 @@ public class CodeSwarm extends PApplet implements EndOfFileEvent {
    @Override
    public void settings() {
 
-      this.width = Config.getPositiveIntProperty(Config.WIDTH_KEY);
-      this.height = Config.getPositiveIntProperty(Config.HEIGHT_KEY);
+      this.width = Config.getWidth();
+      this.height = Config.getHeight();
 
       if (Config.getBooleanProperty(Config.USE_OPEN_GL)) {
          size(width, height, FX2D);
@@ -266,12 +277,12 @@ public class CodeSwarm extends PApplet implements EndOfFileEvent {
       } else if (avatarFetcher.getClass().equals(GravatarFetcher.class)) {
          ((GravatarFetcher) avatarFetcher).setGravatarFallback(Config.getStringProperty("GravatarFallback"));
       }
-      
+
       loadRepEvents(Config.getStringProperty(Config.INPUT_FILE_KEY)); // event formatted (this is the standard)
       while (!finishedLoading && eventsQueue.isEmpty());
       if (eventsQueue.isEmpty()) {
          System.out.println("No events found in repository xml file.");
-         System.exit(1);
+         return;
       }
       prevDate = eventsQueue.peek().getDate();
 
@@ -586,10 +597,10 @@ public class CodeSwarm extends PApplet implements EndOfFileEvent {
       text("Legend:", 3, 3);
       for (int i = 0; i < colorAssigner.getTests().size(); i++) {
          ColorTest t = colorAssigner.getTests().get(i);
-         fill(t.getC1(), 200);
+         fill(t.getC1().getRGB(), 200);
          text(t.getLabel(), font.getSize(), 3 + ((i + 1) * (font.getSize() + 2)));
       }
-   }   
+   }
 
    /**
     * Show short help on available commands
@@ -669,7 +680,7 @@ public class CodeSwarm extends PApplet implements EndOfFileEvent {
             break;
          }
       }
-   }  
+   }
 
    /**
     * Take screenshot
@@ -993,5 +1004,5 @@ public class CodeSwarm extends PApplet implements EndOfFileEvent {
    @Override
    public void endOfFile() {
       this.finishedLoading = true;
-   }   
+   }
 }

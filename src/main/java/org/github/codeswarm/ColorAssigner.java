@@ -31,9 +31,10 @@ public class ColorAssigner {
    public ColorAssigner() {
    }
 
-   public void addRule(String label, String expr, int c1, int c2) {
+   public void addRule(String label, String expr, Color c1, Color c2) {
       ColorTest t = new ColorTest();
-      t.setExpr(Pattern.compile(expr));
+      t.setPattern(Pattern.compile(expr));
+      t.setExpr(expr);
       t.setLabel(label);
       t.setC1(c1);
       t.setC2(c2);

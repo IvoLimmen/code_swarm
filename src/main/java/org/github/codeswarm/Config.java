@@ -34,6 +34,26 @@ final public class Config {
    public static Config getInstance() {
       return CURRENT;
    }
+
+   private int width;
+   private int height;
+
+   public static int getHeight() {
+      return CURRENT.height;
+   }
+
+   public static int getWidth() {
+      return CURRENT.width;
+   }
+
+   public void setHeight(int height) {
+      this.height = height;
+   }
+
+   public void setWidth(int width) {
+      this.width = width;
+   }      
+   
    public static final String SHOW_POPULAR = "ShowPopular";
 
    /**
