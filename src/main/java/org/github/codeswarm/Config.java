@@ -23,6 +23,9 @@ import java.io.*;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleObjectProperty;
 
 /**
  * @author Michael Ogawa
@@ -31,29 +34,6 @@ final public class Config {
 
    private final static Config CURRENT = new Config();
 
-   public static Config getInstance() {
-      return CURRENT;
-   }
-
-   private int width;
-   private int height;
-
-   public static int getHeight() {
-      return CURRENT.height;
-   }
-
-   public static int getWidth() {
-      return CURRENT.width;
-   }
-
-   public void setHeight(int height) {
-      this.height = height;
-   }
-
-   public void setWidth(int width) {
-      this.width = width;
-   }      
-   
    public static final String SHOW_POPULAR = "ShowPopular";
 
    /**
@@ -80,10 +60,6 @@ final public class Config {
     * The number of frames per day. Used to calculate time between frames. Optional.
     */
    public static final String FRAMES_PER_DAY_KEY = "FramesPerDay";
-   /**
-    * Boolean value, controls png creation
-    */
-   public static final String TAKE_SNAPSHOTS_KEY = "TakeSnapshots";
    /**
     * R,G,B Determines the background color
     */
@@ -150,22 +126,6 @@ final public class Config {
     */
    public static final String HIGHLIGHT_PCT_KEY = "HighlightPct";
    /**
-    * Boolean value, controls showing the Legend
-    */
-   public static final String SHOW_LEGEND = "ShowLegend";
-   /**
-    * Boolean value, controls showing the Histogram
-    */
-   public static final String SHOW_HISTORY = "ShowHistory";
-   /**
-    * Boolean value, controls showing the Date
-    */
-   public static final String SHOW_DATE = "ShowDate";
-   /**
-    * Boolean value, controls showing edges between nodes and people
-    */
-   public static final String SHOW_EDGES = "ShowEdges";
-   /**
     * Boolean value, controls showing debug info
     */
    public static final String SHOW_DEBUG = "ShowDebug";
@@ -197,9 +157,8 @@ final public class Config {
    public static String DEFAULT_COLOR_ASSIGN = "\"Misc\",\".*\",128,128,128,128,128,128";
    public static final String DRAW_CIRCULAR_AVATARS = "CircularAvatars";
 
-   private List<Properties> propStack;
-
-   private Config() {
+   public static Config getInstance() {
+      return CURRENT;
    }
 
    public static void init(String configFileName) throws IOException {
@@ -224,17 +183,6 @@ final public class Config {
       Properties props = new Properties();
       props.load(new FileInputStream(filename));
       addPropertiesLayer(props);
-   }
-
-   protected void initPropStack() {
-      CURRENT.propStack = new LinkedList<>();
-      CURRENT.propStack.add(createDefaults());
-   }
-
-   private Properties createDefaults() {
-      Properties def = new Properties();
-      def.setProperty(COLOR_ASSIGN_KEY + "1", DEFAULT_COLOR_ASSIGN);
-      return def;
    }
 
    /**
@@ -351,5 +299,84 @@ final public class Config {
 
    public static double getDoubleProperty(String key) {
       return Double.parseDouble(getStringProperty(key));
+   }
+
+   private final SimpleIntegerProperty width = new SimpleIntegerProperty(800);
+   private final SimpleIntegerProperty height = new SimpleIntegerProperty(600);
+   private final SimpleBooleanProperty showLegend = new SimpleBooleanProperty(true);
+   private final SimpleBooleanProperty showHistogram = new SimpleBooleanProperty(true);
+   private final SimpleBooleanProperty showDate = new SimpleBooleanProperty(true);
+   private final SimpleBooleanProperty showEdges = new SimpleBooleanProperty(true);
+   private final SimpleBooleanProperty showPopular = new SimpleBooleanProperty(true);
+   private final SimpleBooleanProperty showUsername = new SimpleBooleanProperty(true);
+   private final SimpleBooleanProperty takeSnapshots = new SimpleBooleanProperty(false);
+   private final SimpleObjectProperty<javafx.scene.paint.Color> background = new SimpleObjectProperty<>(javafx.scene.paint.Color.BLACK);
+   private final SimpleObjectProperty<javafx.scene.paint.Color> fontColor = new SimpleObjectProperty<>(javafx.scene.paint.Color.WHITE);
+   private List<Properties> propStack;
+
+   private Config() {
+   }
+
+   public SimpleBooleanProperty getShowUsername() {
+      return showUsername;
+   }
+
+   public SimpleObjectProperty<javafx.scene.paint.Color> getBackground() {
+      return background;
+   }
+
+   public SimpleObjectProperty<javafx.scene.paint.Color> getFontColor() {
+      return fontColor;
+   }
+
+   public SimpleBooleanProperty getShowDate() {
+      return showDate;
+   }
+
+   public SimpleBooleanProperty getShowEdges() {
+      return showEdges;
+   }
+
+   public SimpleBooleanProperty getShowHistogram() {
+      return showHistogram;
+   }
+
+   public SimpleBooleanProperty getShowLegend() {
+      return showLegend;
+   }
+
+   public SimpleBooleanProperty getShowPopular() {
+      return showPopular;
+   }
+
+   public SimpleIntegerProperty getWidth() {
+      return width;
+   }
+
+   public SimpleIntegerProperty getHeight() {
+      return height;
+   }
+
+   public SimpleBooleanProperty getTakeSnapshots() {
+      return takeSnapshots;
+   }
+
+   public void setHeight(int height) {
+      this.height.set(height);
+   }
+
+   public void setWidth(int width) {
+      this.width.set(width);
+   }
+
+   protected void initPropStack() {
+      CURRENT.propStack = new LinkedList<>();
+      CURRENT.propStack.add(createDefaults());
+   }
+
+   private Properties createDefaults() {
+      Properties def = new Properties();
+      def.setProperty(COLOR_ASSIGN_KEY + "1", DEFAULT_COLOR_ASSIGN);
+      return def;
    }
 }

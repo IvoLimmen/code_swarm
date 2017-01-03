@@ -133,7 +133,7 @@ public class CodeSwarm extends PApplet implements EndOfFileEvent {
    @Override
    public void exitActual() {
       // no no...
-      this.frame.setVisible(false);
+      this.surface.setVisible(false);
    }
      
    // User-defined variables
@@ -188,7 +188,7 @@ public class CodeSwarm extends PApplet implements EndOfFileEvent {
    int currentColor;
 
    // Physics engine configuration
-   PhysicsEngine physicsEngine = null;
+   private final PhysicsEngine physicsEngine = new PhysicsEngineOrderly();
    private boolean circularAvatars = false;
 
    // Formats the date string nicely
@@ -206,8 +206,8 @@ public class CodeSwarm extends PApplet implements EndOfFileEvent {
    @Override
    public void settings() {
 
-      this.width = Config.getWidth();
-      this.height = Config.getHeight();
+      this.width = Config.getInstance().getWidth().getValue();
+      this.height = Config.getInstance().getHeight().getValue();
 
       if (Config.getBooleanProperty(Config.USE_OPEN_GL)) {
          size(width, height, FX2D);
@@ -222,16 +222,19 @@ public class CodeSwarm extends PApplet implements EndOfFileEvent {
    @Override
    public void setup() {
 
+      showLegend = Config.getInstance().getShowLegend().getValue();
+      showHistogram = Config.getInstance().getShowHistogram().getValue();
+      showDate = Config.getInstance().getShowDate().getValue();
+      showEdges = Config.getInstance().getShowEdges().getValue();
+      showPopular = Config.getInstance().getShowPopular().getValue();
+      takeSnapshots = Config.getInstance().getTakeSnapshots().getValue();
+      showUserName = Config.getInstance().getShowUsername().getValue();
+
+      
       int maxBackgroundThreads = Config.getPositiveIntProperty(Config.MAX_THREADS_KEY);
       backgroundExecutor = new ThreadPoolExecutor(1, maxBackgroundThreads, Long.MAX_VALUE, TimeUnit.NANOSECONDS, new ArrayBlockingQueue<>(4 * maxBackgroundThreads), new ThreadPoolExecutor.CallerRunsPolicy());
-
-      showLegend = Config.getBooleanProperty(Config.SHOW_LEGEND);
-      showHistogram = Config.getBooleanProperty(Config.SHOW_HISTORY);
-      showDate = Config.getBooleanProperty(Config.SHOW_DATE);
-      showEdges = Config.getBooleanProperty(Config.SHOW_EDGES);
+      
       showDebug = Config.getBooleanProperty(Config.SHOW_DEBUG);
-      showPopular = Config.getBooleanProperty(Config.SHOW_POPULAR);
-      takeSnapshots = Config.getBooleanProperty(Config.TAKE_SNAPSHOTS_KEY);
       drawNamesSharp = Config.getBooleanProperty(Config.DRAW_NAMES_SHARP);
       drawNamesHalos = Config.getBooleanProperty(Config.DRAW_NAMES_HALOS);
       drawFilesSharp = Config.getBooleanProperty(Config.DRAW_FILES_SHARP);
@@ -245,10 +248,7 @@ public class CodeSwarm extends PApplet implements EndOfFileEvent {
       double framesperday = Config.getDoubleProperty(Config.FRAMES_PER_DAY_KEY);
       UPDATE_DELTA = (long) (86400000 / framesperday);
 
-      isInputSorted = Config.getBooleanProperty(Config.IS_INPUT_SORTED_KEY);
-      showUserName = Config.getBooleanProperty(Config.SHOW_USER_NAME_KEY);
-
-      physicsEngine = new PhysicsEngineOrderly();
+      isInputSorted = Config.getBooleanProperty(Config.IS_INPUT_SORTED_KEY);      
 
       smooth();
       frameRate(FRAME_RATE);
@@ -378,11 +378,7 @@ public class CodeSwarm extends PApplet implements EndOfFileEvent {
 
       textFont(font);
 
-      // help, legend and debug information are exclusive
-      if (showHelp) {
-         // help override legend and debug information
-         drawHelp();
-      } else if (showDebug) {
+      if (showDebug) {
          // debug override legend information
          drawDebugData();
       } else if (showLegend) {
@@ -600,32 +596,6 @@ public class CodeSwarm extends PApplet implements EndOfFileEvent {
          fill(t.getC1().getRGB(), 200);
          text(t.getLabel(), font.getSize(), 3 + ((i + 1) * (font.getSize() + 2)));
       }
-   }
-
-   /**
-    * Show short help on available commands
-    */
-   public void drawHelp() {
-      int line = 0;
-      noStroke();
-      textFont(font);
-      textAlign(LEFT, TOP);
-      fill(fontColor, 200);
-      text("Help on keyboard commands:", 0, 10 * line++);
-      text("   space bar : pause", 0, 10 * line++);
-      text("           a : show name halos", 0, 10 * line++);
-      text("           b : show debug", 0, 10 * line++);
-      text("           d : show date", 0, 10 * line++);
-      text("           e : show edges", 0, 10 * line++);
-      text("           f : draw files fuzzy", 0, 10 * line++);
-      text("           h : show histogram", 0, 10 * line++);
-      text("           j : draw files jelly", 0, 10 * line++);
-      text("           l : show legend", 0, 10 * line++);
-      text("           p : show popular", 0, 10 * line++);
-      text("           q : quit code_swarm", 0, 10 * line++);
-      text("           s : draw names sharp", 0, 10 * line++);
-      text("           S : draw files sharp", 0, 10 * line++);
-      text("           ? : show help", 0, 10 * line++);
    }
 
    /**
@@ -917,88 +887,6 @@ public class CodeSwarm extends PApplet implements EndOfFileEvent {
          //we have to load all of the data before we can continue if it isn't sorted
          eventLoader.run();
       }
-   }
-
-   /*
-   * Output file events for debugging void printQueue() { while(
-   * eventsQueue.size() > 0 ) { FileEvent fe = (FileEvent)eventsQueue.poll();
-   * println( fe.date ); } }
-    */
-   /**
-    * @note Keystroke callback function
-    */
-   @Override
-   public void keyPressed() {
-      switch (key) {
-         case ' ': {
-            pauseButton();
-            break;
-         }
-         case 'a': {
-            drawNamesHalos = !drawNamesHalos;
-            break;
-         }
-         case 'b': {
-            showDebug = !showDebug;
-            break;
-         }
-         case 'd': {
-            showDate = !showDate;
-            break;
-         }
-         case 'e': {
-            showEdges = !showEdges;
-            break;
-         }
-         case 'f': {
-            drawFilesFuzzy = !drawFilesFuzzy;
-            break;
-         }
-         case 'h': {
-            showHistogram = !showHistogram;
-            break;
-         }
-         case 'j': {
-            drawFilesJelly = !drawFilesJelly;
-            break;
-         }
-         case 'l': {
-            showLegend = !showLegend;
-            break;
-         }
-         case 'p': {
-            showPopular = !showPopular;
-            break;
-         }
-         case 'q': {
-            exit();
-            break;
-         }
-         case 's': {
-            drawNamesSharp = !drawNamesSharp;
-            break;
-         }
-         case 'S': {
-            drawFilesSharp = !drawFilesSharp;
-            break;
-         }
-         case '?': {
-            showHelp = !showHelp;
-            break;
-         }
-      }
-   }
-
-   /**
-    * Toggle pause
-    */
-   public void pauseButton() {
-      if (!paused) {
-         noLoop();
-      } else {
-         loop();
-      }
-      paused = !paused;
    }
 
    @Override

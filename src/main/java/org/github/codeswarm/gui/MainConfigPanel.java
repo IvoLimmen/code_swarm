@@ -34,7 +34,7 @@ import org.github.codeswarm.ColorTest;
 import org.github.codeswarm.Config;
 
 public class MainConfigPanel extends Application {
-   
+
    public static void start() {
       launch(new String[]{});
    }
@@ -49,6 +49,8 @@ public class MainConfigPanel extends Application {
 
    private CheckBox userName;
 
+   private CheckBox popular;
+   
    private CheckBox date;
 
    private CheckBox edges;
@@ -104,7 +106,8 @@ public class MainConfigPanel extends Application {
           FXCollections.observableArrayList("800x600", "1024x768", "960x720", "1920x1080"));
       GridPane.setHalignment(screenSize, HPos.LEFT);
       gridPane.add(screenSize, 1, 1);
-      screenSize.getSelectionModel().select(2);
+      String current = Config.getInstance().getWidth().getValue() + "x" + Config.getInstance().getHeight().getValue();
+      screenSize.getSelectionModel().select(current);
 
       Label framesPerDayLbl = new Label("Frames per day");
       GridPane.setHalignment(framesPerDayLbl, HPos.RIGHT);
@@ -116,29 +119,34 @@ public class MainConfigPanel extends Application {
       gridPane.add(framesPerDay, 1, 2);
 
       this.legend = new CheckBox("Show legend");
-      legend.setSelected(true);
+      this.legend.selectedProperty().bindBidirectional(Config.getInstance().getShowLegend());
       GridPane.setHalignment(legend, HPos.LEFT);
       gridPane.add(legend, 1, 3);
 
       this.history = new CheckBox("Show history");
-      history.setSelected(true);
+      this.history.selectedProperty().bindBidirectional(Config.getInstance().getShowHistogram());
       GridPane.setHalignment(history, HPos.LEFT);
       gridPane.add(history, 1, 4);
 
       this.userName = new CheckBox("Show username");
-      userName.setSelected(true);
+      this.userName.selectedProperty().bindBidirectional(Config.getInstance().getShowUsername());
       GridPane.setHalignment(userName, HPos.LEFT);
       gridPane.add(userName, 1, 5);
 
+      this.popular = new CheckBox("Show popular");
+      this.popular.selectedProperty().bindBidirectional(Config.getInstance().getShowPopular());
+      GridPane.setHalignment(popular, HPos.LEFT);
+      gridPane.add(popular, 1, 6);
+      
       this.date = new CheckBox("Show date");
-      date.setSelected(true);
+      this.date.selectedProperty().bindBidirectional(Config.getInstance().getShowDate());
       GridPane.setHalignment(date, HPos.LEFT);
-      gridPane.add(date, 1, 6);
+      gridPane.add(date, 1, 7);
 
       this.edges = new CheckBox("Show edges");
-      edges.setSelected(false);
+      this.edges.selectedProperty().bindBidirectional(Config.getInstance().getShowEdges());
       GridPane.setHalignment(edges, HPos.LEFT);
-      gridPane.add(edges, 1, 7);
+      gridPane.add(edges, 1, 8);
 
       return tab;
    }
@@ -152,7 +160,7 @@ public class MainConfigPanel extends Application {
       gridPane.add(backgroundLbl, 0, 1);
 
       this.background = new ColorPicker();
-      background.setValue(Color.BLACK);
+      this.background.valueProperty().bindBidirectional(Config.getInstance().getBackground());
       GridPane.setHalignment(background, HPos.LEFT);
       gridPane.add(background, 1, 1);
 
@@ -174,7 +182,7 @@ public class MainConfigPanel extends Application {
       gridPane.add(fontColorLbl, 0, 3);
 
       this.fontColor = new ColorPicker();
-      fontColor.setValue(Color.WHITE);
+      this.fontColor.valueProperty().bindBidirectional(Config.getInstance().getFontColor());
       GridPane.setHalignment(fontColor, HPos.LEFT);
       gridPane.add(fontColor, 1, 3);
 
@@ -243,7 +251,7 @@ public class MainConfigPanel extends Application {
       HBox hBox = new HBox(5d);
       hBox.setPadding(new Insets(5d));
       hBox.setAlignment(Pos.CENTER_RIGHT);
-      
+
       Button preview = new Button("Preview");
       preview.setOnAction(a -> {
          setConfig();
@@ -260,7 +268,7 @@ public class MainConfigPanel extends Application {
 
       return hBox;
    }
-   
+
    private void setConfig() {
       String screenSize = this.screenSize.getSelectionModel().getSelectedItem();
       Config.getInstance().setWidth(Integer.parseInt(screenSize.split("x")[0]));
