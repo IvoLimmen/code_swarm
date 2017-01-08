@@ -55,7 +55,7 @@ public class MainConfigPanel extends Application {
    private CheckBox userName;
 
    private CheckBox popular;
-   
+
    private CheckBox date;
 
    private CheckBox edges;
@@ -69,9 +69,11 @@ public class MainConfigPanel extends Application {
    private TextField fontSize;
 
    private ObservableList<ColorAssignerProperties> colorList;
+   private EditDialog editDialog;
 
    @Override
    public void start(Stage primaryStage) throws Exception {
+      this.editDialog = new EditDialog(primaryStage);
       //primaryStage.getIcons().add(new Image(Main.class.getResourceAsStream("/1f4d1.png")));
       primaryStage.setTitle("Code Swarm Configuration");
       primaryStage.setScene(mainScene());
@@ -142,7 +144,7 @@ public class MainConfigPanel extends Application {
       this.popular.selectedProperty().bindBidirectional(Config.getInstance().getShowPopular());
       GridPane.setHalignment(popular, HPos.LEFT);
       gridPane.add(popular, 1, 6);
-      
+
       this.date = new CheckBox("Show date");
       this.date.selectedProperty().bindBidirectional(Config.getInstance().getShowDate());
       GridPane.setHalignment(date, HPos.LEFT);
@@ -224,36 +226,43 @@ public class MainConfigPanel extends Application {
 
    private Tab tabFileTypes() {
       Tab tab = new Tab();
-      tab.setClosable(false);      
+      tab.setClosable(false);
       tab.setText("Filetype settings");
 
-      BorderPane borderPane = new BorderPane();      
+      BorderPane borderPane = new BorderPane();
       borderPane.setPadding(new Insets(5d));
       tab.setContent(borderPane);
-      
-      VBox vBox = new VBox(5d);   
+
+      VBox vBox = new VBox(5d);
       vBox.setPadding(new Insets(5d));
       vBox.setMinWidth(75d);
+
+      TableView<ColorAssignerProperties> tableView = new TableView<>();
       
       Button addButton = new Button("Add");
+      addButton.setOnAction((event) -> {
+         this.editDialog.createDialog(new ColorAssignerProperties(new ColorTest())).showAndWait();         
+      });
       addButton.setMinWidth(75d);
       vBox.getChildren().add(addButton);
-      
+
       Button editButton = new Button("Edit");
+      editButton.setOnAction((event) -> {         
+         this.editDialog.createDialog(tableView.getSelectionModel().getSelectedItem()).showAndWait();                  
+      });
       editButton.setMinWidth(75d);
       vBox.getChildren().add(editButton);
-      
+
       Button removeButton = new Button("Remove");
       removeButton.setMinWidth(75d);
       vBox.getChildren().add(removeButton);
-      
+
       borderPane.setRight(vBox);
-      
+
       this.colorList = new ObservableSequentialListWrapper<>(new ArrayList<>());
       this.colorList.add(new ColorAssignerProperties(new ColorTest("Docs", ".*doc.*", java.awt.Color.RED)));
       this.colorList.add(new ColorAssignerProperties(new ColorTest("Java", ".*java.*", java.awt.Color.BLUE)));
 
-      TableView<ColorAssignerProperties> tableView = new TableView<>();
       tableView.setItems(colorList);
       tableView.getSelectionModel().select(0);
       tableView.setEditable(true);
@@ -265,10 +274,12 @@ public class MainConfigPanel extends Application {
 
       labelCol.setMinWidth(100d);
       patternCol.setMinWidth(100d);
-      
+      colorCol.setMinWidth(80d);
+
       tableView.getColumns().add(labelCol);
       tableView.getColumns().add(patternCol);
       tableView.getColumns().add(colorCol);
+      tableView.setMaxWidth(290d);
 
       labelCol.setCellValueFactory(c -> c.getValue().getLabel());
       patternCol.setCellValueFactory(c -> c.getValue().getExpression());
@@ -278,13 +289,13 @@ public class MainConfigPanel extends Application {
             @Override
             protected void updateItem(Color item, boolean empty) {
                super.updateItem(item, empty);
-               
+
                if (item != null && !empty) {
-                  setText(item.toString());                  
+                  setText(item.toString());
                   setTextFill(item);
-                  setBackground(new Background(new BackgroundFill(Color.BLACK, CornerRadii.EMPTY, Insets.EMPTY)));
+                  setBackground(new Background(new BackgroundFill(background.getValue(), CornerRadii.EMPTY, Insets.EMPTY)));
                }
-            }            
+            }
          };
       });
 

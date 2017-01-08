@@ -14,17 +14,7 @@ public class ColorAssignerProperties {
    public ColorAssignerProperties(ColorTest colorTest) {
       this.expression = new SimpleStringProperty(colorTest.getExpr());
       this.label = new SimpleStringProperty(colorTest.getLabel());
-      this.color = new SimpleObjectProperty<>(convertColor(colorTest.getC1()));
-   }
-
-   private double toSubColor(int value) {
-      double val = 0;
-
-      if (value > 0) {
-         val = value / 255d;
-      }
-
-      return val;
+      this.color = new SimpleObjectProperty<>(ColorUtil.toFxColor(colorTest.getC1()));
    }
 
    public SimpleStringProperty getExpression() {
@@ -38,9 +28,4 @@ public class ColorAssignerProperties {
    public SimpleObjectProperty<Color> getColor() {
       return color;
    }
-
-   private Color convertColor(java.awt.Color color) {
-      return new Color(toSubColor(color.getRed()), toSubColor(color.getGreen()), toSubColor(color.getBlue()), toSubColor(color.getAlpha()));
-   }
-
 }

@@ -137,7 +137,6 @@ public class CodeSwarm extends PApplet implements EndOfFileEvent {
    }
      
    // User-defined variables
-   int FRAME_RATE = 24;
    long UPDATE_DELTA = -1;
    String SPRITE_FILE = "particle.png";
    String MASK_FILE = "src/main/resources/mask.png";
@@ -251,7 +250,7 @@ public class CodeSwarm extends PApplet implements EndOfFileEvent {
       isInputSorted = Config.getBooleanProperty(Config.IS_INPUT_SORTED_KEY);      
 
       smooth();
-      frameRate(FRAME_RATE);
+      frameRate(24);
 
       // init data structures
       nodes = new HashMap<>();
