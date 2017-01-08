@@ -306,7 +306,7 @@ final public class Config {
    private final SimpleBooleanProperty showLegend = new SimpleBooleanProperty(true);
    private final SimpleBooleanProperty showHistogram = new SimpleBooleanProperty(true);
    private final SimpleBooleanProperty showDate = new SimpleBooleanProperty(true);
-   private final SimpleBooleanProperty showEdges = new SimpleBooleanProperty(true);
+   private final SimpleBooleanProperty showEdges = new SimpleBooleanProperty(false);
    private final SimpleBooleanProperty showPopular = new SimpleBooleanProperty(true);
    private final SimpleBooleanProperty showUsername = new SimpleBooleanProperty(true);
    private final SimpleBooleanProperty takeSnapshots = new SimpleBooleanProperty(false);

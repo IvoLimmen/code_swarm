@@ -20,8 +20,6 @@ package org.github.codeswarm;
  */
 import java.awt.Color;
 import java.util.regex.*;
-import processing.core.PApplet;
-import processing.core.PConstants;
 
 public class ColorTest {
 
@@ -29,17 +27,15 @@ public class ColorTest {
    private String expr;
    private String label;
    private Color c1;
-   private Color c2;
 
    public ColorTest() {
    }
 
-   public ColorTest(String label, String expr, Color c1, Color c2) {
+   public ColorTest(String label, String expr, Color c1) {
       this.expr = expr;
       this.pattern = Pattern.compile(expr);
       this.label = label;
       this.c1 = c1;
-      this.c2 = c2;
    }
 
    public Pattern getPattern() {
@@ -74,21 +70,13 @@ public class ColorTest {
       this.c1 = c1;
    }
 
-   public Color getC2() {
-      return c2;
-   }
-
-   public void setC2(Color c2) {
-      this.c2 = c2;
-   }
-
    public boolean passes(String s) {
       Matcher m = pattern.matcher(s);
       return m.matches();
    }
 
    public int assign() {
-      return PApplet.lerpColor(c1.getRGB(), c2.getRGB(), (float) Math.random(), PConstants.RGB);
+      return c1.getRGB();
    }
 
    public void loadProperty(String value) {
@@ -120,7 +108,6 @@ public class ColorTest {
          }
       }
       c1 = new Color(components[0], components[1], components[2]);
-      c2 = new Color(components[3], components[4], components[5]);
    }
 
 }

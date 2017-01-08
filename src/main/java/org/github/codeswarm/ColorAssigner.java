@@ -31,13 +31,12 @@ public class ColorAssigner {
    public ColorAssigner() {
    }
 
-   public void addRule(String label, String expr, Color c1, Color c2) {
+   public void addRule(String label, String expr, Color c1) {
       ColorTest t = new ColorTest();
       t.setPattern(Pattern.compile(expr));
       t.setExpr(expr);
       t.setLabel(label);
       t.setC1(c1);
-      t.setC2(c2);
       addRule(t);
    }
 

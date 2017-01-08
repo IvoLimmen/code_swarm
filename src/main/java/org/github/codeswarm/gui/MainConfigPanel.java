@@ -223,8 +223,8 @@ public class MainConfigPanel extends Application {
       tab.setText("Filetype settings");
 
       this.colorList = new ObservableSequentialListWrapper<>(new ArrayList<>());
-      this.colorList.add(new ColorAssignerProperties(new ColorTest("Docs", ".*doc.*", java.awt.Color.RED, java.awt.Color.RED)));
-      this.colorList.add(new ColorAssignerProperties(new ColorTest("Java", ".*java.*", java.awt.Color.BLUE, java.awt.Color.MAGENTA)));
+      this.colorList.add(new ColorAssignerProperties(new ColorTest("Docs", ".*doc.*", java.awt.Color.RED)));
+      this.colorList.add(new ColorAssignerProperties(new ColorTest("Java", ".*java.*", java.awt.Color.BLUE)));
 
       TableView<ColorAssignerProperties> tableView = new TableView<>();
       tableView.setItems(colorList);
