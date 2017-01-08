@@ -107,7 +107,7 @@ public class CodeSwarm extends PApplet implements EndOfFileEvent {
             List<String> configFileStack = Arrays.asList(new String[]{"defaults/CodeSwarm.config",
                "defaults/user.config", userConfigFilename});
             Config.init(configFileStack);
-            PApplet.main(new String[]{"org.github.codeswarm.CodeSwarm"});
+            MainConfigPanel.start();
          } else {
             // FIXME: Temporary for testing in IDE
             userConfigFilename = "data/sample.config";

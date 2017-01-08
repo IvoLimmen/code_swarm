@@ -18,15 +18,20 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import org.github.codeswarm.CodeSwarm;
@@ -219,9 +224,31 @@ public class MainConfigPanel extends Application {
 
    private Tab tabFileTypes() {
       Tab tab = new Tab();
-      tab.setClosable(false);
+      tab.setClosable(false);      
       tab.setText("Filetype settings");
 
+      BorderPane borderPane = new BorderPane();      
+      borderPane.setPadding(new Insets(5d));
+      tab.setContent(borderPane);
+      
+      VBox vBox = new VBox(5d);   
+      vBox.setPadding(new Insets(5d));
+      vBox.setMinWidth(75d);
+      
+      Button addButton = new Button("Add");
+      addButton.setMinWidth(75d);
+      vBox.getChildren().add(addButton);
+      
+      Button editButton = new Button("Edit");
+      editButton.setMinWidth(75d);
+      vBox.getChildren().add(editButton);
+      
+      Button removeButton = new Button("Remove");
+      removeButton.setMinWidth(75d);
+      vBox.getChildren().add(removeButton);
+      
+      borderPane.setRight(vBox);
+      
       this.colorList = new ObservableSequentialListWrapper<>(new ArrayList<>());
       this.colorList.add(new ColorAssignerProperties(new ColorTest("Docs", ".*doc.*", java.awt.Color.RED)));
       this.colorList.add(new ColorAssignerProperties(new ColorTest("Java", ".*java.*", java.awt.Color.BLUE)));
@@ -230,19 +257,36 @@ public class MainConfigPanel extends Application {
       tableView.setItems(colorList);
       tableView.getSelectionModel().select(0);
       tableView.setEditable(true);
-      tab.setContent(tableView);
+      borderPane.setCenter(tableView);
 
-      TableColumn<ColorAssignerProperties, String> patternCol = new TableColumn<>("Pattern");
       TableColumn<ColorAssignerProperties, String> labelCol = new TableColumn<>("Label");
+      TableColumn<ColorAssignerProperties, String> patternCol = new TableColumn<>("Pattern");
       TableColumn<ColorAssignerProperties, Color> colorCol = new TableColumn<>("Color");
 
-      tableView.getColumns().add(patternCol);
+      labelCol.setMinWidth(100d);
+      patternCol.setMinWidth(100d);
+      
       tableView.getColumns().add(labelCol);
+      tableView.getColumns().add(patternCol);
       tableView.getColumns().add(colorCol);
 
-      patternCol.setCellValueFactory(c -> c.getValue().getExpression());
       labelCol.setCellValueFactory(c -> c.getValue().getLabel());
+      patternCol.setCellValueFactory(c -> c.getValue().getExpression());
       colorCol.setCellValueFactory(c -> c.getValue().getColor());
+      colorCol.setCellFactory((param) -> {
+         return new TableCell<ColorAssignerProperties, Color>() {
+            @Override
+            protected void updateItem(Color item, boolean empty) {
+               super.updateItem(item, empty);
+               
+               if (item != null && !empty) {
+                  setText(item.toString());                  
+                  setTextFill(item);
+                  setBackground(new Background(new BackgroundFill(Color.BLACK, CornerRadii.EMPTY, Insets.EMPTY)));
+               }
+            }            
+         };
+      });
 
       return tab;
    }
