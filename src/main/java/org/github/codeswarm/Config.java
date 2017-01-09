@@ -26,6 +26,7 @@ import java.util.Properties;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import org.github.codeswarm.type.DisplayFile;
 
 /**
  * @author Michael Ogawa
@@ -155,8 +156,8 @@ final public class Config {
 
    public static Config getInstance() {
       return CURRENT;
-   }
-
+   }   
+  
    private final ColorAssigner colorAssigner = new ColorAssigner();
 
    public ColorAssigner getColorAssigner() {
@@ -303,6 +304,8 @@ final public class Config {
       return Double.parseDouble(getStringProperty(key));
    }
 
+   private DisplayFile displayFile = DisplayFile.FUZZY;
+   
    private final SimpleIntegerProperty width = new SimpleIntegerProperty(800);
    private final SimpleIntegerProperty height = new SimpleIntegerProperty(600);
    private final SimpleBooleanProperty showLegend = new SimpleBooleanProperty(true);
@@ -312,9 +315,6 @@ final public class Config {
    private final SimpleBooleanProperty showPopular = new SimpleBooleanProperty(false);
    private final SimpleBooleanProperty showUsername = new SimpleBooleanProperty(true);
    private final SimpleBooleanProperty takeSnapshots = new SimpleBooleanProperty(false);
-   private final SimpleBooleanProperty drawFilesSharp = new SimpleBooleanProperty(false);
-   private final SimpleBooleanProperty drawFilesJelly = new SimpleBooleanProperty(false);
-   private final SimpleBooleanProperty drawFilesFuzzy = new SimpleBooleanProperty(false);
    private final SimpleObjectProperty<javafx.scene.paint.Color> background = new SimpleObjectProperty<>(javafx.scene.paint.Color.BLACK);
    private final SimpleObjectProperty<javafx.scene.paint.Color> fontColor = new SimpleObjectProperty<>(javafx.scene.paint.Color.WHITE);
    private List<Properties> propStack;
@@ -323,18 +323,14 @@ final public class Config {
       this.colorAssigner.addRule("Misc", ".*", Color.GRAY);
    }
 
-   public SimpleBooleanProperty getDrawFilesFuzzy() {
-      return drawFilesFuzzy;
-   }
+   public DisplayFile getDisplayFile() {
+      return displayFile;
+   }   
 
-   public SimpleBooleanProperty getDrawFilesJelly() {
-      return drawFilesJelly;
+   public void setDisplayFile(DisplayFile displayFile) {
+      this.displayFile = displayFile;
    }
-
-   public SimpleBooleanProperty getDrawFilesSharp() {
-      return drawFilesSharp;
-   }
-
+   
    public SimpleBooleanProperty getShowUsername() {
       return showUsername;
    }

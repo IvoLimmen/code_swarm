@@ -34,9 +34,11 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import javafx.util.StringConverter;
 import org.github.codeswarm.CodeSwarm;
 import org.github.codeswarm.ColorTest;
 import org.github.codeswarm.Config;
+import org.github.codeswarm.type.DisplayFile;
 
 public class MainConfigPanel extends Application {
 
@@ -160,20 +162,30 @@ public class MainConfigPanel extends Application {
       Tab tab = createTab("File settings");
       GridPane gridPane = (GridPane) tab.getContent();
 
-      CheckBox drawFilesJelly = new CheckBox("Draw jelly");
-      drawFilesJelly.selectedProperty().bindBidirectional(Config.getInstance().getDrawFilesJelly());
-      GridPane.setHalignment(drawFilesJelly, HPos.LEFT);
-      gridPane.add(drawFilesJelly, 1, 1);
+      Label drawFileLbl = new Label("Draw file");
+      GridPane.setHalignment(drawFileLbl, HPos.RIGHT);
+      gridPane.add(drawFileLbl, 0, 1);
+      
+      ChoiceBox<DisplayFile> displayFile = new ChoiceBox<>();
+      displayFile.setConverter(new StringConverter<DisplayFile>() {
+         @Override
+         public String toString(DisplayFile object) {
+            return object.getLabel();
+         }
 
-      CheckBox drawFilesSharp = new CheckBox("Draw sharp");
-      drawFilesSharp.selectedProperty().bindBidirectional(Config.getInstance().getDrawFilesSharp());
-      GridPane.setHalignment(drawFilesSharp, HPos.LEFT);
-      gridPane.add(drawFilesSharp, 1, 2);
-
-      CheckBox drawFilesFuzzy = new CheckBox("Draw fuzzy");
-      drawFilesFuzzy.selectedProperty().bindBidirectional(Config.getInstance().getDrawFilesFuzzy());
-      GridPane.setHalignment(drawFilesFuzzy, HPos.LEFT);
-      gridPane.add(drawFilesFuzzy, 1, 3);
+         @Override
+         public DisplayFile fromString(String string) {
+            // not used
+            return DisplayFile.FUZZY;
+         }
+      });
+      displayFile.getItems().addAll(DisplayFile.values());
+      displayFile.setOnAction((event) -> {
+         Config.getInstance().setDisplayFile(displayFile.getValue());
+      });
+      displayFile.setValue(Config.getInstance().getDisplayFile());
+      GridPane.setHalignment(displayFile, HPos.LEFT);
+      gridPane.add(displayFile, 1, 1);
       
       return tab;
    }

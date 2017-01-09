@@ -45,6 +45,10 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.github.codeswarm.avatar.GravatarFetcher;
 import org.github.codeswarm.avatar.LocalAvatar;
 import org.github.codeswarm.gui.MainConfigPanel;
+import org.github.codeswarm.type.DisplayFile;
+import static org.github.codeswarm.type.DisplayFile.FUZZY;
+import static org.github.codeswarm.type.DisplayFile.JELLY;
+import static org.github.codeswarm.type.DisplayFile.SHARP;
 import processing.core.PApplet;
 import processing.core.PFont;
 import processing.core.PImage;
@@ -397,8 +401,10 @@ public class CodeSwarm extends PApplet implements EndOfFileEvent {
 
    private void drawFileNode(FileNode n) {
       if (n.isAlive()) {
+         DisplayFile displayFile = Config.getInstance().getDisplayFile();
+         
          float currentWidth = 0f;
-         if (Config.getInstance().getDrawFilesSharp().getValue()) {
+         if (displayFile.equals(SHARP)) {
             colorMode(RGB);
             fill(n.getNodeHue(), n.getLife());
             float w = 3 * PARTICLE_SIZE;
@@ -413,7 +419,7 @@ public class CodeSwarm extends PApplet implements EndOfFileEvent {
             ellipseMode(CENTER);
             ellipse(n.getPosition().x, n.getPosition().y, w, w);
          }
-         if (Config.getInstance().getDrawFilesFuzzy().getValue()) {
+         if (displayFile.equals(FUZZY)) {
             tint(n.getNodeHue(), n.getLife());
 
             float w = (8 + (sqrt(n.getTouches()) * 4)) * PARTICLE_SIZE;
@@ -428,7 +434,7 @@ public class CodeSwarm extends PApplet implements EndOfFileEvent {
             // else
             image(sprite, n.getPosition().x - halfw, n.getPosition().y - halfw, w, w);
          }
-         if (Config.getInstance().getDrawFilesJelly().getValue()) {
+         if (displayFile.equals(JELLY)) {
             noFill();
             if (n.getLife() >= n.getMinBold()) {
                stroke(255);
