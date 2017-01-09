@@ -44,6 +44,7 @@ import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.github.codeswarm.avatar.GravatarFetcher;
 import org.github.codeswarm.avatar.LocalAvatar;
+import org.github.codeswarm.gui.ColorUtil;
 import org.github.codeswarm.gui.MainConfigPanel;
 import org.github.codeswarm.type.DisplayFile;
 import static org.github.codeswarm.type.DisplayFile.FUZZY;
@@ -228,8 +229,8 @@ public class CodeSwarm extends PApplet implements EndOfFileEvent {
       drawNamesHalos = Config.getBooleanProperty(Config.DRAW_NAMES_HALOS);
       circularAvatars = Config.getBooleanProperty(Config.DRAW_CIRCULAR_AVATARS);
 
-      background = Config.getColorProperty(Config.BACKGROUND_KEY).getRGB();
-      fontColor = Config.getColorProperty(Config.FONT_COLOR_KEY).getRGB();
+      background = ColorUtil.toAwtColor(Config.getInstance().getBackground().getValue()).getRGB();
+      fontColor = ColorUtil.toAwtColor(Config.getInstance().getFontColor().getValue()).getRGB();
 
       double framesperday = Config.getDoubleProperty(Config.FRAMES_PER_DAY_KEY);
       UPDATE_DELTA = (long) (86400000 / framesperday);

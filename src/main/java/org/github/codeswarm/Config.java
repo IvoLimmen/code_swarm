@@ -64,8 +64,6 @@ final public class Config {
    /**
     * R,G,B Determines the background color
     */
-   public static final String BACKGROUND_KEY = "Background";
-   public static final String FONT_COLOR_KEY = "FontColor";
    public static final String FONT_KEY = "Font";
    public static final String FONT_SIZE = "FontSize";
    public static final String FONT_KEY_BOLD = "BoldFont";
