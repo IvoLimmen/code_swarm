@@ -176,8 +176,6 @@ public class CodeSwarm extends PApplet implements EndOfFileEvent {
    boolean showHelp;
    boolean takeSnapshots;
    boolean showDebug;
-   boolean drawNamesSharp;
-   boolean drawNamesHalos;
 
    // Color mapper
    int currentColor;
@@ -225,8 +223,6 @@ public class CodeSwarm extends PApplet implements EndOfFileEvent {
       backgroundExecutor = new ThreadPoolExecutor(1, maxBackgroundThreads, Long.MAX_VALUE, TimeUnit.NANOSECONDS, new ArrayBlockingQueue<>(4 * maxBackgroundThreads), new ThreadPoolExecutor.CallerRunsPolicy());
       
       showDebug = Config.getBooleanProperty(Config.SHOW_DEBUG);
-      drawNamesSharp = Config.getBooleanProperty(Config.DRAW_NAMES_SHARP);
-      drawNamesHalos = Config.getBooleanProperty(Config.DRAW_NAMES_HALOS);
       circularAvatars = Config.getBooleanProperty(Config.DRAW_CIRCULAR_AVATARS);
 
       background = ColorUtil.toAwtColor(Config.getInstance().getBackground().getValue()).getRGB();
@@ -275,10 +271,10 @@ public class CodeSwarm extends PApplet implements EndOfFileEvent {
       maxFramesSaved = (int) Math.pow(10, SCREENSHOT_FILE.replaceAll("[^#]", "").length());
 
       // Create fonts
-      String fontName = Config.getStringProperty(Config.FONT_KEY);
-      String boldFontName = Config.getStringProperty(Config.FONT_KEY_BOLD);
-      Integer fontSize = Config.getPositiveIntProperty(Config.FONT_SIZE);
-      Integer fontSizeBold = Config.getPositiveIntProperty(Config.FONT_SIZE_BOLD);
+      String fontName = Config.getInstance().getFont();
+      String boldFontName = Config.getInstance().getBoldFont();
+      Integer fontSize = Config.getInstance().getFontSize().getValue();
+      Integer fontSizeBold = Config.getInstance().getBoldFontSize().getValue();
       font = createFont(fontName, fontSize);
       boldFont = createFont(boldFontName, fontSizeBold);
 
@@ -327,12 +323,12 @@ public class CodeSwarm extends PApplet implements EndOfFileEvent {
 
       // Surround names with aura
       // Then blur it
-      if (drawNamesHalos) {
+      if (Config.getInstance().getDrawNamesHalo().getValue()) {
          drawPeopleNodesBlur();
       }
 
       // Then draw names again, but sharp
-      if (drawNamesSharp) {
+      if (Config.getInstance().getDrawNamesSharp().getValue()) {
          drawPeopleNodesSharp();
       }
 

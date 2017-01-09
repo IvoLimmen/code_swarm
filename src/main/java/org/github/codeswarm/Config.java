@@ -64,7 +64,6 @@ final public class Config {
    /**
     * R,G,B Determines the background color
     */
-   public static final String FONT_KEY = "Font";
    public static final String FONT_SIZE = "FontSize";
    public static final String FONT_KEY_BOLD = "BoldFont";
    public static final String FONT_SIZE_BOLD = "BoldFontSize";
@@ -136,30 +135,11 @@ final public class Config {
     * Boolean value, controls drawing halos around names
     */
    public static final String DRAW_NAMES_HALOS = "DrawNamesHalos";
-   /**
-    * Boolean value, controls drawing files as a dot
-    */
-   public static final String DRAW_FILES_SHARP = "DrawFilesSharp";
-   /**
-    * Boolean value, controls drawing files as a fuzzy blob
-    */
-   public static final String DRAW_FILES_FUZZY = "DrawFilesFuzzy";
-   /**
-    * Boolean value, controls drawing files as an ellipse uses touches to determine size
-    */
-   public static final String DRAW_FILES_JELLY = "DrawFilesJelly";
    public static final String IS_INPUT_SORTED_KEY = "IsInputSorted";
-   public static final String SHOW_USER_NAME_KEY = "ShowUserName";
    public static final String DRAW_CIRCULAR_AVATARS = "CircularAvatars";
 
    public static Config getInstance() {
       return CURRENT;
-   }   
-  
-   private final ColorAssigner colorAssigner = new ColorAssigner();
-
-   public ColorAssigner getColorAssigner() {
-      return colorAssigner;
    }
 
    public static void init(String configFileName) throws IOException {
@@ -301,9 +281,16 @@ final public class Config {
    public static double getDoubleProperty(String key) {
       return Double.parseDouble(getStringProperty(key));
    }
+   private String boldFont;
+   private String font;
+   private final ColorAssigner colorAssigner = new ColorAssigner();
 
    private DisplayFile displayFile = DisplayFile.FUZZY;
-   
+
+   private final SimpleBooleanProperty drawNamesHalo = new SimpleBooleanProperty(true);
+   private final SimpleBooleanProperty drawNamesSharp = new SimpleBooleanProperty(true);
+   private final SimpleIntegerProperty fontSize = new SimpleIntegerProperty(10);
+   private final SimpleIntegerProperty boldFontSize = new SimpleIntegerProperty(12);
    private final SimpleIntegerProperty width = new SimpleIntegerProperty(800);
    private final SimpleIntegerProperty height = new SimpleIntegerProperty(600);
    private final SimpleBooleanProperty showLegend = new SimpleBooleanProperty(true);
@@ -321,14 +308,50 @@ final public class Config {
       this.colorAssigner.addRule("Misc", ".*", Color.GRAY);
    }
 
+   public SimpleBooleanProperty getDrawNamesHalo() {
+      return drawNamesHalo;
+   }
+
+   public SimpleBooleanProperty getDrawNamesSharp() {
+      return drawNamesSharp;
+   }
+
+   public SimpleIntegerProperty getBoldFontSize() {
+      return boldFontSize;
+   }
+
+   public SimpleIntegerProperty getFontSize() {
+      return fontSize;
+   }
+
+   public String getBoldFont() {
+      return boldFont;
+   }
+
+   public void setBoldFont(String boldFont) {
+      this.boldFont = boldFont;
+   }
+
+   public String getFont() {
+      return font;
+   }
+
+   public void setFont(String font) {
+      this.font = font;
+   }
+
+   public ColorAssigner getColorAssigner() {
+      return colorAssigner;
+   }
+
    public DisplayFile getDisplayFile() {
       return displayFile;
-   }   
+   }
 
    public void setDisplayFile(DisplayFile displayFile) {
       this.displayFile = displayFile;
    }
-   
+
    public SimpleBooleanProperty getShowUsername() {
       return showUsername;
    }

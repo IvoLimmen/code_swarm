@@ -2,6 +2,7 @@ package org.github.codeswarm.gui;
 
 import com.sun.javafx.collections.ObservableSequentialListWrapper;
 import java.util.ArrayList;
+import java.util.Arrays;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -22,6 +23,7 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextFormatter;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BorderPane;
@@ -33,8 +35,10 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
+import javafx.util.converter.NumberStringConverter;
 import org.github.codeswarm.CodeSwarm;
 import org.github.codeswarm.ColorTest;
 import org.github.codeswarm.Config;
@@ -52,14 +56,18 @@ public class MainConfigPanel extends Application {
 
    private ComboBox<String> fontType;
 
-   private ColorPicker fontColor;
+   private ComboBox<String> boldFontType;
 
-   private TextField fontSize;
+   private ColorPicker fontColor;
 
    private ObservableList<ColorAssignerProperties> colorList = new ObservableSequentialListWrapper<>(new ArrayList<>());
 
+   private ObservableList<String> fontList = new ObservableSequentialListWrapper<>(new ArrayList<>());
+
    private EditDialog editDialog;
 
+   private final static String[] FONT_DEFAULTS = new String[] { "SansSerif", "Arial" }; 
+   
    @Override
    public void start(Stage primaryStage) throws Exception {
 
@@ -77,6 +85,16 @@ public class MainConfigPanel extends Application {
       this.colorList.clear();
       Config.getInstance().getColorAssigner().getTests().forEach((ct) -> {
          this.colorList.add(new ColorAssignerProperties(ct));
+      });
+
+      this.fontList.addAll(Font.getFontNames());
+
+      // make a logical default
+      Arrays.asList(FONT_DEFAULTS).forEach((font) -> {
+         if (this.fontList.contains(font)) {
+            Config.getInstance().setFont(font);
+            Config.getInstance().setBoldFont(font);            
+         }
       });
    }
 
@@ -96,13 +114,14 @@ public class MainConfigPanel extends Application {
       tabPane.getTabs().add(tabGeneral());
       tabPane.getTabs().add(tabColor());
       tabPane.getTabs().add(tabFiles());
+      tabPane.getTabs().add(tabPerson());
       tabPane.getTabs().add(tabFileTypes());
 
       return tabPane;
    }
 
    private Tab tabGeneral() {
-      Tab tab = createTab("General settings");
+      Tab tab = createTab("General");
       GridPane gridPane = (GridPane) tab.getContent();
 
       Label screenSizeLbl = new Label("Screen size");
@@ -110,7 +129,7 @@ public class MainConfigPanel extends Application {
       gridPane.add(screenSizeLbl, 0, 1);
 
       this.screenSize = new ChoiceBox<>(
-          FXCollections.observableArrayList("800x600", "1024x768", "960x720", "1920x1080"));
+          FXCollections.observableArrayList("800x600", "960x720", "1024x768", "1920x1080"));
       GridPane.setHalignment(screenSize, HPos.LEFT);
       gridPane.add(screenSize, 1, 1);
       String current = Config.getInstance().getWidth().getValue() + "x" + Config.getInstance().getHeight().getValue();
@@ -159,13 +178,13 @@ public class MainConfigPanel extends Application {
    }
 
    private Tab tabFiles() {
-      Tab tab = createTab("File settings");
+      Tab tab = createTab("File");
       GridPane gridPane = (GridPane) tab.getContent();
 
       Label drawFileLbl = new Label("Draw file");
       GridPane.setHalignment(drawFileLbl, HPos.RIGHT);
       gridPane.add(drawFileLbl, 0, 1);
-      
+
       ChoiceBox<DisplayFile> displayFile = new ChoiceBox<>();
       displayFile.setConverter(new StringConverter<DisplayFile>() {
          @Override
@@ -186,12 +205,29 @@ public class MainConfigPanel extends Application {
       displayFile.setValue(Config.getInstance().getDisplayFile());
       GridPane.setHalignment(displayFile, HPos.LEFT);
       gridPane.add(displayFile, 1, 1);
+
+      return tab;
+   }
+
+   private Tab tabPerson() {
+      Tab tab = createTab("Person");
+      GridPane gridPane = (GridPane) tab.getContent();
+
+      CheckBox drawHalo = new CheckBox("Draw halos");
+      drawHalo.selectedProperty().bindBidirectional(Config.getInstance().getDrawNamesHalo());
+      GridPane.setHalignment(drawHalo, HPos.LEFT);
+      gridPane.add(drawHalo, 1, 0);
       
+      CheckBox drawSharp = new CheckBox("Draw sharp");
+      drawSharp.selectedProperty().bindBidirectional(Config.getInstance().getDrawNamesSharp());
+      GridPane.setHalignment(drawSharp, HPos.LEFT);
+      gridPane.add(drawSharp, 1, 1);
+
       return tab;
    }
    
    private Tab tabColor() {
-      Tab tab = createTab("Color settings");
+      Tab tab = createTab("Color");
       GridPane gridPane = (GridPane) tab.getContent();
 
       Label backgroundLbl = new Label("Background color");
@@ -208,11 +244,11 @@ public class MainConfigPanel extends Application {
       gridPane.add(fontTypeLbl, 0, 2);
 
       this.fontType = new ComboBox<>();
-      ObservableList<String> list = new ObservableSequentialListWrapper<>(new ArrayList<>());
-      list.add("Arial");
-      list.add("Ubuntu");
-      fontType.setItems(list);
-      fontType.getSelectionModel().select(0);
+      fontType.setItems(this.fontList);
+      fontType.getSelectionModel().select(Config.getInstance().getFont());
+      fontType.setOnAction((event) -> {
+         Config.getInstance().setFont(fontType.getSelectionModel().getSelectedItem());
+      });
       GridPane.setHalignment(fontType, HPos.LEFT);
       gridPane.add(fontType, 1, 2);
 
@@ -229,11 +265,61 @@ public class MainConfigPanel extends Application {
       GridPane.setHalignment(fontSizeLbl, HPos.RIGHT);
       gridPane.add(fontSizeLbl, 0, 4);
 
-      this.fontSize = new TextField();
-      fontSize.setText("10");
+      TextField fontSize = new TextField();
+      fontSize.setTextFormatter(new TextFormatter<Integer>(new StringConverter<Integer>() {
+         @Override
+         public String toString(Integer object) {
+            if (object == null) {
+               return "0";
+            }
+            return object.toString();
+         }
+
+         @Override
+         public Integer fromString(String string) {
+            return Integer.parseInt(string);
+         }
+      }));
+      fontSize.textProperty().bindBidirectional(Config.getInstance().getFontSize(), new NumberStringConverter());
       GridPane.setHalignment(fontSize, HPos.LEFT);
       gridPane.add(fontSize, 1, 4);
 
+      Label boldFontTypeLbl = new Label("Bold font");
+      GridPane.setHalignment(boldFontTypeLbl, HPos.RIGHT);
+      gridPane.add(boldFontTypeLbl, 0, 5);
+
+      this.boldFontType = new ComboBox<>();
+      boldFontType.setItems(this.fontList);
+      boldFontType.getSelectionModel().select(Config.getInstance().getBoldFont());
+      boldFontType.setOnAction((event) -> {
+         Config.getInstance().setBoldFont(boldFontType.getSelectionModel().getSelectedItem());
+      });
+      GridPane.setHalignment(boldFontType, HPos.LEFT);
+      gridPane.add(boldFontType, 1, 5);
+
+      Label boldFontSizeLbl = new Label("Bold font size");
+      GridPane.setHalignment(boldFontSizeLbl, HPos.RIGHT);
+      gridPane.add(boldFontSizeLbl, 0, 6);
+      
+      TextField boldFontSize = new TextField();
+      boldFontSize.setTextFormatter(new TextFormatter<Integer>(new StringConverter<Integer>() {
+         @Override
+         public String toString(Integer object) {
+            if (object == null) {
+               return "0";
+            }
+            return object.toString();
+         }
+
+         @Override
+         public Integer fromString(String string) {
+            return Integer.parseInt(string);
+         }
+      }));
+      boldFontSize.textProperty().bindBidirectional(Config.getInstance().getBoldFontSize(), new NumberStringConverter());
+      GridPane.setHalignment(boldFontSize, HPos.LEFT);
+      gridPane.add(boldFontSize, 1, 6);
+      
       return tab;
    }
 
@@ -259,7 +345,7 @@ public class MainConfigPanel extends Application {
    private Tab tabFileTypes() {
       Tab tab = new Tab();
       tab.setClosable(false);
-      tab.setText("Filetype settings");
+      tab.setText("Filetype");
 
       BorderPane borderPane = new BorderPane();
       borderPane.setPadding(new Insets(5d));
