@@ -168,22 +168,13 @@ public class CodeSwarm extends PApplet implements EndOfFileEvent {
    boolean paused = false;
 
    // Graphics state variables
-   boolean showHistogram;
-   boolean showDate;
-   boolean showLegend;
-   boolean showPopular;
-   boolean showEdges;
    boolean showHelp;
    boolean takeSnapshots;
    boolean showDebug;
    boolean drawNamesSharp;
    boolean drawNamesHalos;
-   boolean drawFilesSharp;
-   boolean drawFilesFuzzy;
-   boolean drawFilesJelly;
 
    // Color mapper
-   ColorAssigner colorAssigner;
    int currentColor;
 
    // Physics engine configuration
@@ -221,11 +212,6 @@ public class CodeSwarm extends PApplet implements EndOfFileEvent {
    @Override
    public void setup() {
 
-      showLegend = Config.getInstance().getShowLegend().getValue();
-      showHistogram = Config.getInstance().getShowHistogram().getValue();
-      showDate = Config.getInstance().getShowDate().getValue();
-      showEdges = Config.getInstance().getShowEdges().getValue();
-      showPopular = Config.getInstance().getShowPopular().getValue();
       takeSnapshots = Config.getInstance().getTakeSnapshots().getValue();
       showUserName = Config.getInstance().getShowUsername().getValue();
 
@@ -236,9 +222,6 @@ public class CodeSwarm extends PApplet implements EndOfFileEvent {
       showDebug = Config.getBooleanProperty(Config.SHOW_DEBUG);
       drawNamesSharp = Config.getBooleanProperty(Config.DRAW_NAMES_SHARP);
       drawNamesHalos = Config.getBooleanProperty(Config.DRAW_NAMES_HALOS);
-      drawFilesSharp = Config.getBooleanProperty(Config.DRAW_FILES_SHARP);
-      drawFilesFuzzy = Config.getBooleanProperty(Config.DRAW_FILES_FUZZY);
-      drawFilesJelly = Config.getBooleanProperty(Config.DRAW_FILES_JELLY);
       circularAvatars = Config.getBooleanProperty(Config.DRAW_CIRCULAR_AVATARS);
 
       background = Config.getColorProperty(Config.BACKGROUND_KEY).getRGB();
@@ -264,9 +247,6 @@ public class CodeSwarm extends PApplet implements EndOfFileEvent {
          //Otherwise we need to store them all at once in a data structure that will sort them
          eventsQueue = new PriorityBlockingQueue<>();
       }
-
-      // Init color map
-      initColors();
 
       avatarFetcher = getAvatarFetcher(Config.getStringProperty("AvatarFetcher"));
       avatarFetcher.setSize(Config.getPositiveIntProperty("AvatarSize"));
@@ -320,25 +300,6 @@ public class CodeSwarm extends PApplet implements EndOfFileEvent {
    }
 
    /**
-    * Load a colormap
-    */
-   public void initColors() {
-      colorAssigner = new ColorAssigner();
-      int i = 1;
-      String property;
-      while ((property = Config.getColorAssignProperty(i)) != null) {
-         ColorTest ct = new ColorTest();
-         ct.loadProperty(property);
-         colorAssigner.addRule(ct);
-         i++;
-      }
-      // Load the default.
-      ColorTest ct = new ColorTest();
-      ct.loadProperty(Config.DEFAULT_COLOR_ASSIGN);
-      colorAssigner.addRule(ct);
-   }
-
-   /**
     * Main loop
     */
    @Override
@@ -349,7 +310,7 @@ public class CodeSwarm extends PApplet implements EndOfFileEvent {
       this.update(); // update state to next frame
 
       // Draw edges (for debugging only)
-      if (showEdges) {
+      if (Config.getInstance().getShowEdges().getValue()) {
          edges.values().forEach((edge) -> {
             if (edge.getLife() > 40) {
                stroke(255, edge.getLife() + 100);
@@ -380,20 +341,20 @@ public class CodeSwarm extends PApplet implements EndOfFileEvent {
       if (showDebug) {
          // debug override legend information
          drawDebugData();
-      } else if (showLegend) {
+      } else if (Config.getInstance().getShowLegend().getValue()) {
          // legend only if nothing "more important"
          drawLegend();
       }
 
-      if (showPopular) {
+      if (Config.getInstance().getShowPopular().getValue()) {
          drawPopular();
       }
 
-      if (showHistogram) {
+      if (Config.getInstance().getShowHistogram().getValue()) {
          drawHistory();
       }
 
-      if (showDate) {
+      if (Config.getInstance().getShowDate().getValue()) {
          drawDate();
       }
 
@@ -437,7 +398,7 @@ public class CodeSwarm extends PApplet implements EndOfFileEvent {
    private void drawFileNode(FileNode n) {
       if (n.isAlive()) {
          float currentWidth = 0f;
-         if (drawFilesSharp) {
+         if (Config.getInstance().getDrawFilesSharp().getValue()) {
             colorMode(RGB);
             fill(n.getNodeHue(), n.getLife());
             float w = 3 * PARTICLE_SIZE;
@@ -452,7 +413,7 @@ public class CodeSwarm extends PApplet implements EndOfFileEvent {
             ellipseMode(CENTER);
             ellipse(n.getPosition().x, n.getPosition().y, w, w);
          }
-         if (drawFilesFuzzy) {
+         if (Config.getInstance().getDrawFilesFuzzy().getValue()) {
             tint(n.getNodeHue(), n.getLife());
 
             float w = (8 + (sqrt(n.getTouches()) * 4)) * PARTICLE_SIZE;
@@ -467,7 +428,7 @@ public class CodeSwarm extends PApplet implements EndOfFileEvent {
             // else
             image(sprite, n.getPosition().x - halfw, n.getPosition().y - halfw, w, w);
          }
-         if (drawFilesJelly) {
+         if (Config.getInstance().getDrawFilesJelly().getValue()) {
             noFill();
             if (n.getLife() >= n.getMinBold()) {
                stroke(255);
@@ -495,7 +456,7 @@ public class CodeSwarm extends PApplet implements EndOfFileEvent {
           * TODO : this would become interesting on some special event, or for special materials colorMode( RGB ); fill(
           * 0, life ); textAlign( CENTER, CENTER ); text( name, x, y ); Example below:
           */
-         if (showPopular) {
+         if (Config.getInstance().getShowPopular().getValue()) {
             textAlign(CENTER, CENTER);
             fill(fontColor, 200);
             if (n.qualifies()) {
@@ -590,8 +551,8 @@ public class CodeSwarm extends PApplet implements EndOfFileEvent {
       textFont(font);
       textAlign(LEFT, TOP);
       text("Legend:", 3, 3);
-      for (int i = 0; i < colorAssigner.getTests().size(); i++) {
-         ColorTest t = colorAssigner.getTests().get(i);
+      for (int i = 0; i <    Config.getInstance().getColorAssigner().getTests().size(); i++) {
+         ColorTest t = Config.getInstance().getColorAssigner().getTests().get(i);
          fill(t.getC1().getRGB(), 200);
          text(t.getLabel(), font.getSize(), 3 + ((i + 1) * (font.getSize() + 2)));
       }
@@ -699,7 +660,7 @@ public class CodeSwarm extends PApplet implements EndOfFileEvent {
             int life = Config.getIntProperty(Config.FILE_LIFE_KEY);
             int highlight = Config.getIntProperty(Config.HIGHLIGHT_PCT_KEY);
             float mass = Config.getFloatProperty(Config.FILE_MASS_KEY);
-            file = new FileNode(currentEvent, life, dec, highlight, mass, colorAssigner.getColor(currentEvent.getPath() + currentEvent.getFilename()), maxTouches);
+            file = new FileNode(currentEvent, life, dec, highlight, mass, Config.getInstance().getColorAssigner().getColor(currentEvent.getPath() + currentEvent.getFilename()), maxTouches);
             physicsEngine.startLocation(file);
             physicsEngine.startVelocity(file);
             colorMode(RGB);

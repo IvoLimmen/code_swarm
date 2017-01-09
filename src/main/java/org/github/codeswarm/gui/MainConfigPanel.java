@@ -46,20 +46,6 @@ public class MainConfigPanel extends Application {
 
    private ChoiceBox<String> screenSize;
 
-   private TextField framesPerDay;
-
-   private CheckBox legend;
-
-   private CheckBox history;
-
-   private CheckBox userName;
-
-   private CheckBox popular;
-
-   private CheckBox date;
-
-   private CheckBox edges;
-
    private ColorPicker background;
 
    private ComboBox<String> fontType;
@@ -68,17 +54,28 @@ public class MainConfigPanel extends Application {
 
    private TextField fontSize;
 
-   private ObservableList<ColorAssignerProperties> colorList;
+   private ObservableList<ColorAssignerProperties> colorList = new ObservableSequentialListWrapper<>(new ArrayList<>());
+
    private EditDialog editDialog;
 
    @Override
    public void start(Stage primaryStage) throws Exception {
+
+      initialize();
+
       this.editDialog = new EditDialog(primaryStage);
       //primaryStage.getIcons().add(new Image(Main.class.getResourceAsStream("/1f4d1.png")));
       primaryStage.setTitle("Code Swarm Configuration");
       primaryStage.setScene(mainScene());
       primaryStage.setResizable(true);
       primaryStage.show();
+   }
+
+   private void initialize() {
+      this.colorList.clear();
+      Config.getInstance().getColorAssigner().getTests().forEach((ct) -> {
+         this.colorList.add(new ColorAssignerProperties(ct));
+      });
    }
 
    private Scene mainScene() {
@@ -96,6 +93,7 @@ public class MainConfigPanel extends Application {
       TabPane tabPane = new TabPane();
       tabPane.getTabs().add(tabGeneral());
       tabPane.getTabs().add(tabColor());
+      tabPane.getTabs().add(tabFiles());
       tabPane.getTabs().add(tabFileTypes());
 
       return tabPane;
@@ -120,44 +118,66 @@ public class MainConfigPanel extends Application {
       GridPane.setHalignment(framesPerDayLbl, HPos.RIGHT);
       gridPane.add(framesPerDayLbl, 0, 2);
 
-      this.framesPerDay = new TextField();
+      TextField framesPerDay = new TextField();
       framesPerDay.setText("6");
       GridPane.setHalignment(framesPerDay, HPos.LEFT);
       gridPane.add(framesPerDay, 1, 2);
 
-      this.legend = new CheckBox("Show legend");
-      this.legend.selectedProperty().bindBidirectional(Config.getInstance().getShowLegend());
+      CheckBox legend = new CheckBox("Show legend");
+      legend.selectedProperty().bindBidirectional(Config.getInstance().getShowLegend());
       GridPane.setHalignment(legend, HPos.LEFT);
       gridPane.add(legend, 1, 3);
 
-      this.history = new CheckBox("Show history");
-      this.history.selectedProperty().bindBidirectional(Config.getInstance().getShowHistogram());
-      GridPane.setHalignment(history, HPos.LEFT);
-      gridPane.add(history, 1, 4);
+      CheckBox histogram = new CheckBox("Show histogram");
+      histogram.selectedProperty().bindBidirectional(Config.getInstance().getShowHistogram());
+      GridPane.setHalignment(histogram, HPos.LEFT);
+      gridPane.add(histogram, 1, 4);
 
-      this.userName = new CheckBox("Show username");
-      this.userName.selectedProperty().bindBidirectional(Config.getInstance().getShowUsername());
+      CheckBox userName = new CheckBox("Show username");
+      userName.selectedProperty().bindBidirectional(Config.getInstance().getShowUsername());
       GridPane.setHalignment(userName, HPos.LEFT);
       gridPane.add(userName, 1, 5);
 
-      this.popular = new CheckBox("Show popular");
-      this.popular.selectedProperty().bindBidirectional(Config.getInstance().getShowPopular());
+      CheckBox popular = new CheckBox("Show popular");
+      popular.selectedProperty().bindBidirectional(Config.getInstance().getShowPopular());
       GridPane.setHalignment(popular, HPos.LEFT);
       gridPane.add(popular, 1, 6);
 
-      this.date = new CheckBox("Show date");
-      this.date.selectedProperty().bindBidirectional(Config.getInstance().getShowDate());
+      CheckBox date = new CheckBox("Show date");
+      date.selectedProperty().bindBidirectional(Config.getInstance().getShowDate());
       GridPane.setHalignment(date, HPos.LEFT);
       gridPane.add(date, 1, 7);
 
-      this.edges = new CheckBox("Show edges");
-      this.edges.selectedProperty().bindBidirectional(Config.getInstance().getShowEdges());
+      CheckBox edges = new CheckBox("Show edges");
+      edges.selectedProperty().bindBidirectional(Config.getInstance().getShowEdges());
       GridPane.setHalignment(edges, HPos.LEFT);
       gridPane.add(edges, 1, 8);
 
       return tab;
    }
 
+   private Tab tabFiles() {
+      Tab tab = createTab("File settings");
+      GridPane gridPane = (GridPane) tab.getContent();
+
+      CheckBox drawFilesJelly = new CheckBox("Draw jelly");
+      drawFilesJelly.selectedProperty().bindBidirectional(Config.getInstance().getDrawFilesJelly());
+      GridPane.setHalignment(drawFilesJelly, HPos.LEFT);
+      gridPane.add(drawFilesJelly, 1, 1);
+
+      CheckBox drawFilesSharp = new CheckBox("Draw sharp");
+      drawFilesSharp.selectedProperty().bindBidirectional(Config.getInstance().getDrawFilesSharp());
+      GridPane.setHalignment(drawFilesSharp, HPos.LEFT);
+      gridPane.add(drawFilesSharp, 1, 2);
+
+      CheckBox drawFilesFuzzy = new CheckBox("Draw fuzzy");
+      drawFilesFuzzy.selectedProperty().bindBidirectional(Config.getInstance().getDrawFilesFuzzy());
+      GridPane.setHalignment(drawFilesFuzzy, HPos.LEFT);
+      gridPane.add(drawFilesFuzzy, 1, 3);
+      
+      return tab;
+   }
+   
    private Tab tabColor() {
       Tab tab = createTab("Color settings");
       GridPane gridPane = (GridPane) tab.getContent();
@@ -238,17 +258,19 @@ public class MainConfigPanel extends Application {
       vBox.setMinWidth(75d);
 
       TableView<ColorAssignerProperties> tableView = new TableView<>();
-      
+
       Button addButton = new Button("Add");
       addButton.setOnAction((event) -> {
-         this.editDialog.createDialog(new ColorAssignerProperties(new ColorTest())).showAndWait();         
+         ColorAssignerProperties cap = new ColorAssignerProperties(new ColorTest());
+         this.editDialog.createDialog(cap).showAndWait();
+         this.colorList.add(0, cap);
       });
       addButton.setMinWidth(75d);
       vBox.getChildren().add(addButton);
 
       Button editButton = new Button("Edit");
-      editButton.setOnAction((event) -> {         
-         this.editDialog.createDialog(tableView.getSelectionModel().getSelectedItem()).showAndWait();                  
+      editButton.setOnAction((event) -> {
+         this.editDialog.createDialog(tableView.getSelectionModel().getSelectedItem()).showAndWait();
       });
       editButton.setMinWidth(75d);
       vBox.getChildren().add(editButton);
@@ -258,10 +280,6 @@ public class MainConfigPanel extends Application {
       vBox.getChildren().add(removeButton);
 
       borderPane.setRight(vBox);
-
-      this.colorList = new ObservableSequentialListWrapper<>(new ArrayList<>());
-      this.colorList.add(new ColorAssignerProperties(new ColorTest("Docs", ".*doc.*", java.awt.Color.RED)));
-      this.colorList.add(new ColorAssignerProperties(new ColorTest("Java", ".*java.*", java.awt.Color.BLUE)));
 
       tableView.setItems(colorList);
       tableView.getSelectionModel().select(0);
@@ -325,6 +343,11 @@ public class MainConfigPanel extends Application {
    }
 
    private void setConfig() {
+      Config.getInstance().getColorAssigner().getTests().clear();
+      this.colorList.forEach((ct) -> {
+         Config.getInstance().getColorAssigner().addRule(ct.getLabel().getValue(), ct.getExpression().getValue(), ColorUtil.toAwtColor(ct.getColor().getValue()));
+      });
+
       String screenSize = this.screenSize.getSelectionModel().getSelectedItem();
       Config.getInstance().setWidth(Integer.parseInt(screenSize.split("x")[0]));
       Config.getInstance().setHeight(Integer.parseInt(screenSize.split("x")[1]));

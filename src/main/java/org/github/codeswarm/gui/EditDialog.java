@@ -50,7 +50,7 @@ public class EditDialog {
       StackPane root = new StackPane();
       root.getChildren().add(borderPane);
 
-      return new Scene(root, 600, 400);
+      return new Scene(root, 300, 200);
    }
 
    private GridPane createButtons() {

@@ -151,14 +151,16 @@ final public class Config {
    public static final String DRAW_FILES_JELLY = "DrawFilesJelly";
    public static final String IS_INPUT_SORTED_KEY = "IsInputSorted";
    public static final String SHOW_USER_NAME_KEY = "ShowUserName";
-   /**
-    * Default regex and rgb values used to match anything not caught in the config file
-    */
-   public static String DEFAULT_COLOR_ASSIGN = "\"Misc\",\".*\",128,128,128,128,128,128";
    public static final String DRAW_CIRCULAR_AVATARS = "CircularAvatars";
 
    public static Config getInstance() {
       return CURRENT;
+   }
+
+   private final ColorAssigner colorAssigner = new ColorAssigner();
+
+   public ColorAssigner getColorAssigner() {
+      return colorAssigner;
    }
 
    public static void init(String configFileName) throws IOException {
@@ -307,14 +309,30 @@ final public class Config {
    private final SimpleBooleanProperty showHistogram = new SimpleBooleanProperty(true);
    private final SimpleBooleanProperty showDate = new SimpleBooleanProperty(true);
    private final SimpleBooleanProperty showEdges = new SimpleBooleanProperty(false);
-   private final SimpleBooleanProperty showPopular = new SimpleBooleanProperty(true);
+   private final SimpleBooleanProperty showPopular = new SimpleBooleanProperty(false);
    private final SimpleBooleanProperty showUsername = new SimpleBooleanProperty(true);
    private final SimpleBooleanProperty takeSnapshots = new SimpleBooleanProperty(false);
+   private final SimpleBooleanProperty drawFilesSharp = new SimpleBooleanProperty(false);
+   private final SimpleBooleanProperty drawFilesJelly = new SimpleBooleanProperty(false);
+   private final SimpleBooleanProperty drawFilesFuzzy = new SimpleBooleanProperty(false);
    private final SimpleObjectProperty<javafx.scene.paint.Color> background = new SimpleObjectProperty<>(javafx.scene.paint.Color.BLACK);
    private final SimpleObjectProperty<javafx.scene.paint.Color> fontColor = new SimpleObjectProperty<>(javafx.scene.paint.Color.WHITE);
    private List<Properties> propStack;
 
    private Config() {
+      this.colorAssigner.addRule("Misc", ".*", Color.GRAY);
+   }
+
+   public SimpleBooleanProperty getDrawFilesFuzzy() {
+      return drawFilesFuzzy;
+   }
+
+   public SimpleBooleanProperty getDrawFilesJelly() {
+      return drawFilesJelly;
+   }
+
+   public SimpleBooleanProperty getDrawFilesSharp() {
+      return drawFilesSharp;
    }
 
    public SimpleBooleanProperty getShowUsername() {
@@ -371,12 +389,5 @@ final public class Config {
 
    protected void initPropStack() {
       CURRENT.propStack = new LinkedList<>();
-      CURRENT.propStack.add(createDefaults());
-   }
-
-   private Properties createDefaults() {
-      Properties def = new Properties();
-      def.setProperty(COLOR_ASSIGN_KEY + "1", DEFAULT_COLOR_ASSIGN);
-      return def;
    }
 }

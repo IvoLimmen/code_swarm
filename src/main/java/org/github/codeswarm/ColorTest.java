@@ -29,6 +29,7 @@ public class ColorTest {
    private Color c1;
 
    public ColorTest() {
+      this("Label", ".*ext*", Color.WHITE);
    }
 
    public ColorTest(String label, String expr, Color c1) {
