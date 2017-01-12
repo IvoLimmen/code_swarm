@@ -23,7 +23,6 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TextFormatter;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BorderPane;
@@ -137,16 +136,16 @@ public class MainConfigPanel extends Application {
       screenSizeCb.getSelectionModel().select(current);
 
       framesPerDayTf = new TextField();
-      framesPerDayTf.setText("" + Config.getInstance().getFramesPerDay());     
+      framesPerDayTf.setText("" + Config.getInstance().getFramesPerDay());
       GridPane.setHalignment(framesPerDayTf, HPos.LEFT);
       gridPane.add(framesPerDayTf, 1, 2);
-      
+
       Label framesPerDayLbl = new Label("Frames per day");
       GridPane.setHalignment(framesPerDayLbl, HPos.RIGHT);
       gridPane.add(framesPerDayLbl, 0, 2);
 
       framesPerDayTf = new TextField();
-      framesPerDayTf.setText("" + Config.getInstance().getFramesPerDay());     
+      framesPerDayTf.setText("" + Config.getInstance().getFramesPerDay());
       GridPane.setHalignment(framesPerDayTf, HPos.LEFT);
       gridPane.add(framesPerDayTf, 1, 2);
 
@@ -191,13 +190,13 @@ public class MainConfigPanel extends Application {
       legend.selectedProperty().bindBidirectional(Config.getInstance().getTakeSnapshots());
       GridPane.setHalignment(legend, HPos.LEFT);
       gridPane.add(legend, 1, 1);
-      
+
       Label screenshotFileMaskLbl = new Label("Screenshot filemask");
       GridPane.setHalignment(screenshotFileMaskLbl, HPos.RIGHT);
       gridPane.add(screenshotFileMaskLbl, 0, 2);
 
       TextField screenshotFileMaskTf = new TextField();
-      screenshotFileMaskTf.textProperty().bind(Config.getInstance().getScreenshotFileMask());     
+      screenshotFileMaskTf.textProperty().bind(Config.getInstance().getScreenshotFileMask());
       GridPane.setHalignment(screenshotFileMaskTf, HPos.LEFT);
       gridPane.add(screenshotFileMaskTf, 1, 2);
 
@@ -233,6 +232,42 @@ public class MainConfigPanel extends Application {
       GridPane.setHalignment(displayFile, HPos.LEFT);
       gridPane.add(displayFile, 1, 1);
 
+      Label fileMassLbl = new Label("Mass");
+      GridPane.setHalignment(fileMassLbl, HPos.RIGHT);
+      gridPane.add(fileMassLbl, 0, 2);
+      
+      IntegerField fileMassTf = new IntegerField();
+      fileMassTf.textProperty().bindBidirectional(Config.getInstance().getFileMass(), new NumberStringConverter());
+      GridPane.setHalignment(fileMassTf, HPos.LEFT);
+      gridPane.add(fileMassTf, 1, 2);
+      
+      Label fileLifeLbl = new Label("Life");
+      GridPane.setHalignment(fileLifeLbl, HPos.RIGHT);
+      gridPane.add(fileLifeLbl, 0, 3);
+
+      IntegerField fileLife = new IntegerField();
+      fileLife.textProperty().bindBidirectional(Config.getInstance().getFileLife(), new NumberStringConverter());
+      GridPane.setHalignment(fileLife, HPos.LEFT);
+      gridPane.add(fileLife, 1, 3);
+      
+      Label fileDecLbl = new Label("Decrement");
+      GridPane.setHalignment(fileDecLbl, HPos.RIGHT);
+      gridPane.add(fileDecLbl, 0, 4);
+
+      IntegerField fileDec = new IntegerField();
+      fileDec.textProperty().bindBidirectional(Config.getInstance().getFileDecrement(), new NumberStringConverter());
+      GridPane.setHalignment(fileDec, HPos.LEFT);
+      gridPane.add(fileDec, 1, 4);
+
+      Label fileHighlightLbl = new Label("Highlight");
+      GridPane.setHalignment(fileHighlightLbl, HPos.RIGHT);
+      gridPane.add(fileHighlightLbl, 0, 5);
+
+      IntegerField fileHighlight = new IntegerField();
+      fileHighlight.textProperty().bindBidirectional(Config.getInstance().getFileHighlight(), new NumberStringConverter());
+      GridPane.setHalignment(fileHighlight, HPos.LEFT);
+      gridPane.add(fileHighlight, 1, 5);
+      
       return tab;
    }
 
@@ -250,6 +285,42 @@ public class MainConfigPanel extends Application {
       GridPane.setHalignment(drawSharp, HPos.LEFT);
       gridPane.add(drawSharp, 1, 1);
 
+      Label personMassLbl = new Label("Mass");
+      GridPane.setHalignment(personMassLbl, HPos.RIGHT);
+      gridPane.add(personMassLbl, 0, 2);
+      
+      IntegerField personMassTf = new IntegerField();
+      personMassTf.textProperty().bindBidirectional(Config.getInstance().getPersonMass(), new NumberStringConverter());
+      GridPane.setHalignment(personMassTf, HPos.LEFT);
+      gridPane.add(personMassTf, 1, 2);
+      
+      Label personLifeLbl = new Label("Life");
+      GridPane.setHalignment(personLifeLbl, HPos.RIGHT);
+      gridPane.add(personLifeLbl, 0, 3);
+
+      IntegerField personLife = new IntegerField();
+      personLife.textProperty().bindBidirectional(Config.getInstance().getPersonLife(), new NumberStringConverter());
+      GridPane.setHalignment(personLife, HPos.LEFT);
+      gridPane.add(personLife, 1, 3);
+      
+      Label personDecLbl = new Label("Decrement");
+      GridPane.setHalignment(personDecLbl, HPos.RIGHT);
+      gridPane.add(personDecLbl, 0, 4);
+
+      IntegerField personDec = new IntegerField();
+      personDec.textProperty().bindBidirectional(Config.getInstance().getPersonDescrement(), new NumberStringConverter());
+      GridPane.setHalignment(personDec, HPos.LEFT);
+      gridPane.add(personDec, 1, 4);
+
+      Label personHighlightLbl = new Label("Highlight");
+      GridPane.setHalignment(personHighlightLbl, HPos.RIGHT);
+      gridPane.add(personHighlightLbl, 0, 5);
+
+      IntegerField personHighlight = new IntegerField();
+      personHighlight.textProperty().bindBidirectional(Config.getInstance().getPersonHighlight(), new NumberStringConverter());
+      GridPane.setHalignment(personHighlight, HPos.LEFT);
+      gridPane.add(personHighlight, 1, 5);
+      
       return tab;
    }
 
@@ -292,21 +363,7 @@ public class MainConfigPanel extends Application {
       GridPane.setHalignment(fontSizeLbl, HPos.RIGHT);
       gridPane.add(fontSizeLbl, 0, 4);
 
-      TextField fontSize = new TextField();
-      fontSize.setTextFormatter(new TextFormatter<Integer>(new StringConverter<Integer>() {
-         @Override
-         public String toString(Integer object) {
-            if (object == null) {
-               return "0";
-            }
-            return object.toString();
-         }
-
-         @Override
-         public Integer fromString(String string) {
-            return Integer.parseInt(string);
-         }
-      }));
+      IntegerField fontSize = new IntegerField();
       fontSize.textProperty().bindBidirectional(Config.getInstance().getFontSize(), new NumberStringConverter());
       GridPane.setHalignment(fontSize, HPos.LEFT);
       gridPane.add(fontSize, 1, 4);
@@ -328,21 +385,7 @@ public class MainConfigPanel extends Application {
       GridPane.setHalignment(boldFontSizeLbl, HPos.RIGHT);
       gridPane.add(boldFontSizeLbl, 0, 6);
 
-      TextField boldFontSize = new TextField();
-      boldFontSize.setTextFormatter(new TextFormatter<Integer>(new StringConverter<Integer>() {
-         @Override
-         public String toString(Integer object) {
-            if (object == null) {
-               return "0";
-            }
-            return object.toString();
-         }
-
-         @Override
-         public Integer fromString(String string) {
-            return Integer.parseInt(string);
-         }
-      }));
+      IntegerField boldFontSize = new IntegerField();
       boldFontSize.textProperty().bindBidirectional(Config.getInstance().getBoldFontSize(), new NumberStringConverter());
       GridPane.setHalignment(boldFontSize, HPos.LEFT);
       gridPane.add(boldFontSize, 1, 6);
@@ -360,7 +403,7 @@ public class MainConfigPanel extends Application {
       gridPane.setVgap(5d);
       gridPane.setHgap(5d);
 
-      ColumnConstraints column1 = new ColumnConstraints(125);
+      ColumnConstraints column1 = new ColumnConstraints(150);
       ColumnConstraints column2 = new ColumnConstraints(50, 75, 150);
       column2.setHgrow(Priority.ALWAYS);
       gridPane.getColumnConstraints().addAll(column1, column2);

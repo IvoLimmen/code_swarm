@@ -19,7 +19,7 @@ public class PersonNode extends Node {
    /**
     * 1) constructor.
     */
-   public PersonNode(String n, int initialLife, int decrementLife, int highlightPercent, float mass, int flavor) {
+   public PersonNode(String n, int initialLife, int decrementLife, int highlightPercent, int mass, int flavor) {
       super(initialLife, decrementLife);
       setName(n);
       this.flavor = flavor;

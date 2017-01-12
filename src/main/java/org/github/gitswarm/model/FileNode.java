@@ -16,7 +16,7 @@ public class FileNode extends Node implements Comparable<FileNode> {
    /**
     * 1) constructor.
     */
-   public FileNode(FileEvent fe, int initialLife, int decrementLife, int highlightPercent, float mass, int hue, int maxTouches) {
+   public FileNode(FileEvent fe, int initialLife, int decrementLife, int highlightPercent, int mass, int hue, int maxTouches) {
       super(initialLife, decrementLife);
       setName(fe.getPath() + fe.getFilename());
       touches = 1;      
@@ -89,12 +89,10 @@ public class FileNode extends Node implements Comparable<FileNode> {
    }
 
    public boolean qualifies() {
-      if (this.touches >= (maxTouches * 0.5f)) {
-         return true;
-      }
-      return false;
+      return this.touches >= (maxTouches * 0.5f);
    }
 
+   @Override
    public int compareTo(FileNode fn) {
       int retval = 0;
       if (this.touches < fn.touches) {

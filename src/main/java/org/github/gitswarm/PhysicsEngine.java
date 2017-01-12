@@ -93,7 +93,7 @@ public abstract class PhysicsEngine {
 
    public void startVelocity(Node node) {
       Vector2f vec = new Vector2f(((float) Math.random() * 2 - 1), ((float) Math.random() * 2 - 1));
-      vec.scale((1 / vec.length()) * (float) Math.random() * 15 / node.getMass());
+      vec.scale((1 / vec.length()) * (float) Math.random() * 15 / (node.getMass() * 1.0f));
       
       node.getLastPosition().set(new Vector2f(node.getPosition()));
       node.getLastPosition().add(vec);

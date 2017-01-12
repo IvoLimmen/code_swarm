@@ -654,10 +654,10 @@ public class GitSwarm extends PApplet implements EndOfFileEvent {
 
          FileNode file = findNode(currentEvent.getPath() + currentEvent.getFilename());
          if (file == null) {
-            int dec = Config.getIntProperty(Config.FILE_DECREMENT_KEY);
-            int life = Config.getIntProperty(Config.FILE_LIFE_KEY);
-            int highlight = Config.getIntProperty(Config.HIGHLIGHT_PCT_KEY);
-            float mass = Config.getFloatProperty(Config.FILE_MASS_KEY);
+            int dec = Config.getInstance().getFileDecrement().getValue();
+            int life = Config.getInstance().getFileLife().getValue();
+            int highlight = Config.getInstance().getFileHighlight().getValue();
+            int mass = Config.getInstance().getFileMass().getValue();
             file = new FileNode(currentEvent, life, dec, highlight, mass, Config.getInstance().getColorAssigner().getColor(currentEvent.getPath() + currentEvent.getFilename()), maxTouches);
             physicsEngine.startLocation(file);
             physicsEngine.startVelocity(file);
@@ -672,10 +672,10 @@ public class GitSwarm extends PApplet implements EndOfFileEvent {
 
          PersonNode person = findPerson(currentEvent.getAuthor());
          if (person == null) {
-            float mass = Config.getFloatProperty(Config.PERSON_MASS_KEY);
-            int dec = Config.getIntProperty(Config.PERSON_DECREMENT_KEY);
-            int life = Config.getIntProperty(Config.PERSON_LIFE_KEY);
-            int highlight = Config.getIntProperty(Config.HIGHLIGHT_PCT_KEY);
+            int mass = Config.getInstance().getPersonMass().getValue();
+            int dec = Config.getInstance().getPersonDescrement().getValue();
+            int life = Config.getInstance().getPersonLife().getValue();
+            int highlight = Config.getInstance().getPersonHighlight().getValue();
             person = new PersonNode(currentEvent.getAuthor(), life, dec, highlight, mass, color(0));
 
             String iconFile = avatarFetcher.fetchUserImage(person.getName());
@@ -700,9 +700,9 @@ public class GitSwarm extends PApplet implements EndOfFileEvent {
 
          Edge edge = findEdge(file, person);
          if (edge == null) {
-            float length = Config.getFloatProperty(Config.EDGE_LENGTH_KEY);
-            int dec = Config.getIntProperty(Config.EDGE_DECREMENT_KEY);
-            int life = Config.getIntProperty(Config.EDGE_LIFE_KEY);
+            float length = Config.getInstance().getEdgeLength().getValue();
+            int dec = Config.getInstance().getEdgeDecrement().getValue();
+            int life = Config.getInstance().getEdgeLife().getValue();
             edge = new Edge(file, person, life, dec, length);
             edges.put(new MutablePair<>(file, person), edge);
          } else {

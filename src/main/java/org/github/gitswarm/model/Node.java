@@ -16,7 +16,7 @@ public abstract class Node extends Drawable {
    /**
     * mass of the node
     */
-   protected float mass; // Currently unused
+   protected int mass;
 
    /**
     * 1) constructor.
@@ -25,7 +25,7 @@ public abstract class Node extends Drawable {
       super(lifeInit, lifeDecrement);
       position = new Vector2f();
       lastPosition = new Vector2f();
-      friction = 1.0f; // No friction
+      friction = 1.0f;
    }
 
    public String getName() {
@@ -36,7 +36,7 @@ public abstract class Node extends Drawable {
       this.name = name;
    }
 
-   public float getMass() {
+   public int getMass() {
       return mass;
    }
 

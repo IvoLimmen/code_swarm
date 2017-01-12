@@ -35,7 +35,7 @@ import org.github.gitswarm.type.DisplayFile;
 public final class Config {
 
    private final static Config CURRENT = new Config();
-   
+
    /**
     * The input file
     */
@@ -265,10 +265,66 @@ public final class Config {
    private final SimpleBooleanProperty takeSnapshots = new SimpleBooleanProperty(false);
    private final SimpleObjectProperty<javafx.scene.paint.Color> background = new SimpleObjectProperty<>(javafx.scene.paint.Color.BLACK);
    private final SimpleObjectProperty<javafx.scene.paint.Color> fontColor = new SimpleObjectProperty<>(javafx.scene.paint.Color.WHITE);
+   private final SimpleIntegerProperty personMass = new SimpleIntegerProperty(100);
+   private final SimpleIntegerProperty personHighlight = new SimpleIntegerProperty(5);
+   private final SimpleIntegerProperty personLife = new SimpleIntegerProperty(255);
+   private final SimpleIntegerProperty personDescrement = new SimpleIntegerProperty(-1);
+   private final SimpleIntegerProperty fileMass = new SimpleIntegerProperty(1);
+   private final SimpleIntegerProperty fileHighlight = new SimpleIntegerProperty(5);
+   private final SimpleIntegerProperty fileLife = new SimpleIntegerProperty(155);
+   private final SimpleIntegerProperty fileDecrement = new SimpleIntegerProperty(-2);
+   private final SimpleIntegerProperty edgeLife = new SimpleIntegerProperty(155);
+   private final SimpleIntegerProperty edgeDecrement = new SimpleIntegerProperty(-2);
+   private final SimpleIntegerProperty edgeLength = new SimpleIntegerProperty(25);
+
    private List<Properties> propStack;
 
    private Config() {
       this.colorAssigner.addRule("Misc", ".*", Color.GRAY);
+   }
+
+   public SimpleIntegerProperty getPersonDescrement() {
+      return personDescrement;
+   }
+
+   public SimpleIntegerProperty getPersonLife() {
+      return personLife;
+   }
+
+   public SimpleIntegerProperty getPersonHighlight() {
+      return personHighlight;
+   }
+
+   public SimpleIntegerProperty getEdgeLife() {
+      return edgeLife;
+   }
+
+   public SimpleIntegerProperty getEdgeLength() {
+      return edgeLength;
+   }
+
+   public SimpleIntegerProperty getEdgeDecrement() {
+      return edgeDecrement;
+   }
+
+   public SimpleIntegerProperty getFileLife() {
+      return fileLife;
+   }
+
+   public SimpleIntegerProperty getFileDecrement() {
+      return fileDecrement;
+   }
+
+   public SimpleIntegerProperty getFileHighlight() {
+      return fileHighlight;
+   }
+
+   public SimpleIntegerProperty getFileMass() {
+      return fileMass;
+   }
+
+   public SimpleIntegerProperty getPersonMass() {
+      return personMass;
    }
 
    public SimpleStringProperty getScreenshotFileMask() {
