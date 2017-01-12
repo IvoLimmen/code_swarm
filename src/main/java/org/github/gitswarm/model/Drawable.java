@@ -1,4 +1,4 @@
-package org.github.codeswarm.model;
+package org.github.gitswarm.model;
 
 /**
  * Base class for all drawable objects

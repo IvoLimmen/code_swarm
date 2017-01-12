@@ -1,4 +1,4 @@
-package org.github.codeswarm.avatar;
+package org.github.gitswarm.avatar;
 
 import java.io.File;
 import java.io.FileOutputStream;

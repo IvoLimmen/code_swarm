@@ -1,4 +1,4 @@
-package org.github.codeswarm;
+package org.github.gitswarm;
 
 
 /**
@@ -20,8 +20,8 @@ package org.github.codeswarm;
  * along with code_swarm.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import org.github.codeswarm.model.PersonNode;
-import org.github.codeswarm.model.FileNode;
+import org.github.gitswarm.model.PersonNode;
+import org.github.gitswarm.model.FileNode;
 import java.util.Iterator;
 import javax.vecmath.Vector2f;
 
@@ -70,7 +70,7 @@ public class PhysicsEngineOrderly extends PhysicsEngine {
       pNode.getPosition().add(delta);
 
       // All person nodes attract each other, but only to a certain point, then they repel with gentle force
-      for (PersonNode n : CodeSwarm.getLivingPeople()) {
+      for (PersonNode n : GitSwarm.getLivingPeople()) {
          if (pNode != n) {
             delta.sub(pNode.getPosition(), n.getPosition());
             if (delta.lengthSquared() < MIN_DISTANCE_SQR) {
@@ -137,7 +137,7 @@ public class PhysicsEngineOrderly extends PhysicsEngine {
       for (int i = 0; i < 100; i++) {
          Vector2f testStart = this.randomLocation();
          boolean good = true;
-         for (PersonNode n : CodeSwarm.getLivingPeople()) {
+         for (PersonNode n : GitSwarm.getLivingPeople()) {
             Vector2f delta = new Vector2f();
             delta.sub(n.getPosition(), testStart);
             if (delta.lengthSquared() < MIN_DISTANCE_SQR) {

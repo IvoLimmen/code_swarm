@@ -1,4 +1,4 @@
-package org.github.codeswarm.type;
+package org.github.gitswarm.type;
 
 public enum DisplayFile {
    FUZZY("fuzzy"),

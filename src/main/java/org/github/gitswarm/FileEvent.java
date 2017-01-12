@@ -1,4 +1,4 @@
-package org.github.codeswarm;
+package org.github.gitswarm;
 
 import java.util.Date;
 

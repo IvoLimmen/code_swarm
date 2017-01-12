@@ -1,4 +1,4 @@
-package org.github.codeswarm.model;
+package org.github.gitswarm.model;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,4 +1,4 @@
-package org.github.codeswarm.gui;
+package org.github.gitswarm.gui;
 
 import javafx.geometry.Insets;
 import javafx.scene.Scene;

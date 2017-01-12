@@ -1,9 +1,9 @@
-package org.github.codeswarm;
+package org.github.gitswarm;
 
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.BlockingQueue;
-import org.github.codeswarm.avatar.AvatarFetcher;
+import org.github.gitswarm.avatar.AvatarFetcher;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;

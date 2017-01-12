@@ -1,4 +1,4 @@
-package org.github.codeswarm.model;
+package org.github.gitswarm.model;
 
 import javax.vecmath.Vector2f;
 

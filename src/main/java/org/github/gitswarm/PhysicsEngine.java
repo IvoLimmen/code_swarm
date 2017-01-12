@@ -1,9 +1,9 @@
-package org.github.codeswarm;
+package org.github.gitswarm;
 
-import org.github.codeswarm.model.Node;
-import org.github.codeswarm.model.Edge;
-import org.github.codeswarm.model.PersonNode;
-import org.github.codeswarm.model.FileNode;
+import org.github.gitswarm.model.Node;
+import org.github.gitswarm.model.Edge;
+import org.github.gitswarm.model.PersonNode;
+import org.github.gitswarm.model.FileNode;
 import javax.vecmath.Vector2f;
 
 /**

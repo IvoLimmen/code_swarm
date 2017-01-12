@@ -1,4 +1,4 @@
-package org.github.codeswarm.gui;
+package org.github.gitswarm.gui;
 
 import com.sun.javafx.collections.ObservableSequentialListWrapper;
 import java.util.ArrayList;
@@ -39,10 +39,10 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import javafx.util.converter.NumberStringConverter;
-import org.github.codeswarm.CodeSwarm;
-import org.github.codeswarm.ColorTest;
-import org.github.codeswarm.Config;
-import org.github.codeswarm.type.DisplayFile;
+import org.github.gitswarm.GitSwarm;
+import org.github.gitswarm.ColorTest;
+import org.github.gitswarm.Config;
+import org.github.gitswarm.type.DisplayFile;
 
 public class MainConfigPanel extends Application {
 
@@ -453,7 +453,7 @@ public class MainConfigPanel extends Application {
       Button preview = new Button("Preview");
       preview.setOnAction(a -> {
          setConfig();
-         CodeSwarm.boot();
+         GitSwarm.boot();
       });
       hBox.getChildren().add(preview);
       hBox.getChildren().add(new Button("Start"));

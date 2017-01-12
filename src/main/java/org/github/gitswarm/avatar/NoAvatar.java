@@ -1,4 +1,4 @@
-package org.github.codeswarm.avatar;
+package org.github.gitswarm.avatar;
 
 public class NoAvatar extends AvatarFetcher {
 

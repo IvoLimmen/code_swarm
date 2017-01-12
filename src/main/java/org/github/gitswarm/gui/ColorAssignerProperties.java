@@ -1,9 +1,9 @@
-package org.github.codeswarm.gui;
+package org.github.gitswarm.gui;
 
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.scene.paint.Color;
-import org.github.codeswarm.ColorTest;
+import org.github.gitswarm.ColorTest;
 
 public class ColorAssignerProperties {
 

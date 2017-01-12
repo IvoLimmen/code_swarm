@@ -1,4 +1,4 @@
-package org.github.codeswarm.avatar;
+package org.github.gitswarm.avatar;
 
 import java.net.MalformedURLException;
 import java.net.URL;

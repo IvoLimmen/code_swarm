@@ -1,4 +1,4 @@
-package org.github.codeswarm;
+package org.github.gitswarm;
 
 public interface EndOfFileEvent {
 

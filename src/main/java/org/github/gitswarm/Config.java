@@ -1,4 +1,4 @@
-package org.github.codeswarm;
+package org.github.gitswarm;
 
 /*
    Copyright 2008 Michael Ogawa
@@ -27,7 +27,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
-import org.github.codeswarm.type.DisplayFile;
+import org.github.gitswarm.type.DisplayFile;
 
 /**
  * @author Michael Ogawa

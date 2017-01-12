@@ -1,4 +1,4 @@
-package org.github.codeswarm;
+package org.github.gitswarm;
 
 /**
  * Copyright 2008 Michael Ogawa
@@ -15,11 +15,11 @@ package org.github.codeswarm;
  * You should have received a copy of the GNU General Public License along with code_swarm. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-import org.github.codeswarm.avatar.AvatarFetcher;
-import org.github.codeswarm.model.Drawable;
-import org.github.codeswarm.model.Edge;
-import org.github.codeswarm.model.PersonNode;
-import org.github.codeswarm.model.FileNode;
+import org.github.gitswarm.avatar.AvatarFetcher;
+import org.github.gitswarm.model.Drawable;
+import org.github.gitswarm.model.Edge;
+import org.github.gitswarm.model.PersonNode;
+import org.github.gitswarm.model.FileNode;
 import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
@@ -42,19 +42,19 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.github.codeswarm.avatar.GravatarFetcher;
-import org.github.codeswarm.avatar.LocalAvatar;
-import org.github.codeswarm.gui.ColorUtil;
-import org.github.codeswarm.gui.MainConfigPanel;
-import org.github.codeswarm.type.DisplayFile;
-import static org.github.codeswarm.type.DisplayFile.FUZZY;
-import static org.github.codeswarm.type.DisplayFile.JELLY;
-import static org.github.codeswarm.type.DisplayFile.SHARP;
+import org.github.gitswarm.avatar.GravatarFetcher;
+import org.github.gitswarm.avatar.LocalAvatar;
+import org.github.gitswarm.gui.ColorUtil;
+import org.github.gitswarm.gui.MainConfigPanel;
+import org.github.gitswarm.type.DisplayFile;
+import static org.github.gitswarm.type.DisplayFile.FUZZY;
+import static org.github.gitswarm.type.DisplayFile.JELLY;
+import static org.github.gitswarm.type.DisplayFile.SHARP;
 import processing.core.PApplet;
 import processing.core.PFont;
 import processing.core.PImage;
 
-public class CodeSwarm extends PApplet implements EndOfFileEvent {
+public class GitSwarm extends PApplet implements EndOfFileEvent {
 
    /**
     * @remark needed for any serializable class
@@ -109,14 +109,14 @@ public class CodeSwarm extends PApplet implements EndOfFileEvent {
       try {
          if (args.length > 0) {
             userConfigFilename = args[0];
-            List<String> configFileStack = Arrays.asList(new String[]{"defaults/CodeSwarm.config",
+            List<String> configFileStack = Arrays.asList(new String[]{"defaults/GitSwarm.config",
                "defaults/user.config", userConfigFilename});
             Config.init(configFileStack);
             MainConfigPanel.start();
          } else {
             // FIXME: Temporary for testing in IDE
             userConfigFilename = "data/sample.config";
-            List<String> configFileStack = Arrays.asList(new String[]{"defaults/CodeSwarm.config",
+            List<String> configFileStack = Arrays.asList(new String[]{"defaults/GitSwarm.config",
                "defaults/user.config", userConfigFilename});
             Config.init(configFileStack);
             MainConfigPanel.start();
@@ -132,7 +132,7 @@ public class CodeSwarm extends PApplet implements EndOfFileEvent {
    }
 
    static public void boot() {
-      PApplet.main(new String[]{"org.github.codeswarm.CodeSwarm"});
+      PApplet.main(new String[]{"org.github.gitswarm.GitSwarm"});
    }
 
    @Override

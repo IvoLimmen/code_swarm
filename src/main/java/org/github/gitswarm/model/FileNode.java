@@ -1,6 +1,6 @@
-package org.github.codeswarm.model;
+package org.github.gitswarm.model;
 
-import org.github.codeswarm.FileEvent;
+import org.github.gitswarm.FileEvent;
 
 /**
  * A node describing a file

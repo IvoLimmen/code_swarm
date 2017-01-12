@@ -1,4 +1,4 @@
-package org.github.codeswarm.model;
+package org.github.gitswarm.model;
 
 /**
  * An Edge link two nodes together : a File to a Person.
