@@ -7,7 +7,7 @@ This is my technical resume. I picked this project for a couple of reasons:
  * Multiple languages (Java and Python)
  * Bad use of OO (looked more like structs)
  * Presentation, configuration and XML parsing is all in one object.
- * Technically ok product, bad code
+ * Technically OK product, bad code
 
 ## What is a technical resume? ##
 
@@ -23,7 +23,7 @@ This is my technical resume. I picked this project for a couple of reasons:
 
   What you can't see is that I can do this fast and efficient, and that I can teach this also.
 
-## What don't you mean SOLID? ##
+## Don't you mean SOLID? ##
 
   Fuck SOLID. Can't remember what that means. These three rules covers everything a good coder requires. Plus passion!
 
@@ -35,7 +35,7 @@ This is my technical resume. I picked this project for a couple of reasons:
   not require that much junit tests.
   I much rather steer on a 100% integration test coverage.
 
-## That does not work with technolkogy X and/or framework Y! ##
+## That does not work with technology X and/or framework Y! ##
 
   Yeah right.
 
