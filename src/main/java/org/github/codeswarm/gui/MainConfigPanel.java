@@ -50,24 +50,24 @@ public class MainConfigPanel extends Application {
       launch(new String[]{});
    }
 
-   private ChoiceBox<String> screenSize;
+   private ChoiceBox<String> screenSizeCb;
 
-   private ColorPicker background;
+   private TextField framesPerDayTf;
 
-   private ComboBox<String> fontType;
+   private ColorPicker backgroundCp;
 
-   private ComboBox<String> boldFontType;
+   private ComboBox<String> fontTypeCb;
 
-   private ColorPicker fontColor;
+   private ComboBox<String> boldFontTypeCb;
 
-   private ObservableList<ColorAssignerProperties> colorList = new ObservableSequentialListWrapper<>(new ArrayList<>());
+   private final ObservableList<ColorAssignerProperties> colorList = new ObservableSequentialListWrapper<>(new ArrayList<>());
 
-   private ObservableList<String> fontList = new ObservableSequentialListWrapper<>(new ArrayList<>());
+   private final ObservableList<String> fontList = new ObservableSequentialListWrapper<>(new ArrayList<>());
 
    private EditDialog editDialog;
 
-   private final static String[] FONT_DEFAULTS = new String[] { "SansSerif", "Arial" }; 
-   
+   private final static String[] FONT_DEFAULTS = new String[]{"SansSerif", "Arial"};
+
    @Override
    public void start(Stage primaryStage) throws Exception {
 
@@ -93,7 +93,7 @@ public class MainConfigPanel extends Application {
       Arrays.asList(FONT_DEFAULTS).forEach((font) -> {
          if (this.fontList.contains(font)) {
             Config.getInstance().setFont(font);
-            Config.getInstance().setBoldFont(font);            
+            Config.getInstance().setBoldFont(font);
          }
       });
    }
@@ -112,6 +112,7 @@ public class MainConfigPanel extends Application {
    private TabPane tabbedPane() {
       TabPane tabPane = new TabPane();
       tabPane.getTabs().add(tabGeneral());
+      tabPane.getTabs().add(tabMovie());
       tabPane.getTabs().add(tabColor());
       tabPane.getTabs().add(tabFiles());
       tabPane.getTabs().add(tabPerson());
@@ -128,21 +129,26 @@ public class MainConfigPanel extends Application {
       GridPane.setHalignment(screenSizeLbl, HPos.RIGHT);
       gridPane.add(screenSizeLbl, 0, 1);
 
-      this.screenSize = new ChoiceBox<>(
+      this.screenSizeCb = new ChoiceBox<>(
           FXCollections.observableArrayList("800x600", "960x720", "1024x768", "1920x1080"));
-      GridPane.setHalignment(screenSize, HPos.LEFT);
-      gridPane.add(screenSize, 1, 1);
+      GridPane.setHalignment(screenSizeCb, HPos.LEFT);
+      gridPane.add(screenSizeCb, 1, 1);
       String current = Config.getInstance().getWidth().getValue() + "x" + Config.getInstance().getHeight().getValue();
-      screenSize.getSelectionModel().select(current);
+      screenSizeCb.getSelectionModel().select(current);
 
+      framesPerDayTf = new TextField();
+      framesPerDayTf.setText("" + Config.getInstance().getFramesPerDay());     
+      GridPane.setHalignment(framesPerDayTf, HPos.LEFT);
+      gridPane.add(framesPerDayTf, 1, 2);
+      
       Label framesPerDayLbl = new Label("Frames per day");
       GridPane.setHalignment(framesPerDayLbl, HPos.RIGHT);
       gridPane.add(framesPerDayLbl, 0, 2);
 
-      TextField framesPerDay = new TextField();
-      framesPerDay.setText("6");
-      GridPane.setHalignment(framesPerDay, HPos.LEFT);
-      gridPane.add(framesPerDay, 1, 2);
+      framesPerDayTf = new TextField();
+      framesPerDayTf.setText("" + Config.getInstance().getFramesPerDay());     
+      GridPane.setHalignment(framesPerDayTf, HPos.LEFT);
+      gridPane.add(framesPerDayTf, 1, 2);
 
       CheckBox legend = new CheckBox("Show legend");
       legend.selectedProperty().bindBidirectional(Config.getInstance().getShowLegend());
@@ -173,6 +179,27 @@ public class MainConfigPanel extends Application {
       edges.selectedProperty().bindBidirectional(Config.getInstance().getShowEdges());
       GridPane.setHalignment(edges, HPos.LEFT);
       gridPane.add(edges, 1, 8);
+
+      return tab;
+   }
+
+   private Tab tabMovie() {
+      Tab tab = createTab("Movie");
+      GridPane gridPane = (GridPane) tab.getContent();
+
+      CheckBox legend = new CheckBox("Save snapshots");
+      legend.selectedProperty().bindBidirectional(Config.getInstance().getTakeSnapshots());
+      GridPane.setHalignment(legend, HPos.LEFT);
+      gridPane.add(legend, 1, 1);
+      
+      Label screenshotFileMaskLbl = new Label("Screenshot filemask");
+      GridPane.setHalignment(screenshotFileMaskLbl, HPos.RIGHT);
+      gridPane.add(screenshotFileMaskLbl, 0, 2);
+
+      TextField screenshotFileMaskTf = new TextField();
+      screenshotFileMaskTf.textProperty().bind(Config.getInstance().getScreenshotFileMask());     
+      GridPane.setHalignment(screenshotFileMaskTf, HPos.LEFT);
+      gridPane.add(screenshotFileMaskTf, 1, 2);
 
       return tab;
    }
@@ -217,7 +244,7 @@ public class MainConfigPanel extends Application {
       drawHalo.selectedProperty().bindBidirectional(Config.getInstance().getDrawNamesHalo());
       GridPane.setHalignment(drawHalo, HPos.LEFT);
       gridPane.add(drawHalo, 1, 0);
-      
+
       CheckBox drawSharp = new CheckBox("Draw sharp");
       drawSharp.selectedProperty().bindBidirectional(Config.getInstance().getDrawNamesSharp());
       GridPane.setHalignment(drawSharp, HPos.LEFT);
@@ -225,7 +252,7 @@ public class MainConfigPanel extends Application {
 
       return tab;
    }
-   
+
    private Tab tabColor() {
       Tab tab = createTab("Color");
       GridPane gridPane = (GridPane) tab.getContent();
@@ -234,30 +261,30 @@ public class MainConfigPanel extends Application {
       GridPane.setHalignment(backgroundLbl, HPos.RIGHT);
       gridPane.add(backgroundLbl, 0, 1);
 
-      this.background = new ColorPicker();
-      this.background.valueProperty().bindBidirectional(Config.getInstance().getBackground());
-      GridPane.setHalignment(background, HPos.LEFT);
-      gridPane.add(background, 1, 1);
+      this.backgroundCp = new ColorPicker();
+      this.backgroundCp.valueProperty().bindBidirectional(Config.getInstance().getBackground());
+      GridPane.setHalignment(backgroundCp, HPos.LEFT);
+      gridPane.add(backgroundCp, 1, 1);
 
       Label fontTypeLbl = new Label("Font");
       GridPane.setHalignment(fontTypeLbl, HPos.RIGHT);
       gridPane.add(fontTypeLbl, 0, 2);
 
-      this.fontType = new ComboBox<>();
-      fontType.setItems(this.fontList);
-      fontType.getSelectionModel().select(Config.getInstance().getFont());
-      fontType.setOnAction((event) -> {
-         Config.getInstance().setFont(fontType.getSelectionModel().getSelectedItem());
+      this.fontTypeCb = new ComboBox<>();
+      fontTypeCb.setItems(this.fontList);
+      fontTypeCb.getSelectionModel().select(Config.getInstance().getFont());
+      fontTypeCb.setOnAction((event) -> {
+         Config.getInstance().setFont(fontTypeCb.getSelectionModel().getSelectedItem());
       });
-      GridPane.setHalignment(fontType, HPos.LEFT);
-      gridPane.add(fontType, 1, 2);
+      GridPane.setHalignment(fontTypeCb, HPos.LEFT);
+      gridPane.add(fontTypeCb, 1, 2);
 
       Label fontColorLbl = new Label("Font color");
       GridPane.setHalignment(fontColorLbl, HPos.RIGHT);
       gridPane.add(fontColorLbl, 0, 3);
 
-      this.fontColor = new ColorPicker();
-      this.fontColor.valueProperty().bindBidirectional(Config.getInstance().getFontColor());
+      ColorPicker fontColor = new ColorPicker();
+      fontColor.valueProperty().bindBidirectional(Config.getInstance().getFontColor());
       GridPane.setHalignment(fontColor, HPos.LEFT);
       gridPane.add(fontColor, 1, 3);
 
@@ -288,19 +315,19 @@ public class MainConfigPanel extends Application {
       GridPane.setHalignment(boldFontTypeLbl, HPos.RIGHT);
       gridPane.add(boldFontTypeLbl, 0, 5);
 
-      this.boldFontType = new ComboBox<>();
-      boldFontType.setItems(this.fontList);
-      boldFontType.getSelectionModel().select(Config.getInstance().getBoldFont());
-      boldFontType.setOnAction((event) -> {
-         Config.getInstance().setBoldFont(boldFontType.getSelectionModel().getSelectedItem());
+      this.boldFontTypeCb = new ComboBox<>();
+      boldFontTypeCb.setItems(this.fontList);
+      boldFontTypeCb.getSelectionModel().select(Config.getInstance().getBoldFont());
+      boldFontTypeCb.setOnAction((event) -> {
+         Config.getInstance().setBoldFont(boldFontTypeCb.getSelectionModel().getSelectedItem());
       });
-      GridPane.setHalignment(boldFontType, HPos.LEFT);
-      gridPane.add(boldFontType, 1, 5);
+      GridPane.setHalignment(boldFontTypeCb, HPos.LEFT);
+      gridPane.add(boldFontTypeCb, 1, 5);
 
       Label boldFontSizeLbl = new Label("Bold font size");
       GridPane.setHalignment(boldFontSizeLbl, HPos.RIGHT);
       gridPane.add(boldFontSizeLbl, 0, 6);
-      
+
       TextField boldFontSize = new TextField();
       boldFontSize.setTextFormatter(new TextFormatter<Integer>(new StringConverter<Integer>() {
          @Override
@@ -319,7 +346,7 @@ public class MainConfigPanel extends Application {
       boldFontSize.textProperty().bindBidirectional(Config.getInstance().getBoldFontSize(), new NumberStringConverter());
       GridPane.setHalignment(boldFontSize, HPos.LEFT);
       gridPane.add(boldFontSize, 1, 6);
-      
+
       return tab;
    }
 
@@ -409,7 +436,7 @@ public class MainConfigPanel extends Application {
                if (item != null && !empty) {
                   setText(item.toString());
                   setTextFill(item);
-                  setBackground(new Background(new BackgroundFill(background.getValue(), CornerRadii.EMPTY, Insets.EMPTY)));
+                  setBackground(new Background(new BackgroundFill(backgroundCp.getValue(), CornerRadii.EMPTY, Insets.EMPTY)));
                }
             }
          };
@@ -446,7 +473,9 @@ public class MainConfigPanel extends Application {
          Config.getInstance().getColorAssigner().addRule(ct.getLabel().getValue(), ct.getExpression().getValue(), ColorUtil.toAwtColor(ct.getColor().getValue()));
       });
 
-      String screenSize = this.screenSize.getSelectionModel().getSelectedItem();
+      Config.getInstance().setFramesPerDay(Integer.parseInt(framesPerDayTf.getText()));
+
+      String screenSize = this.screenSizeCb.getSelectionModel().getSelectedItem();
       Config.getInstance().setWidth(Integer.parseInt(screenSize.split("x")[0]));
       Config.getInstance().setHeight(Integer.parseInt(screenSize.split("x")[1]));
    }

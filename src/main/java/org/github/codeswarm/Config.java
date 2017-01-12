@@ -26,6 +26,7 @@ import java.util.Properties;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
 import org.github.codeswarm.type.DisplayFile;
 
 /**
@@ -283,11 +284,13 @@ final public class Config {
    }
    private String boldFont;
    private String font;
+   private int framesPerDay = 6;
    private final ColorAssigner colorAssigner = new ColorAssigner();
 
    private DisplayFile displayFile = DisplayFile.FUZZY;
 
-   private final SimpleBooleanProperty drawNamesHalo = new SimpleBooleanProperty(true);
+   private final SimpleStringProperty screenshotFileMask = new SimpleStringProperty("#####.png");
+   private final SimpleBooleanProperty drawNamesHalo = new SimpleBooleanProperty(false);
    private final SimpleBooleanProperty drawNamesSharp = new SimpleBooleanProperty(true);
    private final SimpleIntegerProperty fontSize = new SimpleIntegerProperty(10);
    private final SimpleIntegerProperty boldFontSize = new SimpleIntegerProperty(12);
@@ -306,6 +309,18 @@ final public class Config {
 
    private Config() {
       this.colorAssigner.addRule("Misc", ".*", Color.GRAY);
+   }
+
+   public SimpleStringProperty getScreenshotFileMask() {
+      return screenshotFileMask;
+   }
+
+   public int getFramesPerDay() {
+      return framesPerDay;
+   }
+
+   public void setFramesPerDay(int framesPerDay) {
+      this.framesPerDay = framesPerDay;
    }
 
    public SimpleBooleanProperty getDrawNamesHalo() {

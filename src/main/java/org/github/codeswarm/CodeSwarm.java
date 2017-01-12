@@ -145,7 +145,6 @@ public class CodeSwarm extends PApplet implements EndOfFileEvent {
    long UPDATE_DELTA = -1;
    String SPRITE_FILE = "particle.png";
    String MASK_FILE = "src/main/resources/mask.png";
-   String SCREENSHOT_FILE;
    int background;
    int PARTICLE_SIZE = 2;
 
@@ -174,7 +173,6 @@ public class CodeSwarm extends PApplet implements EndOfFileEvent {
 
    // Graphics state variables
    boolean showHelp;
-   boolean takeSnapshots;
    boolean showDebug;
 
    // Color mapper
@@ -215,11 +213,9 @@ public class CodeSwarm extends PApplet implements EndOfFileEvent {
    @Override
    public void setup() {
 
-      takeSnapshots = Config.getInstance().getTakeSnapshots().getValue();
       showUserName = Config.getInstance().getShowUsername().getValue();
-
       
-      int maxBackgroundThreads = Config.getPositiveIntProperty(Config.MAX_THREADS_KEY);
+      int maxBackgroundThreads = 4;
       backgroundExecutor = new ThreadPoolExecutor(1, maxBackgroundThreads, Long.MAX_VALUE, TimeUnit.NANOSECONDS, new ArrayBlockingQueue<>(4 * maxBackgroundThreads), new ThreadPoolExecutor.CallerRunsPolicy());
       
       showDebug = Config.getBooleanProperty(Config.SHOW_DEBUG);
@@ -228,7 +224,7 @@ public class CodeSwarm extends PApplet implements EndOfFileEvent {
       background = ColorUtil.toAwtColor(Config.getInstance().getBackground().getValue()).getRGB();
       fontColor = ColorUtil.toAwtColor(Config.getInstance().getFontColor().getValue()).getRGB();
 
-      double framesperday = Config.getDoubleProperty(Config.FRAMES_PER_DAY_KEY);
+      double framesperday = Config.getInstance().getFramesPerDay();
       UPDATE_DELTA = (long) (86400000 / framesperday);
 
       isInputSorted = Config.getBooleanProperty(Config.IS_INPUT_SORTED_KEY);      
@@ -266,9 +262,7 @@ public class CodeSwarm extends PApplet implements EndOfFileEvent {
       }
       prevDate = eventsQueue.peek().getDate();
 
-      SCREENSHOT_FILE = Config.getStringProperty(Config.SNAPSHOT_LOCATION_KEY);
-
-      maxFramesSaved = (int) Math.pow(10, SCREENSHOT_FILE.replaceAll("[^#]", "").length());
+      maxFramesSaved = (int) Math.pow(10, Config.getInstance().getScreenshotFileMask().getValue().replaceAll("[^#]", "").length());
 
       // Create fonts
       String fontName = Config.getInstance().getFont();
@@ -359,7 +353,7 @@ public class CodeSwarm extends PApplet implements EndOfFileEvent {
          drawDate();
       }
 
-      if (takeSnapshots) {
+      if (Config.getInstance().getTakeSnapshots().getValue()) {
          dumpFrame();
       }
 
@@ -620,7 +614,8 @@ public class CodeSwarm extends PApplet implements EndOfFileEvent {
     */
    public void dumpFrame() {
       if (frameCount < this.maxFramesSaved) {
-         final File outputFile = new File(insertFrame(SCREENSHOT_FILE));
+         String screenshotFileMask = Config.getInstance().getScreenshotFileMask().getValue();
+         final File outputFile = new File(insertFrame("data/" + screenshotFileMask));
          final PImage image = get();
          outputFile.getParentFile().mkdirs();
 
