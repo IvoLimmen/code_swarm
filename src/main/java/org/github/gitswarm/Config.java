@@ -42,53 +42,13 @@ public final class Config {
    public static final String INPUT_FILE_KEY = "InputFile";
    public static final String COLOR_ASSIGN_KEY = "ColorAssign";
    /**
-    * Length of edges
-    */
-   public static final String EDGE_LENGTH_KEY = "EdgeLength";
-   /**
     * Path to sprite file for nodes
     */
-   public static final String SPRITE_FILE_KEY = "ParticleSpriteFile";
-   /**
-    * How long to keep edges alive
-    */
-   public static final String EDGE_DECREMENT_KEY = "EdgeDecrement";
-   /**
-    * How long to keep files alive
-    */
-   public static final String FILE_DECREMENT_KEY = "FileDecrement";
-   /**
-    * How long to keep person alive
-    */
-   public static final String PERSON_DECREMENT_KEY = "PersonDecrement";
-   /**
-    * File Mass
-    */
-   public static final String FILE_MASS_KEY = "FileMass";
-   /**
-    * Person Mass
-    */
-   public static final String PERSON_MASS_KEY = "PersonMass";
-   /**
-    * How long to keep edges alive
-    */
-   public static final String EDGE_LIFE_KEY = "EdgeLife";
-   /**
-    * How long to keep nodes alive
-    */
-   public static final String FILE_LIFE_KEY = "FileLife";
-   /**
-    * How long to keep people alive
-    */
-   public static final String PERSON_LIFE_KEY = "PersonLife";
+   public static final String SPRITE_FILE_KEY = "ParticleSpriteFile";   
    /**
     * Boolean value, controls using the OpenGL library (experimental)
     */
    public static final String USE_OPEN_GL = "UseOpenGL";
-   /**
-    * Percentage of life to highlight
-    */
-   public static final String HIGHLIGHT_PCT_KEY = "HighlightPct";
    /**
     * Boolean value, controls showing debug info
     */

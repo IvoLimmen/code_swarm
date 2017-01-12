@@ -115,6 +115,7 @@ public class MainConfigPanel extends Application {
       tabPane.getTabs().add(tabColor());
       tabPane.getTabs().add(tabFiles());
       tabPane.getTabs().add(tabPerson());
+      tabPane.getTabs().add(tabEdge());
       tabPane.getTabs().add(tabFileTypes());
 
       return tabPane;
@@ -324,6 +325,40 @@ public class MainConfigPanel extends Application {
       return tab;
    }
 
+   private Tab tabEdge() {
+      Tab tab = createTab("Edge");
+      GridPane gridPane = (GridPane) tab.getContent();
+      
+      Label edgeLifeLbl = new Label("Life");
+      GridPane.setHalignment(edgeLifeLbl, HPos.RIGHT);
+      gridPane.add(edgeLifeLbl, 0, 1);
+
+      IntegerField edgeLife = new IntegerField();
+      edgeLife.textProperty().bindBidirectional(Config.getInstance().getEdgeLife(), new NumberStringConverter());
+      GridPane.setHalignment(edgeLife, HPos.LEFT);
+      gridPane.add(edgeLife, 1, 1);
+      
+      Label edgeDecLbl = new Label("Decrement");
+      GridPane.setHalignment(edgeDecLbl, HPos.RIGHT);
+      gridPane.add(edgeDecLbl, 0, 2);
+
+      IntegerField edgeDec = new IntegerField();
+      edgeDec.textProperty().bindBidirectional(Config.getInstance().getEdgeDecrement(), new NumberStringConverter());
+      GridPane.setHalignment(edgeDec, HPos.LEFT);
+      gridPane.add(edgeDec, 1, 2);
+
+      Label edgeHighlightLbl = new Label("Length");
+      GridPane.setHalignment(edgeHighlightLbl, HPos.RIGHT);
+      gridPane.add(edgeHighlightLbl, 0, 3);
+
+      IntegerField edgeHighlight = new IntegerField();
+      edgeHighlight.textProperty().bindBidirectional(Config.getInstance().getEdgeLength(), new NumberStringConverter());
+      GridPane.setHalignment(edgeHighlight, HPos.LEFT);
+      gridPane.add(edgeHighlight, 1, 3);
+      
+      return tab;
+   }
+   
    private Tab tabColor() {
       Tab tab = createTab("Color");
       GridPane gridPane = (GridPane) tab.getContent();
