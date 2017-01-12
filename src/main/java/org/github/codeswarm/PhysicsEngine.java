@@ -100,8 +100,8 @@ public abstract class PhysicsEngine {
    }
 
    public Vector2f randomLocation() {
-      int width = Config.getInstance().getIntProperty(Config.WIDTH_KEY);
-      int height = Config.getInstance().getIntProperty(Config.HEIGHT_KEY);
+      int width = Config.getInstance().getWidth().getValue();
+      int height = Config.getInstance().getHeight().getValue();
       
       Vector2f vec = new Vector2f(width * (float) Math.random(), height * (float) Math.random());
       return vec;

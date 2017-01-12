@@ -32,50 +32,15 @@ import org.github.codeswarm.type.DisplayFile;
 /**
  * @author Michael Ogawa
  */
-final public class Config {
+public final class Config {
 
    private final static Config CURRENT = new Config();
-
-   public static final String SHOW_POPULAR = "ShowPopular";
-
-   /**
-    * The width of window
-    */
-   public static final String WIDTH_KEY = "Width";
-   /**
-    * The height of window
-    */
-   public static final String HEIGHT_KEY = "Height";
-   /**
-    * The maximum number of background threads
-    */
-   public static final String MAX_THREADS_KEY = "MaxThreads";
+   
    /**
     * The input file
     */
    public static final String INPUT_FILE_KEY = "InputFile";
-   /**
-    * The amount of time between frames
-    */
-   public static final String MSEC_PER_FRAME_KEY = "MillisecondsPerFrame";
-   /**
-    * The number of frames per day. Used to calculate time between frames. Optional.
-    */
-   public static final String FRAMES_PER_DAY_KEY = "FramesPerDay";
-   /**
-    * R,G,B Determines the background color
-    */
-   public static final String FONT_SIZE = "FontSize";
-   public static final String FONT_KEY_BOLD = "BoldFont";
-   public static final String FONT_SIZE_BOLD = "BoldFontSize";
-   /**
-    * Rules for color coding nodes
-    */
    public static final String COLOR_ASSIGN_KEY = "ColorAssign";
-   /**
-    * Location to save snapshots. TakeSnapshots must be true to use
-    */
-   public static final String SNAPSHOT_LOCATION_KEY = "SnapshotLocation";
    /**
     * Length of edges
     */
@@ -129,13 +94,8 @@ final public class Config {
     */
    public static final String SHOW_DEBUG = "ShowDebug";
    /**
-    * Boolean value, controls drawing names
-    */
-   public static final String DRAW_NAMES_SHARP = "DrawNamesSharp";
-   /**
     * Boolean value, controls drawing halos around names
     */
-   public static final String DRAW_NAMES_HALOS = "DrawNamesHalos";
    public static final String IS_INPUT_SORTED_KEY = "IsInputSorted";
    public static final String DRAW_CIRCULAR_AVATARS = "CircularAvatars";
 

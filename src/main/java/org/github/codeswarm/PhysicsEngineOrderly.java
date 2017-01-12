@@ -56,8 +56,8 @@ public class PhysicsEngineOrderly extends PhysicsEngine {
    public void onRelax(PersonNode pNode) {
       Vector2f delta;
 
-      int width = Config.getInstance().getIntProperty(Config.WIDTH_KEY);
-      int height = Config.getInstance().getIntProperty(Config.HEIGHT_KEY);
+      int width = Config.getInstance().getWidth().getValue();
+      int height = Config.getInstance().getHeight().getValue();
       
       // A gentle force to attract pNodes to the center
       // NOTE: this should be done prior to attraction/repulsion forces, otherwise
