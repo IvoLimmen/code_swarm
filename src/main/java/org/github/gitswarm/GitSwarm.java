@@ -41,8 +41,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.github.gitswarm.avatar.GravatarFetcher;
-import org.github.gitswarm.avatar.LocalAvatar;
+import org.github.gitswarm.avatar.GitHubFetcher;
 import org.github.gitswarm.gui.ColorUtil;
 import org.github.gitswarm.gui.MainConfigPanel;
 import org.github.gitswarm.type.DisplayFile;
@@ -178,7 +177,6 @@ public class GitSwarm extends PApplet implements EndOfFileEvent {
 
    // Physics engine configuration
    private final PhysicsEngine physicsEngine = new PhysicsEngineOrderly();
-   private boolean circularAvatars = false;
 
    // Formats the date string nicely
    DateFormat formatter = DateFormat.getDateInstance();
@@ -188,7 +186,7 @@ public class GitSwarm extends PApplet implements EndOfFileEvent {
 
    protected ExecutorService backgroundExecutor;
 
-   public AvatarFetcher avatarFetcher;
+   public AvatarFetcher avatarFetcher = new GitHubFetcher();
 
    private int fontColor;
 
@@ -217,7 +215,6 @@ public class GitSwarm extends PApplet implements EndOfFileEvent {
       backgroundExecutor = new ThreadPoolExecutor(1, maxBackgroundThreads, Long.MAX_VALUE, TimeUnit.NANOSECONDS, new ArrayBlockingQueue<>(4 * maxBackgroundThreads), new ThreadPoolExecutor.CallerRunsPolicy());
 
       showDebug = Config.getBooleanProperty(Config.SHOW_DEBUG);
-      circularAvatars = Config.getBooleanProperty(Config.DRAW_CIRCULAR_AVATARS);
 
       background = ColorUtil.toAwtColor(Config.getInstance().getBackground().getValue()).getRGB();
       fontColor = ColorUtil.toAwtColor(Config.getInstance().getFontColor().getValue()).getRGB();
@@ -233,15 +230,6 @@ public class GitSwarm extends PApplet implements EndOfFileEvent {
       edges = new HashMap<>();
       people = new HashMap<>();
       history = new LinkedList<>();
-
-      avatarFetcher = getAvatarFetcher(Config.getStringProperty("AvatarFetcher"));
-      avatarFetcher.setSize(Config.getPositiveIntProperty("AvatarSize"));
-      if (avatarFetcher.getClass().equals(LocalAvatar.class)) {
-         ((LocalAvatar) avatarFetcher).setLocalAvatarDefaultPic(Config.getStringProperty("LocalAvatarDefaultPic"));
-         ((LocalAvatar) avatarFetcher).setLocalAvatarDirectory(Config.getStringProperty("LocalAvatarDirectory"));
-      } else if (avatarFetcher.getClass().equals(GravatarFetcher.class)) {
-         ((GravatarFetcher) avatarFetcher).setGravatarFallback(Config.getStringProperty("GravatarFallback"));
-      }
 
       loadRepEvents(Config.getStringProperty(Config.INPUT_FILE_KEY)); // event formatted (this is the standard)
       while (!finishedLoading && eventsQueue.isEmpty());
@@ -671,9 +659,7 @@ public class GitSwarm extends PApplet implements EndOfFileEvent {
             if (iconFile != null) {
                PImage icon = loadImage(iconFile, "unknown");
                icon.resize(avatarFetcher.getSize(), avatarFetcher.getSize());
-               if (circularAvatars) {
-                  icon.mask(avatarMask);
-               }
+               icon.mask(avatarMask);
                person.setIcon(icon);
             }
 

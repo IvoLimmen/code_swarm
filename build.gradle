@@ -31,4 +31,8 @@ dependencies {
   compile 'net.java.dev.swing-layout:swing-layout:1.0.2:sources'
   compile 'org.apache.commons:commons-lang3:3.5'
   compile 'org.apache.commons:commons-lang3:3.5:sources'
+  compile 'org.json:json:20160212'
+  compile 'org.json:json:20160212:sources'  
+  compile 'commons-io:commons-io:2.5'
+  compile 'commons-io:commons-io:2.5:sources'  
 }

@@ -12,7 +12,7 @@ import java.security.NoSuchAlgorithmException;
 
 public class AvatarFetcher {
 
-   public int size;
+   public int size = 40;
 
    public AvatarFetcher() {
    }

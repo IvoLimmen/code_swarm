@@ -53,11 +53,6 @@ public final class Config {
     * Boolean value, controls showing debug info
     */
    public static final String SHOW_DEBUG = "ShowDebug";
-   /**
-    * Boolean value, controls drawing halos around names
-    */
-   public static final String IS_INPUT_SORTED_KEY = "IsInputSorted";
-   public static final String DRAW_CIRCULAR_AVATARS = "CircularAvatars";
 
    public static Config getInstance() {
       return CURRENT;
