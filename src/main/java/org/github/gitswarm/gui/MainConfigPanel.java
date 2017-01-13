@@ -136,7 +136,7 @@ public class MainConfigPanel extends Application {
       String current = Config.getInstance().getWidth().getValue() + "x" + Config.getInstance().getHeight().getValue();
       screenSizeCb.getSelectionModel().select(current);
 
-      framesPerDayTf = new TextField();
+      this.framesPerDayTf = new TextField();
       framesPerDayTf.setText("" + Config.getInstance().getFramesPerDay());
       GridPane.setHalignment(framesPerDayTf, HPos.LEFT);
       gridPane.add(framesPerDayTf, 1, 2);
@@ -144,11 +144,6 @@ public class MainConfigPanel extends Application {
       Label framesPerDayLbl = new Label("Frames per day");
       GridPane.setHalignment(framesPerDayLbl, HPos.RIGHT);
       gridPane.add(framesPerDayLbl, 0, 2);
-
-      framesPerDayTf = new TextField();
-      framesPerDayTf.setText("" + Config.getInstance().getFramesPerDay());
-      GridPane.setHalignment(framesPerDayTf, HPos.LEFT);
-      gridPane.add(framesPerDayTf, 1, 2);
 
       CheckBox legend = new CheckBox("Show legend");
       legend.selectedProperty().bindBidirectional(Config.getInstance().getShowLegend());
@@ -528,13 +523,12 @@ public class MainConfigPanel extends Application {
       hBox.setPadding(new Insets(5d));
       hBox.setAlignment(Pos.CENTER_RIGHT);
 
-      Button preview = new Button("Preview");
-      preview.setOnAction(a -> {
+      Button start = new Button("Start");
+      start.setOnAction(a -> {
          setConfig();
          GitSwarm.boot();
       });
-      hBox.getChildren().add(preview);
-      hBox.getChildren().add(new Button("Start"));
+      hBox.getChildren().add(start);
 
       Button quit = new Button("Quit");
       quit.setOnAction(a -> {

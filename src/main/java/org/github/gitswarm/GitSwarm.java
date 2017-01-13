@@ -37,7 +37,6 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang3.tuple.MutablePair;
@@ -140,7 +139,7 @@ public class GitSwarm extends PApplet implements EndOfFileEvent {
       // no no...
       this.surface.setVisible(false);
    }
-     
+
    // User-defined variables
    long UPDATE_DELTA = -1;
    String SPRITE_FILE = "particle.png";
@@ -149,8 +148,7 @@ public class GitSwarm extends PApplet implements EndOfFileEvent {
    int PARTICLE_SIZE = 2;
 
    // Data storage
-   BlockingQueue<FileEvent> eventsQueue;
-   boolean isInputSorted = false;
+   BlockingQueue<FileEvent> eventsQueue = new ArrayBlockingQueue<>(50000);
    boolean showUserName = false;
 
    LinkedList<List<Integer>> history;
@@ -214,10 +212,10 @@ public class GitSwarm extends PApplet implements EndOfFileEvent {
    public void setup() {
 
       showUserName = Config.getInstance().getShowUsername().getValue();
-      
+
       int maxBackgroundThreads = 4;
       backgroundExecutor = new ThreadPoolExecutor(1, maxBackgroundThreads, Long.MAX_VALUE, TimeUnit.NANOSECONDS, new ArrayBlockingQueue<>(4 * maxBackgroundThreads), new ThreadPoolExecutor.CallerRunsPolicy());
-      
+
       showDebug = Config.getBooleanProperty(Config.SHOW_DEBUG);
       circularAvatars = Config.getBooleanProperty(Config.DRAW_CIRCULAR_AVATARS);
 
@@ -227,8 +225,6 @@ public class GitSwarm extends PApplet implements EndOfFileEvent {
       double framesperday = Config.getInstance().getFramesPerDay();
       UPDATE_DELTA = (long) (86400000 / framesperday);
 
-      isInputSorted = Config.getBooleanProperty(Config.IS_INPUT_SORTED_KEY);      
-
       smooth();
       frameRate(24);
 
@@ -237,13 +233,6 @@ public class GitSwarm extends PApplet implements EndOfFileEvent {
       edges = new HashMap<>();
       people = new HashMap<>();
       history = new LinkedList<>();
-      //If the input is sorted, we only need to store the next few events
-      if (isInputSorted) {
-         eventsQueue = new ArrayBlockingQueue<>(50000);
-      } else {
-         //Otherwise we need to store them all at once in a data structure that will sort them
-         eventsQueue = new PriorityBlockingQueue<>();
-      }
 
       avatarFetcher = getAvatarFetcher(Config.getStringProperty("AvatarFetcher"));
       avatarFetcher.setSize(Config.getPositiveIntProperty("AvatarSize"));
@@ -393,7 +382,7 @@ public class GitSwarm extends PApplet implements EndOfFileEvent {
    private void drawFileNode(FileNode n) {
       if (n.isAlive()) {
          DisplayFile displayFile = Config.getInstance().getDisplayFile();
-         
+
          float currentWidth = 0f;
          if (displayFile.equals(SHARP)) {
             colorMode(RGB);
@@ -548,7 +537,7 @@ public class GitSwarm extends PApplet implements EndOfFileEvent {
       textFont(font);
       textAlign(LEFT, TOP);
       text("Legend:", 3, 3);
-      for (int i = 0; i <    Config.getInstance().getColorAssigner().getTests().size(); i++) {
+      for (int i = 0; i < Config.getInstance().getColorAssigner().getTests().size(); i++) {
          ColorTest t = Config.getInstance().getColorAssigner().getTests().get(i);
          fill(t.getC1().getRGB(), 200);
          text(t.getLabel(), font.getSize(), 3 + ((i + 1) * (font.getSize() + 2)));
@@ -837,14 +826,9 @@ public class GitSwarm extends PApplet implements EndOfFileEvent {
       }
 
       final String fullFilename = filename;
-      Runnable eventLoader = new XMLQueueLoader(fullFilename, eventsQueue, isInputSorted, this, avatarFetcher);
+      Runnable eventLoader = new XMLQueueLoader(fullFilename, eventsQueue, this, avatarFetcher);
 
-      if (isInputSorted) {
-         backgroundExecutor.execute(eventLoader);
-      } else {
-         //we have to load all of the data before we can continue if it isn't sorted
-         eventLoader.run();
-      }
+      backgroundExecutor.execute(eventLoader);
    }
 
    @Override

@@ -14,17 +14,15 @@ public class XMLQueueLoader implements Runnable {
 
    private final String fullFilename;
    private BlockingQueue<FileEvent> queue;
-   boolean isXMLSorted;
    private Set<String> peopleSeen = new TreeSet<>();
    private EndOfFileEvent endOfFileEvent;
    //used to ensure that input is sorted when we're told it is
    private long maximumDateSeenSoFar = 0;
    private final AvatarFetcher avatarFetcher;
 
-   public XMLQueueLoader(String fullFilename, BlockingQueue<FileEvent> queue, boolean isXMLSorted, EndOfFileEvent endOfFileEvent, AvatarFetcher avatarFetcher) {
+   public XMLQueueLoader(String fullFilename, BlockingQueue<FileEvent> queue, EndOfFileEvent endOfFileEvent, AvatarFetcher avatarFetcher) {
       this.fullFilename = fullFilename;
       this.queue = queue;
-      this.isXMLSorted = isXMLSorted;
       this.endOfFileEvent = endOfFileEvent;
       this.avatarFetcher = avatarFetcher;
    }
@@ -49,13 +47,11 @@ public class XMLQueueLoader implements Runnable {
 
                //It's difficult for the user to tell that they're missing events,
                //so we should crash in this case
-               if (isXMLSorted) {
-                  if (eventDate < maximumDateSeenSoFar) {
-                     System.out.println("Input not sorted, you must set IsInputSorted to false in your config file");
-                     System.exit(1);
-                  } else {
-                     maximumDateSeenSoFar = eventDate;
-                  }
+               if (eventDate < maximumDateSeenSoFar) {
+                  System.out.println("Input not sorted, you must set IsInputSorted to false in your config file");
+                  System.exit(1);
+               } else {
+                  maximumDateSeenSoFar = eventDate;
                }
 
                String eventAuthor = atts.getValue("author");
