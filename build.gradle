@@ -35,4 +35,6 @@ dependencies {
   compile 'org.json:json:20160212:sources'  
   compile 'commons-io:commons-io:2.5'
   compile 'commons-io:commons-io:2.5:sources'  
+  compile 'org.eclipse.jgit:org.eclipse.jgit:4.6.0.201612231935-r'
+  compile 'org.eclipse.jgit:org.eclipse.jgit:4.6.0.201612231935-r:sources'
 }

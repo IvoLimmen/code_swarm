@@ -56,12 +56,18 @@ public class GitHubFetcher extends AvatarFetcher {
    @Override
    public String fetchUserImage(String username) {
 
-      JSONObject object = new JSONObject(searchUser(username));
-
+      String json = searchUser(username);
+      if (json == null) {
+         return null;
+      }
+      JSONObject object = new JSONObject(json);
       JSONArray array = object.optJSONArray("items");
+      if (array == null || array.isNull(0)) {
+         return null;
+      }
       JSONObject person = array.getJSONObject(0);
       String avatar = person.optString("avatar_url");
-      
+
       try {
          return getImage(username, new URL(avatar));
       }
@@ -71,7 +77,7 @@ public class GitHubFetcher extends AvatarFetcher {
    }
 
    private String searchUser(String email) {
-      StringWriter stringWriter = new StringWriter(4096);
+      String json = null;
       URI uri;
       try {
          uri = new URI("https://api.github.com/search/users?q=" + email);
@@ -79,9 +85,11 @@ public class GitHubFetcher extends AvatarFetcher {
          int responseCode = httpConn.getResponseCode();
          if (responseCode == HttpURLConnection.HTTP_OK) {
             // opens input stream from the HTTP connection
+            StringWriter stringWriter = new StringWriter(4096);
             try (InputStream inputStream = httpConn.getInputStream()) {
                IOUtils.copy(inputStream, stringWriter, "UTF-8");
             }
+            json = stringWriter.toString();
          }
          httpConn.disconnect();
       }
@@ -89,6 +97,6 @@ public class GitHubFetcher extends AvatarFetcher {
          LOGGER.error("", ex);
       }
 
-      return stringWriter.toString();
+      return json;
    }
 }

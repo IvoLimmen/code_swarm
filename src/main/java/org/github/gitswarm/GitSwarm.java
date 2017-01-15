@@ -34,7 +34,6 @@ import java.util.Map;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -44,6 +43,9 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.github.gitswarm.avatar.GitHubFetcher;
 import org.github.gitswarm.gui.ColorUtil;
 import org.github.gitswarm.gui.MainConfigPanel;
+import org.github.gitswarm.model.Commit;
+import org.github.gitswarm.model.GitHistoryRepository;
+import org.github.gitswarm.model.HistoryRepository;
 import org.github.gitswarm.type.DisplayFile;
 import static org.github.gitswarm.type.DisplayFile.FUZZY;
 import static org.github.gitswarm.type.DisplayFile.JELLY;
@@ -103,7 +105,7 @@ public class GitSwarm extends PApplet implements EndOfFileEvent {
     *
     * @param args : should be the path to the config file
     */
-   static public void main(String args[]) {
+   static public void main(String args[]) {           
       try {
          if (args.length > 0) {
             userConfigFilename = args[0];
@@ -147,7 +149,8 @@ public class GitSwarm extends PApplet implements EndOfFileEvent {
    int PARTICLE_SIZE = 2;
 
    // Data storage
-   BlockingQueue<FileEvent> eventsQueue = new ArrayBlockingQueue<>(50000);
+   HistoryRepository historyRepository;
+   List<Commit> commits = new ArrayList<>();
    boolean showUserName = false;
 
    LinkedList<List<Integer>> history;
@@ -232,12 +235,11 @@ public class GitSwarm extends PApplet implements EndOfFileEvent {
       history = new LinkedList<>();
 
       loadRepEvents(Config.getStringProperty(Config.INPUT_FILE_KEY)); // event formatted (this is the standard)
-      while (!finishedLoading && eventsQueue.isEmpty());
-      if (eventsQueue.isEmpty()) {
+      if (commits.isEmpty()) {
          System.out.println("No events found in repository xml file.");
          return;
       }
-      prevDate = eventsQueue.peek().getDate();
+      prevDate = commits.get(0).getDate();
 
       maxFramesSaved = (int) Math.pow(10, Config.getInstance().getScreenshotFileMask().getValue().replaceAll("[^#]", "").length());
 
@@ -258,17 +260,6 @@ public class GitSwarm extends PApplet implements EndOfFileEvent {
       avatarMask.resize(Config.getPositiveIntProperty("AvatarSize"), Config.getPositiveIntProperty("AvatarSize"));
       // Add translucency (using itself in this case)
       sprite.mask(sprite);
-   }
-
-   @SuppressWarnings("unchecked")
-   private AvatarFetcher getAvatarFetcher(String avatarFetcherName) {
-      try {
-         Class<AvatarFetcher> c = (Class<AvatarFetcher>) Class.forName(avatarFetcherName);
-         return c.getConstructor().newInstance();
-      }
-      catch (Exception e) {
-         throw new RuntimeException(e);
-      }
    }
 
    /**
@@ -335,7 +326,7 @@ public class GitSwarm extends PApplet implements EndOfFileEvent {
       }
 
       // Stop animation when we run out of data
-      if (finishedLoading && eventsQueue.isEmpty()) {
+      if (finishedLoading) {
          // noLoop();
          backgroundExecutor.shutdown();
          try {
@@ -542,7 +533,7 @@ public class GitSwarm extends PApplet implements EndOfFileEvent {
       fill(fontColor, 200);
       text("Nodes: " + nodes.size(), 0, 0);
       text("People: " + people.size(), 0, 10);
-      text("Queue: " + eventsQueue.size(), 0, 20);
+      text("Queue: " + commits.size(), 0, 20);
       text("Last render time: " + lastDrawDuration, 0, 30);
    }
 
@@ -602,6 +593,9 @@ public class GitSwarm extends PApplet implements EndOfFileEvent {
       }
    }
 
+   private int commitIndex = 0;
+   private Commit currentCommit;
+   
    /**
     * Update the particle positions
     */
@@ -611,23 +605,14 @@ public class GitSwarm extends PApplet implements EndOfFileEvent {
       history.add(colorList);
 
       nextDate = new Date(prevDate.getTime() + UPDATE_DELTA);
-      currentEvent = eventsQueue.peek();
-
-      while (currentEvent != null && currentEvent.getDate().before(nextDate)) {
-         if (finishedLoading) {
-            currentEvent = eventsQueue.poll();
-            if (currentEvent == null) {
-               return;
-            }
-         } else {
-            try {
-               currentEvent = eventsQueue.take();
-            }
-            catch (InterruptedException e) {
-               System.out.println("Interrupted while fetching current event from eventsQueue");
-               continue;
-            }
-         }
+      
+      if (commitIndex+1 >= commits.size()) {
+         exit();
+      }
+            
+      currentCommit = commits.get(commitIndex++);
+      
+      for (FileEvent currentEvent : currentCommit.getEvents()) {
 
          FileNode file = findNode(currentEvent.getPath() + currentEvent.getFilename());
          if (file == null) {
@@ -692,14 +677,7 @@ public class GitSwarm extends PApplet implements EndOfFileEvent {
        * e.freshen(); } }
           */
          // prevDate = currentEvent.date;
-         prevNode = file;
-         if (finishedLoading) {
-            currentEvent = eventsQueue.peek();
-         } else {
-            while (eventsQueue.isEmpty());
-            currentEvent = eventsQueue.peek();
-         }
-
+         prevNode = file;       
       }
 
       prevDate = nextDate;
@@ -811,10 +789,7 @@ public class GitSwarm extends PApplet implements EndOfFileEvent {
          }
       }
 
-      final String fullFilename = filename;
-      Runnable eventLoader = new XMLQueueLoader(fullFilename, eventsQueue, this, avatarFetcher);
-
-      backgroundExecutor.execute(eventLoader);
+      this.commits = new GitHistoryRepository("/home/ivo/projects/java/git_swarm/.git").getHistory();
    }
 
    @Override
