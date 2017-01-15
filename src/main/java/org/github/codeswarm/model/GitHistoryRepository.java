@@ -75,7 +75,6 @@ public class GitHistoryRepository implements HistoryRepository {
 
             events.add(new Commit(files, new Date(when)));
             commit.disposeBody();
-            break;
          }
       }
       catch (Exception ex) {
