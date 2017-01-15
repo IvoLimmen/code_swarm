@@ -376,7 +376,7 @@ public class GitSwarm extends PApplet {
          strokeCap(ROUND);
          strokeWeight(currentWidth / 4f);
          // strokeWeight((float)life / 10.0 * (float)PARTICLE_SIZE);
-         line(n.getPosition().x, n.getPosition().y, n.getLastPosition().x, n.getLastPosition().y);        
+         line(n.getPosition().x, n.getPosition().y, n.getLastPosition().x, n.getLastPosition().y);
       }
    }
 
@@ -559,76 +559,79 @@ public class GitSwarm extends PApplet {
          exit();
       }
 
-      currentCommit = commits.get(commitIndex++);
+      currentCommit = commits.get(commitIndex);
 
-      for (FileEvent currentEvent : currentCommit.getEvents()) {
+      if (currentCommit.getDate().before(nextDate)) {
+         commitIndex = commitIndex + 1;
 
-         FileNode file = findNode(currentEvent.getPath() + currentEvent.getFilename());
-         if (file == null) {
-            int dec = Config.getInstance().getFileDecrement().getValue();
-            int life = Config.getInstance().getFileLife().getValue();
-            int highlight = Config.getInstance().getFileHighlight().getValue();
-            int mass = Config.getInstance().getFileMass().getValue();
-            file = new FileNode(currentEvent, life, dec, highlight, mass, Config.getInstance().getColorAssigner().getColor(currentEvent.getPath() + currentEvent.getFilename()), maxTouches);
-            physicsEngine.startLocation(file);
-            physicsEngine.startVelocity(file);
-            colorMode(RGB);
-            nodes.put(currentEvent.getPath() + currentEvent.getFilename(), file);
-         } else {
-            file.freshen();
-         }
+         for (FileEvent currentEvent : currentCommit.getEvents()) {
 
-         // add to histogram
-         colorList.add(file.getNodeHue());
-
-         PersonNode person = findPerson(currentEvent.getAuthor());
-         if (person == null) {
-            int mass = Config.getInstance().getPersonMass().getValue();
-            int dec = Config.getInstance().getPersonDescrement().getValue();
-            int life = Config.getInstance().getPersonLife().getValue();
-            int highlight = Config.getInstance().getPersonHighlight().getValue();
-            person = new PersonNode(currentEvent.getAuthor(), life, dec, highlight, mass, color(0));
-
-            String iconFile = avatarFetcher.fetchUserImage(person.getName());
-            if (iconFile != null) {
-               PImage icon = loadImage(iconFile, "unknown");
-               icon.resize(avatarFetcher.getSize(), avatarFetcher.getSize());
-               icon.mask(avatarMask);
-               person.setIcon(icon);
+            FileNode file = findNode(currentEvent.getPath() + currentEvent.getFilename());
+            if (file == null) {
+               int dec = Config.getInstance().getFileDecrement().getValue();
+               int life = Config.getInstance().getFileLife().getValue();
+               int highlight = Config.getInstance().getFileHighlight().getValue();
+               int mass = Config.getInstance().getFileMass().getValue();
+               file = new FileNode(currentEvent, life, dec, highlight, mass, Config.getInstance().getColorAssigner().getColor(currentEvent.getPath() + currentEvent.getFilename()), maxTouches);
+               physicsEngine.startLocation(file);
+               physicsEngine.startVelocity(file);
+               colorMode(RGB);
+               nodes.put(currentEvent.getPath() + currentEvent.getFilename(), file);
+            } else {
+               file.freshen();
             }
 
-            physicsEngine.startLocation(person);
-            physicsEngine.startVelocity(person);
-            people.put(currentEvent.getAuthor(), person);
-         } else {
-            person.freshen();
-         }
-         colorMode(RGB);
-         person.setFlavor(lerpColor(person.getFlavor(), file.getNodeHue(), 1.0f / person.getColorCount()));
-         person.setColorCount(person.getColorCount() + 1);
+            // add to histogram
+            colorList.add(file.getNodeHue());
 
-         Edge edge = findEdge(file, person);
-         if (edge == null) {
-            float length = Config.getInstance().getEdgeLength().getValue();
-            int dec = Config.getInstance().getEdgeDecrement().getValue();
-            int life = Config.getInstance().getEdgeLife().getValue();
-            edge = new Edge(file, person, life, dec, length);
-            edges.put(new MutablePair<>(file, person), edge);
-         } else {
-            edge.freshen();
-         }
+            PersonNode person = findPerson(currentEvent.getAuthor());
+            if (person == null) {
+               int mass = Config.getInstance().getPersonMass().getValue();
+               int dec = Config.getInstance().getPersonDescrement().getValue();
+               int life = Config.getInstance().getPersonLife().getValue();
+               int highlight = Config.getInstance().getPersonHighlight().getValue();
+               person = new PersonNode(currentEvent.getAuthor(), life, dec, highlight, mass, color(0));
 
-         file.setEditor(person);
+               String iconFile = avatarFetcher.fetchUserImage(person.getName());
+               if (iconFile != null) {
+                  PImage icon = loadImage(iconFile, "unknown");
+                  icon.resize(avatarFetcher.getSize(), avatarFetcher.getSize());
+                  icon.mask(avatarMask);
+                  person.setIcon(icon);
+               }
 
-         /*
+               physicsEngine.startLocation(person);
+               physicsEngine.startVelocity(person);
+               people.put(currentEvent.getAuthor(), person);
+            } else {
+               person.freshen();
+            }
+            colorMode(RGB);
+            person.setFlavor(lerpColor(person.getFlavor(), file.getNodeHue(), 1.0f / person.getColorCount()));
+            person.setColorCount(person.getColorCount() + 1);
+
+            Edge edge = findEdge(file, person);
+            if (edge == null) {
+               float length = Config.getInstance().getEdgeLength().getValue();
+               int dec = Config.getInstance().getEdgeDecrement().getValue();
+               int life = Config.getInstance().getEdgeLife().getValue();
+               edge = new Edge(file, person, life, dec, length);
+               edges.put(new MutablePair<>(file, person), edge);
+            } else {
+               edge.freshen();
+            }
+
+            file.setEditor(person);
+
+            /*
        * if ( currentEvent.date.equals( prevDate ) ) { Edge e = findEdge( n, prevNode
        * ); if ( e == null ) { e = new Edge( n, prevNode ); edges.add( e ); } else {
        * e.freshen(); } }
-          */
-         // prevDate = currentEvent.date;
-         prevNode = file;
+             */
+            // prevDate = currentEvent.date;
+            prevNode = file;
+         }
       }
-
       prevDate = nextDate;
 
       // sort colorbins
