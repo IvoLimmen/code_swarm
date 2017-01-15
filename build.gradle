@@ -3,8 +3,8 @@ apply plugin: 'java'
 task run(type: JavaExec) {
   classpath = sourceSets.main.runtimeClasspath
 
-  main = 'org.github.codeswarm.CodeSwarm'
-
+//  main = 'org.github.codeswarm.CodeSwarm'
+main = 'org.github.codeswarm.model.GitHistoryRepository'
   // arguments to pass to the application
   args = ['data/sample.config']
 }
