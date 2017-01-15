@@ -21,7 +21,7 @@ import org.github.gitswarm.model.Edge;
 import org.github.gitswarm.model.PersonNode;
 import org.github.gitswarm.model.FileNode;
 import java.io.File;
-import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -147,7 +147,7 @@ public class GitSwarm extends PApplet {
    private final PhysicsEngine physicsEngine = new PhysicsEngineOrderly();
 
    // Formats the date string nicely
-   DateFormat formatter = DateFormat.getDateInstance();
+   SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
 
    private long lastDrawDuration = 0;
    private int maxFramesSaved;
@@ -376,18 +376,7 @@ public class GitSwarm extends PApplet {
          strokeCap(ROUND);
          strokeWeight(currentWidth / 4f);
          // strokeWeight((float)life / 10.0 * (float)PARTICLE_SIZE);
-         line(n.getPosition().x, n.getPosition().y, n.getLastPosition().x, n.getLastPosition().y);
-         /**
-          * TODO : this would become interesting on some special event, or for special materials colorMode( RGB ); fill(
-          * 0, life ); textAlign( CENTER, CENTER ); text( name, x, y ); Example below:
-          */
-         if (Config.getInstance().getShowPopular().getValue()) {
-            textAlign(CENTER, CENTER);
-            fill(fontColor, 200);
-            if (n.qualifies()) {
-               text(n.getTouches(), n.getPosition().x, n.getPosition().y - (8 + (int) Math.sqrt(n.getTouches())));
-            }
-         }
+         line(n.getPosition().x, n.getPosition().y, n.getLastPosition().x, n.getLastPosition().y);        
       }
    }
 
