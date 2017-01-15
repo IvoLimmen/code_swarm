@@ -19,10 +19,6 @@ package org.github.gitswarm;
    along with code_swarm.  If not, see <http://www.gnu.org/licenses/>.
  */
 import java.awt.Color;
-import java.io.*;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Properties;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -36,167 +32,6 @@ public final class Config {
 
    private final static Config CURRENT = new Config();
 
-   /**
-    * The input file
-    */
-   public static final String INPUT_FILE_KEY = "InputFile";
-   public static final String COLOR_ASSIGN_KEY = "ColorAssign";
-   /**
-    * Path to sprite file for nodes
-    */
-   public static final String SPRITE_FILE_KEY = "ParticleSpriteFile";   
-   /**
-    * Boolean value, controls using the OpenGL library (experimental)
-    */
-   public static final String USE_OPEN_GL = "UseOpenGL";
-   /**
-    * Boolean value, controls showing debug info
-    */
-   public static final String SHOW_DEBUG = "ShowDebug";
-
-   public static Config getInstance() {
-      return CURRENT;
-   }
-
-   public static void init(String configFileName) throws IOException {
-      CURRENT.initPropStack();
-      addPropertiesLayer(configFileName);
-   }
-
-   public static void init(Iterable<String> configFileNames) throws IOException {
-      CURRENT.initPropStack();
-      for (String filename : configFileNames) {
-         if (new File(filename).exists()) {
-            addPropertiesLayer(filename);
-         }
-      }
-   }
-
-   public static void addPropertiesLayer(Properties props) {
-      CURRENT.propStack.add(0, props);
-   }
-
-   public static void addPropertiesLayer(String filename) throws IOException {
-      Properties props = new Properties();
-      props.load(new FileInputStream(filename));
-      addPropertiesLayer(props);
-   }
-
-   /**
-    *
-    * @param key
-    * @return Returns the first key found in the stack of config files.
-    */
-   public static String getStringProperty(String key) {
-      for (Properties props : CURRENT.propStack) {
-         if (props.containsKey(key)) {
-            return props.getProperty(key);
-         }
-      }
-      return null;
-   }
-
-   public static Color getColorProperty(String key) {
-      return stringToColor(getStringProperty(key));
-   }
-
-   /**
-    * Specify the path to the Xml-input file containing the repository entries.<br />
-    * Further versions should not use input-file but an abstract view of the repository-entries.
-    *
-    * @see EventList
-    * @param filePath the path to the Xml-input file.
-    */
-   public static void setInputFile(String filePath) {
-      CURRENT.propStack.get(0).setProperty(INPUT_FILE_KEY, filePath);
-   }
-
-   public static boolean getBooleanProperty(String key) {
-      return Boolean.valueOf(getStringProperty(key));
-   }
-
-   /**
-    *
-    * @param key
-    * @return value of property if found, 0 if not found.
-    */
-   public static int getIntProperty(String key) {
-      return Integer.parseInt(getStringProperty(key));
-   }
-
-   /**
-    *
-    * @param key
-    * @param defValue
-    * @return value of property if found.
-    */
-   public static int getPositiveIntProperty(String key) {
-      int value = getIntProperty(key);
-      if (value < 0) {
-         throw new RuntimeException(key + " must be >0, found " + value);
-      }
-      return value;
-   }
-
-   /**
-    *
-    * @param key
-    * @param defValue
-    * @return defValue if not found or found value isn't negative, Value of property if found.
-    */
-   public static int getNegativeIntProperty(String key) {
-      int value = getIntProperty(key);
-      if (value > 0) {
-         throw new RuntimeException(key + " must be >0, found " + value);
-      }
-      return value;
-   }
-
-   /**
-    *
-    * @param key
-    * @return value of property if found, 0 if not found.
-    */
-   public static long getLongProperty(String key) {
-      return Long.parseLong(getStringProperty(key));
-   }
-
-   /**
-    *
-    * @param key
-    * @return value of property if found, 0 if not found.
-    */
-   public static float getFloatProperty(String key) {
-      return Float.parseFloat(getStringProperty(key));
-   }
-
-   /**
-    *
-    * @param index
-    * @return String containing the regex and rgb values used to colorcode nodes, null if not found
-    */
-   public static String getColorAssignProperty(Integer index) {
-      return getStringProperty(COLOR_ASSIGN_KEY + index.toString());
-   }
-
-   /**
-    *
-    * @param str
-    * @return Color object constructed from values in str
-    */
-   protected static Color stringToColor(String str) {
-      // assume format is "R,G,B"
-      String[] tokens = str.split(",");
-      int[] values = new int[3];
-      for (int i = 0; i < 3; i++) {
-         values[i] = Integer.parseInt(tokens[i]);
-      }
-      return new Color(values[0], values[1], values[2]);
-   }
-
-   public static double getDoubleProperty(String key) {
-      return Double.parseDouble(getStringProperty(key));
-   }
    private String boldFont;
    private String font;
    private int framesPerDay = 6;
@@ -232,7 +67,9 @@ public final class Config {
    private final SimpleIntegerProperty edgeDecrement = new SimpleIntegerProperty(-2);
    private final SimpleIntegerProperty edgeLength = new SimpleIntegerProperty(25);
 
-   private List<Properties> propStack;
+   public static Config getInstance() {
+      return CURRENT;
+   }
 
    private Config() {
       this.colorAssigner.addRule("Misc", ".*", Color.GRAY);
@@ -388,9 +225,5 @@ public final class Config {
 
    public void setWidth(int width) {
       this.width.set(width);
-   }
-
-   protected void initPropStack() {
-      CURRENT.propStack = new LinkedList<>();
    }
 }
