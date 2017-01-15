@@ -3,7 +3,7 @@ apply plugin: 'java'
 task run(type: JavaExec) {
   classpath = sourceSets.main.runtimeClasspath
 
-  main = 'org.github.gitswarm.GitSwarm'
+  main = 'org.github.gitswarm.gui.MainConfigPanel'
 
   // arguments to pass to the application
   args = ['data/sample.config']

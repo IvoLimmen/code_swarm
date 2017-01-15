@@ -45,7 +45,8 @@ import org.github.gitswarm.type.DisplayFile;
 
 public class MainConfigPanel extends Application {
 
-   public static void start() {
+   public static void main(String[] args) {
+      System.out.println("MainConfigPanel.main");
       launch(new String[]{});
    }
 

@@ -21,10 +21,8 @@ import org.github.gitswarm.model.Edge;
 import org.github.gitswarm.model.PersonNode;
 import org.github.gitswarm.model.FileNode;
 import java.io.File;
-import java.io.IOException;
 import java.text.DateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -42,7 +40,6 @@ import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.github.gitswarm.avatar.GitHubFetcher;
 import org.github.gitswarm.gui.ColorUtil;
-import org.github.gitswarm.gui.MainConfigPanel;
 import org.github.gitswarm.model.Commit;
 import org.github.gitswarm.model.GitHistoryRepository;
 import org.github.gitswarm.model.HistoryRepository;
@@ -54,7 +51,7 @@ import processing.core.PApplet;
 import processing.core.PFont;
 import processing.core.PImage;
 
-public class GitSwarm extends PApplet implements EndOfFileEvent {
+public class GitSwarm extends PApplet {
 
    /**
     * @remark needed for any serializable class
@@ -65,11 +62,9 @@ public class GitSwarm extends PApplet implements EndOfFileEvent {
    private static Map<Pair<FileNode, PersonNode>, Edge> edges;
    private static Map<String, PersonNode> people;
    // Liveness cache
-   static List<PersonNode> livingPeople = new ArrayList<>();
-   static List<Edge> livingEdges = new ArrayList<>();
-   static List<FileNode> livingNodes = new ArrayList<>();
-   //kinda a hack that these two are static
-   protected static String userConfigFilename = null;
+   private static List<PersonNode> livingPeople = new ArrayList<>();
+   private static List<Edge> livingEdges = new ArrayList<>();
+   private static List<FileNode> livingNodes = new ArrayList<>();
 
    /**
     * @return list of people whose life is > 0
@@ -100,38 +95,8 @@ public class GitSwarm extends PApplet implements EndOfFileEvent {
       return livingThings;
    }
 
-   /**
-    * code_swarm Entry point.
-    *
-    * @param args : should be the path to the config file
-    */
-   static public void main(String args[]) {           
-      try {
-         if (args.length > 0) {
-            userConfigFilename = args[0];
-            List<String> configFileStack = Arrays.asList(new String[]{"defaults/GitSwarm.config",
-               "defaults/user.config", userConfigFilename});
-            Config.init(configFileStack);
-            MainConfigPanel.start();
-         } else {
-            // FIXME: Temporary for testing in IDE
-            userConfigFilename = "data/sample.config";
-            List<String> configFileStack = Arrays.asList(new String[]{"defaults/GitSwarm.config",
-               "defaults/user.config", userConfigFilename});
-            Config.init(configFileStack);
-            MainConfigPanel.start();
-
-//            System.err.println("Specify a config file.");
-//            System.exit(2);
-         }
-      }
-      catch (IOException e) {
-         System.err.println("Failed due to exception: " + e.getMessage());
-         System.exit(2);
-      }
-   }
-
    static public void boot() {
+      System.out.println("GitSwarm.boot");
       PApplet.main(new String[]{"org.github.gitswarm.GitSwarm"});
    }
 
@@ -199,11 +164,7 @@ public class GitSwarm extends PApplet implements EndOfFileEvent {
       this.width = Config.getInstance().getWidth().getValue();
       this.height = Config.getInstance().getHeight().getValue();
 
-      if (Config.getBooleanProperty(Config.USE_OPEN_GL)) {
-         size(width, height, FX2D);
-      } else {
-         size(width, height);
-      }
+      size(width, height);
    }
 
    /**
@@ -217,7 +178,7 @@ public class GitSwarm extends PApplet implements EndOfFileEvent {
       int maxBackgroundThreads = 4;
       backgroundExecutor = new ThreadPoolExecutor(1, maxBackgroundThreads, Long.MAX_VALUE, TimeUnit.NANOSECONDS, new ArrayBlockingQueue<>(4 * maxBackgroundThreads), new ThreadPoolExecutor.CallerRunsPolicy());
 
-      showDebug = Config.getBooleanProperty(Config.SHOW_DEBUG);
+      showDebug = false;
 
       background = ColorUtil.toAwtColor(Config.getInstance().getBackground().getValue()).getRGB();
       fontColor = ColorUtil.toAwtColor(Config.getInstance().getFontColor().getValue()).getRGB();
@@ -234,7 +195,7 @@ public class GitSwarm extends PApplet implements EndOfFileEvent {
       people = new HashMap<>();
       history = new LinkedList<>();
 
-      loadRepEvents(Config.getStringProperty(Config.INPUT_FILE_KEY)); // event formatted (this is the standard)
+      loadRepEvents();
       if (commits.isEmpty()) {
          System.out.println("No events found in repository xml file.");
          return;
@@ -253,11 +214,10 @@ public class GitSwarm extends PApplet implements EndOfFileEvent {
 
       textFont(font);
 
-      String SPRITE_FILE = Config.getStringProperty(Config.SPRITE_FILE_KEY);
       // Create the file particle image
-      sprite = loadImage(SPRITE_FILE);
+      sprite = loadImage("src/main/resources/particle.png");
       avatarMask = loadImage(MASK_FILE);
-      avatarMask.resize(Config.getPositiveIntProperty("AvatarSize"), Config.getPositiveIntProperty("AvatarSize"));
+      avatarMask.resize(40, 40);
       // Add translucency (using itself in this case)
       sprite.mask(sprite);
    }
@@ -595,7 +555,7 @@ public class GitSwarm extends PApplet implements EndOfFileEvent {
 
    private int commitIndex = 0;
    private Commit currentCommit;
-   
+
    /**
     * Update the particle positions
     */
@@ -605,13 +565,13 @@ public class GitSwarm extends PApplet implements EndOfFileEvent {
       history.add(colorList);
 
       nextDate = new Date(prevDate.getTime() + UPDATE_DELTA);
-      
-      if (commitIndex+1 >= commits.size()) {
+
+      if (commitIndex + 1 >= commits.size()) {
          exit();
       }
-            
+
       currentCommit = commits.get(commitIndex++);
-      
+
       for (FileEvent currentEvent : currentCommit.getEvents()) {
 
          FileNode file = findNode(currentEvent.getPath() + currentEvent.getFilename());
@@ -677,7 +637,7 @@ public class GitSwarm extends PApplet implements EndOfFileEvent {
        * e.freshen(); } }
           */
          // prevDate = currentEvent.date;
-         prevNode = file;       
+         prevNode = file;
       }
 
       prevDate = nextDate;
@@ -780,20 +740,7 @@ public class GitSwarm extends PApplet implements EndOfFileEvent {
     *
     * @param filename
     */
-   public void loadRepEvents(String filename) {
-      if (userConfigFilename != null) {
-         String parentPath = new File(userConfigFilename).getParentFile().getAbsolutePath();
-         File fileInConfigDir = new File(parentPath, filename);
-         if (fileInConfigDir.exists()) {
-            filename = fileInConfigDir.getAbsolutePath();
-         }
-      }
-
+   public void loadRepEvents() {
       this.commits = new GitHistoryRepository("/home/ivo/projects/java/git_swarm/.git").getHistory();
-   }
-
-   @Override
-   public void endOfFile() {
-      this.finishedLoading = true;
    }
 }
