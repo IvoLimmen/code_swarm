@@ -16,7 +16,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ColorPicker;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -58,9 +57,9 @@ public class MainConfigPanel extends Application {
 
    private ColorPicker backgroundCp;
 
-   private ComboBox<String> fontTypeCb;
+   private EnhancedChoiceBox fontTypeCb;
 
-   private ComboBox<String> boldFontTypeCb;
+   private EnhancedChoiceBox boldFontTypeCb;
 
    private final ObservableList<ColorAssignerProperties> colorList = new ObservableSequentialListWrapper<>(new ArrayList<>());
 
@@ -70,8 +69,8 @@ public class MainConfigPanel extends Application {
 
    private final static String[] FONT_DEFAULTS = new String[]{"SansSerif", "Arial"};
 
-   private Stage primaryStage;      
-       
+   private Stage primaryStage;
+
    @Override
    public void start(Stage primaryStage) throws Exception {
 
@@ -81,9 +80,9 @@ public class MainConfigPanel extends Application {
       directoryChooser.setTitle("Select GIT repository for visualization");
       directoryChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
       File targetDirectory = directoryChooser.showDialog(primaryStage);
-            
-      Config.getInstance().setGitDirectory(new File(targetDirectory, ".git").getAbsolutePath());      
-      
+
+      Config.getInstance().setGitDirectory(new File(targetDirectory, ".git").getAbsolutePath());
+
       this.editDialog = new EditDialog(primaryStage);
       //primaryStage.getIcons().add(new Image(Main.class.getResourceAsStream("/1f4d1.png")));
       primaryStage.setTitle("Code Swarm Configuration");
@@ -98,8 +97,12 @@ public class MainConfigPanel extends Application {
          this.colorList.add(new ColorAssignerProperties(ct));
       });
 
-      this.fontList.addAll(Font.getFontNames());
-
+      Font.getFontNames().forEach(f -> {
+         if (!this.fontList.contains(f)) {
+            this.fontList.add(f);
+         }
+      });
+      
       // make a logical default
       Arrays.asList(FONT_DEFAULTS).forEach((font) -> {
          if (this.fontList.contains(font)) {
@@ -136,7 +139,7 @@ public class MainConfigPanel extends Application {
    private Tab tabGeneral() {
       Tab tab = createTab("General");
       GridPane gridPane = (GridPane) tab.getContent();
-      
+
       Label screenSizeLbl = new Label("Screen size");
       GridPane.setHalignment(screenSizeLbl, HPos.RIGHT);
       gridPane.add(screenSizeLbl, 0, 1);
@@ -243,12 +246,12 @@ public class MainConfigPanel extends Application {
       Label fileMassLbl = new Label("Mass");
       GridPane.setHalignment(fileMassLbl, HPos.RIGHT);
       gridPane.add(fileMassLbl, 0, 2);
-      
+
       IntegerField fileMassTf = new IntegerField();
       fileMassTf.textProperty().bindBidirectional(Config.getInstance().getFileMass(), new NumberStringConverter());
       GridPane.setHalignment(fileMassTf, HPos.LEFT);
       gridPane.add(fileMassTf, 1, 2);
-      
+
       Label fileLifeLbl = new Label("Life");
       GridPane.setHalignment(fileLifeLbl, HPos.RIGHT);
       gridPane.add(fileLifeLbl, 0, 3);
@@ -257,7 +260,7 @@ public class MainConfigPanel extends Application {
       fileLife.textProperty().bindBidirectional(Config.getInstance().getFileLife(), new NumberStringConverter());
       GridPane.setHalignment(fileLife, HPos.LEFT);
       gridPane.add(fileLife, 1, 3);
-      
+
       Label fileDecLbl = new Label("Decrement");
       GridPane.setHalignment(fileDecLbl, HPos.RIGHT);
       gridPane.add(fileDecLbl, 0, 4);
@@ -275,7 +278,7 @@ public class MainConfigPanel extends Application {
       fileHighlight.textProperty().bindBidirectional(Config.getInstance().getFileHighlight(), new NumberStringConverter());
       GridPane.setHalignment(fileHighlight, HPos.LEFT);
       gridPane.add(fileHighlight, 1, 5);
-      
+
       return tab;
    }
 
@@ -296,12 +299,12 @@ public class MainConfigPanel extends Application {
       Label personMassLbl = new Label("Mass");
       GridPane.setHalignment(personMassLbl, HPos.RIGHT);
       gridPane.add(personMassLbl, 0, 2);
-      
+
       IntegerField personMassTf = new IntegerField();
       personMassTf.textProperty().bindBidirectional(Config.getInstance().getPersonMass(), new NumberStringConverter());
       GridPane.setHalignment(personMassTf, HPos.LEFT);
       gridPane.add(personMassTf, 1, 2);
-      
+
       Label personLifeLbl = new Label("Life");
       GridPane.setHalignment(personLifeLbl, HPos.RIGHT);
       gridPane.add(personLifeLbl, 0, 3);
@@ -310,7 +313,7 @@ public class MainConfigPanel extends Application {
       personLife.textProperty().bindBidirectional(Config.getInstance().getPersonLife(), new NumberStringConverter());
       GridPane.setHalignment(personLife, HPos.LEFT);
       gridPane.add(personLife, 1, 3);
-      
+
       Label personDecLbl = new Label("Decrement");
       GridPane.setHalignment(personDecLbl, HPos.RIGHT);
       gridPane.add(personDecLbl, 0, 4);
@@ -328,14 +331,14 @@ public class MainConfigPanel extends Application {
       personHighlight.textProperty().bindBidirectional(Config.getInstance().getPersonHighlight(), new NumberStringConverter());
       GridPane.setHalignment(personHighlight, HPos.LEFT);
       gridPane.add(personHighlight, 1, 5);
-      
+
       return tab;
    }
 
    private Tab tabEdge() {
       Tab tab = createTab("Edge");
       GridPane gridPane = (GridPane) tab.getContent();
-      
+
       Label edgeLifeLbl = new Label("Life");
       GridPane.setHalignment(edgeLifeLbl, HPos.RIGHT);
       gridPane.add(edgeLifeLbl, 0, 1);
@@ -344,7 +347,7 @@ public class MainConfigPanel extends Application {
       edgeLife.textProperty().bindBidirectional(Config.getInstance().getEdgeLife(), new NumberStringConverter());
       GridPane.setHalignment(edgeLife, HPos.LEFT);
       gridPane.add(edgeLife, 1, 1);
-      
+
       Label edgeDecLbl = new Label("Decrement");
       GridPane.setHalignment(edgeDecLbl, HPos.RIGHT);
       gridPane.add(edgeDecLbl, 0, 2);
@@ -362,10 +365,10 @@ public class MainConfigPanel extends Application {
       edgeHighlight.textProperty().bindBidirectional(Config.getInstance().getEdgeLength(), new NumberStringConverter());
       GridPane.setHalignment(edgeHighlight, HPos.LEFT);
       gridPane.add(edgeHighlight, 1, 3);
-      
+
       return tab;
    }
-   
+
    private Tab tabColor() {
       Tab tab = createTab("Color");
       GridPane gridPane = (GridPane) tab.getContent();
@@ -383,9 +386,9 @@ public class MainConfigPanel extends Application {
       GridPane.setHalignment(fontTypeLbl, HPos.RIGHT);
       gridPane.add(fontTypeLbl, 0, 2);
 
-      this.fontTypeCb = new ComboBox<>();
+      this.fontTypeCb = new EnhancedChoiceBox();
       fontTypeCb.setItems(this.fontList);
-      fontTypeCb.getSelectionModel().select(Config.getInstance().getFont());
+      fontTypeCb.getSelectionModel().select(Config.getInstance().getFont());      
       fontTypeCb.setOnAction((event) -> {
          Config.getInstance().setFont(fontTypeCb.getSelectionModel().getSelectedItem());
       });
@@ -414,7 +417,7 @@ public class MainConfigPanel extends Application {
       GridPane.setHalignment(boldFontTypeLbl, HPos.RIGHT);
       gridPane.add(boldFontTypeLbl, 0, 5);
 
-      this.boldFontTypeCb = new ComboBox<>();
+      this.boldFontTypeCb = new EnhancedChoiceBox();
       boldFontTypeCb.setItems(this.fontList);
       boldFontTypeCb.getSelectionModel().select(Config.getInstance().getBoldFont());
       boldFontTypeCb.setOnAction((event) -> {
@@ -446,7 +449,7 @@ public class MainConfigPanel extends Application {
       gridPane.setHgap(5d);
 
       ColumnConstraints column1 = new ColumnConstraints(150);
-      ColumnConstraints column2 = new ColumnConstraints(50, 75, 150);
+      ColumnConstraints column2 = new ColumnConstraints(50, 75, 200);
       column2.setHgrow(Priority.ALWAYS);
       gridPane.getColumnConstraints().addAll(column1, column2);
       tab.setContent(gridPane);
