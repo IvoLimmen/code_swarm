@@ -32,9 +32,14 @@ public final class Config {
 
    private final static Config CURRENT = new Config();
 
+   public static Config getInstance() {
+      return CURRENT;
+   }
+
    private String boldFont;
    private String font;
    private int framesPerDay = 6;
+   private String gitDirectory;
    private final ColorAssigner colorAssigner = new ColorAssigner();
 
    private DisplayFile displayFile = DisplayFile.FUZZY;
@@ -67,12 +72,16 @@ public final class Config {
    private final SimpleIntegerProperty edgeDecrement = new SimpleIntegerProperty(-2);
    private final SimpleIntegerProperty edgeLength = new SimpleIntegerProperty(25);
 
-   public static Config getInstance() {
-      return CURRENT;
-   }
-
    private Config() {
       this.colorAssigner.addRule("Misc", ".*", Color.GRAY);
+   }
+
+   public String getGitDirectory() {
+      return gitDirectory;
+   }
+
+   public void setGitDirectory(String gitDirectory) {
+      this.gitDirectory = gitDirectory;
    }
 
    public SimpleIntegerProperty getPersonDescrement() {

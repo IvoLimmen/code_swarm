@@ -733,6 +733,6 @@ public class GitSwarm extends PApplet {
     * @param filename
     */
    public void loadRepEvents() {
-      this.commits = new GitHistoryRepository("/home/ivo/projects/java/git_swarm/.git").getHistory();
+      this.commits = new GitHistoryRepository(Config.getInstance().getGitDirectory()).getHistory();
    }
 }

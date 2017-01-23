@@ -1,6 +1,7 @@
 package org.github.gitswarm.gui;
 
 import com.sun.javafx.collections.ObservableSequentialListWrapper;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import javafx.application.Application;
@@ -35,6 +36,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import javafx.util.converter.NumberStringConverter;
@@ -68,11 +70,20 @@ public class MainConfigPanel extends Application {
 
    private final static String[] FONT_DEFAULTS = new String[]{"SansSerif", "Arial"};
 
+   private Stage primaryStage;      
+       
    @Override
    public void start(Stage primaryStage) throws Exception {
 
       initialize();
 
+      DirectoryChooser directoryChooser = new DirectoryChooser();
+      directoryChooser.setTitle("Select GIT repository for visualization");
+      directoryChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
+      File targetDirectory = directoryChooser.showDialog(primaryStage);
+            
+      Config.getInstance().setGitDirectory(new File(targetDirectory, ".git").getAbsolutePath());      
+      
       this.editDialog = new EditDialog(primaryStage);
       //primaryStage.getIcons().add(new Image(Main.class.getResourceAsStream("/1f4d1.png")));
       primaryStage.setTitle("Code Swarm Configuration");
@@ -125,7 +136,7 @@ public class MainConfigPanel extends Application {
    private Tab tabGeneral() {
       Tab tab = createTab("General");
       GridPane gridPane = (GridPane) tab.getContent();
-
+      
       Label screenSizeLbl = new Label("Screen size");
       GridPane.setHalignment(screenSizeLbl, HPos.RIGHT);
       gridPane.add(screenSizeLbl, 0, 1);
