@@ -5,18 +5,12 @@ import java.net.URL;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
-public class GravatarFetcher extends AvatarFetcher {
+public class GravatarFetcher extends AbstractAvatarFetcher {
 
    private final Pattern emailPattern = Pattern.compile("<(.*?@.*?\\..*?)>");
 
-   private String gravatarFallback;
-
    public GravatarFetcher() {
       super();
-   }
-
-   public void setGravatarFallback(String gravatarFallback) {
-      this.gravatarFallback = gravatarFallback;
    }
 
    @Override
@@ -24,7 +18,7 @@ public class GravatarFetcher extends AvatarFetcher {
       String email = getEmail(username);
       String hash = md5Hex(email);
       try {
-         return getImage(hash, new URL("http://www.gravatar.com/avatar/" + hash + "?d=" + gravatarFallback + "&s=" + size));
+         return getImage(hash, new URL("http://www.gravatar.com/avatar/" + hash + "?d=identicon&s=" + size));
       }
       catch (MalformedURLException e) {
          return null;

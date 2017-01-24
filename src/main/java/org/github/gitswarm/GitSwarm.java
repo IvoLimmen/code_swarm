@@ -15,7 +15,6 @@ package org.github.gitswarm;
  * You should have received a copy of the GNU General Public License along with code_swarm. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-import org.github.gitswarm.avatar.AvatarFetcher;
 import org.github.gitswarm.model.Drawable;
 import org.github.gitswarm.model.Edge;
 import org.github.gitswarm.model.PersonNode;
@@ -38,7 +37,10 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+import org.github.gitswarm.avatar.AvatarFetcher;
+import org.github.gitswarm.avatar.AvatarFetcherChainer;
 import org.github.gitswarm.avatar.GitHubFetcher;
+import org.github.gitswarm.avatar.GravatarFetcher;
 import org.github.gitswarm.gui.ColorUtil;
 import org.github.gitswarm.model.Commit;
 import org.github.gitswarm.model.GitHistoryRepository;
@@ -108,8 +110,6 @@ public class GitSwarm extends PApplet {
 
    // User-defined variables
    long UPDATE_DELTA = -1;
-   String SPRITE_FILE = "particle.png";
-   String MASK_FILE = "src/main/resources/mask.png";
    int background;
    int PARTICLE_SIZE = 2;
 
@@ -154,7 +154,7 @@ public class GitSwarm extends PApplet {
 
    protected ExecutorService backgroundExecutor;
 
-   public AvatarFetcher avatarFetcher = new GitHubFetcher();
+   public AvatarFetcher avatarFetcher = new AvatarFetcherChainer(new GitHubFetcher(), new GravatarFetcher());
 
    private int fontColor;
 
@@ -196,10 +196,11 @@ public class GitSwarm extends PApplet {
       history = new LinkedList<>();
 
       loadRepEvents();
+      
       if (commits.isEmpty()) {
-         System.out.println("No events found in repository xml file.");
          return;
       }
+      
       prevDate = commits.get(0).getDate();
 
       maxFramesSaved = (int) Math.pow(10, Config.getInstance().getScreenshotFileMask().getValue().replaceAll("[^#]", "").length());
@@ -216,7 +217,7 @@ public class GitSwarm extends PApplet {
 
       // Create the file particle image
       sprite = loadImage("src/main/resources/particle.png");
-      avatarMask = loadImage(MASK_FILE);
+      avatarMask = loadImage("src/main/resources/mask.png");
       avatarMask.resize(40, 40);
       // Add translucency (using itself in this case)
       sprite.mask(sprite);
@@ -400,7 +401,7 @@ public class GitSwarm extends PApplet {
          if (p.getIcon() != null) {
             colorMode(RGB);
             tint(255, 255, 255, max(0, p.getLife() - 80));
-            image(p.getIcon(), p.getPosition().x - (avatarFetcher.getSize() / 2), p.getPosition().y - (avatarFetcher.size - (showUserName ? 5 : 15)));
+            image(p.getIcon(), p.getPosition().x - (avatarFetcher.getSize() / 2), p.getPosition().y - (avatarFetcher.getSize() - (showUserName ? 5 : 15)));
          }
       }
    }
@@ -564,19 +565,19 @@ public class GitSwarm extends PApplet {
       if (currentCommit.getDate().before(nextDate)) {
          commitIndex = commitIndex + 1;
 
-         for (FileEvent currentEvent : currentCommit.getEvents()) {
+         for (FileEvent event : currentCommit.getEvents()) {
 
-            FileNode file = findNode(currentEvent.getPath() + currentEvent.getFilename());
+            FileNode file = findNode(event.getPath() + event.getFilename());
             if (file == null) {
                int dec = Config.getInstance().getFileDecrement().getValue();
                int life = Config.getInstance().getFileLife().getValue();
                int highlight = Config.getInstance().getFileHighlight().getValue();
                int mass = Config.getInstance().getFileMass().getValue();
-               file = new FileNode(currentEvent, life, dec, highlight, mass, Config.getInstance().getColorAssigner().getColor(currentEvent.getPath() + currentEvent.getFilename()), maxTouches);
+               file = new FileNode(event, life, dec, highlight, mass, Config.getInstance().getColorAssigner().getColor(event.getPath() + event.getFilename()), maxTouches);
                physicsEngine.startLocation(file);
                physicsEngine.startVelocity(file);
                colorMode(RGB);
-               nodes.put(currentEvent.getPath() + currentEvent.getFilename(), file);
+               nodes.put(event.getPath() + event.getFilename(), file);
             } else {
                file.freshen();
             }
@@ -584,13 +585,13 @@ public class GitSwarm extends PApplet {
             // add to histogram
             colorList.add(file.getNodeHue());
 
-            PersonNode person = findPerson(currentEvent.getAuthor());
+            PersonNode person = findPerson(event.getAuthor());
             if (person == null) {
                int mass = Config.getInstance().getPersonMass().getValue();
                int dec = Config.getInstance().getPersonDescrement().getValue();
                int life = Config.getInstance().getPersonLife().getValue();
                int highlight = Config.getInstance().getPersonHighlight().getValue();
-               person = new PersonNode(currentEvent.getAuthor(), life, dec, highlight, mass, color(0));
+               person = new PersonNode(event.getAuthor(), life, dec, highlight, mass, color(0));
 
                String iconFile = avatarFetcher.fetchUserImage(person.getName());
                if (iconFile != null) {
@@ -602,7 +603,7 @@ public class GitSwarm extends PApplet {
 
                physicsEngine.startLocation(person);
                physicsEngine.startVelocity(person);
-               people.put(currentEvent.getAuthor(), person);
+               people.put(event.getAuthor(), person);
             } else {
                person.freshen();
             }
@@ -622,13 +623,6 @@ public class GitSwarm extends PApplet {
             }
 
             file.setEditor(person);
-
-            /*
-       * if ( currentEvent.date.equals( prevDate ) ) { Edge e = findEdge( n, prevNode
-       * ); if ( e == null ) { e = new Edge( n, prevNode ); edges.add( e ); } else {
-       * e.freshen(); } }
-             */
-            // prevDate = currentEvent.date;
             prevNode = file;
          }
       }
@@ -645,13 +639,6 @@ public class GitSwarm extends PApplet {
       // Init frame:
       physicsEngine.initializeFrame();
 
-      /*
-	We cache liveness information at the beginning on the update cycle.
-
-	Have have to do it this way as the physics engine onRelax methods
-	loop on all living elements and filtering this for every element
-	gets too painfull slow on logs with over 100.000 entries.
-       */
       livingPeople = filterLiving(people.values());
       livingNodes = filterLiving(nodes.values());
       livingEdges = filterLiving(edges.values());

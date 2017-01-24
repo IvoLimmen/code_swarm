@@ -15,13 +15,13 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 import org.apache.commons.io.IOUtils;
-import static org.github.gitswarm.avatar.AvatarFetcher.getImage;
+import static org.github.gitswarm.avatar.AbstractAvatarFetcher.getImage;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class GitHubFetcher extends AvatarFetcher {
+public class GitHubFetcher extends AbstractAvatarFetcher {
 
    private final static Logger LOGGER = LoggerFactory.getLogger(GitHubFetcher.class);
 

@@ -6,7 +6,7 @@ task run(type: JavaExec) {
   main = 'org.github.gitswarm.gui.MainConfigPanel'
 
   // arguments to pass to the application
-  args = ['data/sample.config']
+  args = []
 }
 
 compileJava {
