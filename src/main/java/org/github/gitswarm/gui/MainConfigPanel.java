@@ -47,7 +47,6 @@ import org.github.gitswarm.type.DisplayFile;
 public class MainConfigPanel extends Application {
 
    public static void main(String[] args) {
-      System.out.println("MainConfigPanel.main");
       launch(new String[]{});
    }
 
@@ -68,8 +67,6 @@ public class MainConfigPanel extends Application {
    private EditDialog editDialog;
 
    private final static String[] FONT_DEFAULTS = new String[]{"SansSerif", "Arial"};
-
-   private Stage primaryStage;
 
    @Override
    public void start(Stage primaryStage) throws Exception {
