@@ -99,7 +99,7 @@ public class MainConfigPanel extends Application {
             this.fontList.add(f);
          }
       });
-      
+
       // make a logical default
       Arrays.asList(FONT_DEFAULTS).forEach((font) -> {
          if (this.fontList.contains(font)) {
@@ -385,7 +385,7 @@ public class MainConfigPanel extends Application {
 
       this.fontTypeCb = new EnhancedChoiceBox();
       fontTypeCb.setItems(this.fontList);
-      fontTypeCb.getSelectionModel().select(Config.getInstance().getFont());      
+      fontTypeCb.getSelectionModel().select(Config.getInstance().getFont());
       fontTypeCb.setOnAction((event) -> {
          Config.getInstance().setFont(fontTypeCb.getSelectionModel().getSelectedItem());
       });
@@ -469,6 +469,32 @@ public class MainConfigPanel extends Application {
 
       TableView<ColorAssignerProperties> tableView = new TableView<>();
 
+      Button analyzeButton = new Button("Analyze");
+      analyzeButton.setOnAction((event) -> {
+         ProgressDialog dialog = new ProgressDialog("Analyzing code...");
+
+         GitHistoryAnalyzer gitHistoryAnalyzer = new GitHistoryAnalyzer();
+
+         // binds progress of progress bars to progress of task:
+         dialog.activateProgressBar(gitHistoryAnalyzer);
+
+         // in real life this method would get the result of the task
+         // and update the UI based on its value:
+         gitHistoryAnalyzer.setOnSucceeded(e -> {
+            gitHistoryAnalyzer.getValue().forEach((ct) -> {
+               colorList.add(0, new ColorAssignerProperties(ct));
+            });
+            dialog.getDialogStage().close();
+         });
+
+         dialog.getDialogStage().show();
+
+         Thread thread = new Thread(gitHistoryAnalyzer);
+         thread.start();
+      });
+      analyzeButton.setMinWidth(75d);
+      vBox.getChildren().add(analyzeButton);
+
       Button addButton = new Button("Add");
       addButton.setOnAction((event) -> {
          ColorAssignerProperties cap = new ColorAssignerProperties(new ColorTest());
@@ -486,6 +512,12 @@ public class MainConfigPanel extends Application {
       vBox.getChildren().add(editButton);
 
       Button removeButton = new Button("Remove");
+      removeButton.setOnAction((event) -> {
+         ColorAssignerProperties cap = tableView.getSelectionModel().getSelectedItem();
+         if (cap != null) {
+            tableView.getItems().remove(cap);
+         }
+      });
       removeButton.setMinWidth(75d);
       vBox.getChildren().add(removeButton);
 

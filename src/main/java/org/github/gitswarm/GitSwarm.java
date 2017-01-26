@@ -98,7 +98,6 @@ public class GitSwarm extends PApplet {
    }
 
    static public void boot() {
-      System.out.println("GitSwarm.boot");
       PApplet.main(new String[]{"org.github.gitswarm.GitSwarm"});
    }
 
@@ -196,11 +195,11 @@ public class GitSwarm extends PApplet {
       history = new LinkedList<>();
 
       loadRepEvents();
-      
+
       if (commits.isEmpty()) {
          return;
       }
-      
+
       prevDate = commits.get(0).getDate();
 
       maxFramesSaved = (int) Math.pow(10, Config.getInstance().getScreenshotFileMask().getValue().replaceAll("[^#]", "").length());
