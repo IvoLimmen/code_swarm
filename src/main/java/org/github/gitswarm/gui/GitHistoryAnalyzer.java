@@ -18,9 +18,12 @@ public class GitHistoryAnalyzer extends Task<List<ColorTest>> {
 
    private int currentCommit = 0;
    
-   private final Color[] colors = new Color[]{Color.RED, Color.BLUE, Color.YELLOW, Color.GREEN, Color.PINK, Color.ORANGE,
-      Color.CYAN, Color.MAGENTA};
+   private final Color[] colors;
 
+   public GitHistoryAnalyzer(Color[] colors) {
+      this.colors = colors;
+   }   
+   
    private String determineExtention(String fileName) {
       if (fileName.contains(".")) {
          return fileName.substring(fileName.lastIndexOf(".") + 1);

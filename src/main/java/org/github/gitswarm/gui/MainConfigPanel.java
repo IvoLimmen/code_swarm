@@ -473,7 +473,8 @@ public class MainConfigPanel extends Application {
       analyzeButton.setOnAction((event) -> {
          ProgressDialog dialog = new ProgressDialog("Analyzing code...");
 
-         GitHistoryAnalyzer gitHistoryAnalyzer = new GitHistoryAnalyzer();
+         ColorSetLoader csl = new ColorSetLoader();
+         GitHistoryAnalyzer gitHistoryAnalyzer = new GitHistoryAnalyzer(csl.load("colorset-1.properties"));
 
          // binds progress of progress bars to progress of task:
          dialog.activateProgressBar(gitHistoryAnalyzer);
@@ -521,6 +522,22 @@ public class MainConfigPanel extends Application {
       removeButton.setMinWidth(75d);
       vBox.getChildren().add(removeButton);
 
+      Button recolorButton = new Button("Recolor");
+      recolorButton.setOnAction((event) -> {
+         ColorSetLoader csl = new ColorSetLoader();
+         java.awt.Color[] set = csl.load("colorset-1.properties");
+         int index = 0;
+         
+         for (ColorAssignerProperties cap : tableView.getItems()) {
+            if (index == set.length) {
+               index = 0;
+            }
+            cap.getColor().set(ColorUtil.toFxColor(set[index++]));
+         }
+      });
+      recolorButton.setMinWidth(75d);
+      vBox.getChildren().add(recolorButton);      
+      
       borderPane.setRight(vBox);
 
       tableView.setItems(colorList);
