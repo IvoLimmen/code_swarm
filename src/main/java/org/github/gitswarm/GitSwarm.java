@@ -291,8 +291,7 @@ public class GitSwarm extends PApplet {
          backgroundExecutor.shutdown();
          try {
             backgroundExecutor.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
-         }
-         catch (InterruptedException e) {
+         } catch (InterruptedException e) {
             /* Do nothing, just exit */
          }
          exit();
@@ -558,14 +557,12 @@ public class GitSwarm extends PApplet {
       if (commitIndex + 1 >= commits.size()) {
          exit();
       }
-
+      
       currentCommit = commits.get(commitIndex);
 
       if (currentCommit.getDate().before(nextDate)) {
-         commitIndex = commitIndex + 1;
-
-         for (FileEvent event : currentCommit.getEvents()) {
-
+         commitIndex = commitIndex + 1;         
+         currentCommit.getEvents().stream().map((event) -> {
             FileNode file = findNode(event.getPath() + event.getFilename());
             if (file == null) {
                int dec = Config.getInstance().getFileDecrement().getValue();
@@ -580,10 +577,8 @@ public class GitSwarm extends PApplet {
             } else {
                file.freshen();
             }
-
             // add to histogram
             colorList.add(file.getNodeHue());
-
             PersonNode person = findPerson(event.getAuthor());
             if (person == null) {
                int mass = Config.getInstance().getPersonMass().getValue();
@@ -609,7 +604,6 @@ public class GitSwarm extends PApplet {
             colorMode(RGB);
             person.setFlavor(lerpColor(person.getFlavor(), file.getNodeHue(), 1.0f / person.getColorCount()));
             person.setColorCount(person.getColorCount() + 1);
-
             Edge edge = findEdge(file, person);
             if (edge == null) {
                float length = Config.getInstance().getEdgeLength().getValue();
@@ -620,11 +614,13 @@ public class GitSwarm extends PApplet {
             } else {
                edge.freshen();
             }
-
             file.setEditor(person);
+            return file;
+         }).forEachOrdered((file) -> {
             prevNode = file;
-         }
+         });
       }
+
       prevDate = nextDate;
 
       // sort colorbins
@@ -715,8 +711,6 @@ public class GitSwarm extends PApplet {
 
    /**
     * Load the standard event-formatted file.
-    *
-    * @param filename
     */
    public void loadRepEvents() {
       this.commits = new GitHistoryRepository(Config.getInstance().getGitDirectory()).getHistory();

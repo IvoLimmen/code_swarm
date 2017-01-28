@@ -36,140 +36,54 @@ public final class Config {
       return CURRENT;
    }
 
+   private final SimpleObjectProperty<javafx.scene.paint.Color> background = new SimpleObjectProperty<>(javafx.scene.paint.Color.BLACK);
    private String boldFont;
-   private String font;
-   private int framesPerDay = 6;
-   private String gitDirectory;
+   private final SimpleIntegerProperty boldFontSize = new SimpleIntegerProperty(12);
    private final ColorAssigner colorAssigner = new ColorAssigner();
-
    private DisplayFile displayFile = DisplayFile.FUZZY;
-
-   private final SimpleStringProperty screenshotFileMask = new SimpleStringProperty("#####.png");
    private final SimpleBooleanProperty drawNamesHalo = new SimpleBooleanProperty(false);
    private final SimpleBooleanProperty drawNamesSharp = new SimpleBooleanProperty(true);
+   private final SimpleIntegerProperty edgeDecrement = new SimpleIntegerProperty(-2);
+   private final SimpleIntegerProperty edgeLength = new SimpleIntegerProperty(25);
+   private final SimpleIntegerProperty edgeLife = new SimpleIntegerProperty(155);
+   private final SimpleIntegerProperty fileDecrement = new SimpleIntegerProperty(-2);
+   private final SimpleIntegerProperty fileHighlight = new SimpleIntegerProperty(5);
+   private final SimpleIntegerProperty fileLife = new SimpleIntegerProperty(155);
+   private final SimpleIntegerProperty fileMass = new SimpleIntegerProperty(1);
+   private String font;
+   private final SimpleObjectProperty<javafx.scene.paint.Color> fontColor = new SimpleObjectProperty<>(javafx.scene.paint.Color.WHITE);
    private final SimpleIntegerProperty fontSize = new SimpleIntegerProperty(10);
-   private final SimpleIntegerProperty boldFontSize = new SimpleIntegerProperty(12);
-   private final SimpleIntegerProperty width = new SimpleIntegerProperty(800);
+   private int framesPerDay = 6;
+   private String gitDirectory;
    private final SimpleIntegerProperty height = new SimpleIntegerProperty(600);
-   private final SimpleBooleanProperty showLegend = new SimpleBooleanProperty(true);
-   private final SimpleBooleanProperty showHistogram = new SimpleBooleanProperty(true);
+   private final SimpleIntegerProperty personDescrement = new SimpleIntegerProperty(-1);
+   private final SimpleIntegerProperty personHighlight = new SimpleIntegerProperty(5);
+   private final SimpleIntegerProperty personLife = new SimpleIntegerProperty(255);
+   private final SimpleIntegerProperty personMass = new SimpleIntegerProperty(100);
+   private final SimpleStringProperty screenshotFileMask = new SimpleStringProperty("#####.png");
    private final SimpleBooleanProperty showDate = new SimpleBooleanProperty(true);
    private final SimpleBooleanProperty showEdges = new SimpleBooleanProperty(false);
+   private final SimpleBooleanProperty showHistogram = new SimpleBooleanProperty(true);
+   private final SimpleBooleanProperty showLegend = new SimpleBooleanProperty(true);
    private final SimpleBooleanProperty showPopular = new SimpleBooleanProperty(false);
    private final SimpleBooleanProperty showUsername = new SimpleBooleanProperty(true);
    private final SimpleBooleanProperty takeSnapshots = new SimpleBooleanProperty(false);
-   private final SimpleObjectProperty<javafx.scene.paint.Color> background = new SimpleObjectProperty<>(javafx.scene.paint.Color.BLACK);
-   private final SimpleObjectProperty<javafx.scene.paint.Color> fontColor = new SimpleObjectProperty<>(javafx.scene.paint.Color.WHITE);
-   private final SimpleIntegerProperty personMass = new SimpleIntegerProperty(100);
-   private final SimpleIntegerProperty personHighlight = new SimpleIntegerProperty(5);
-   private final SimpleIntegerProperty personLife = new SimpleIntegerProperty(255);
-   private final SimpleIntegerProperty personDescrement = new SimpleIntegerProperty(-1);
-   private final SimpleIntegerProperty fileMass = new SimpleIntegerProperty(1);
-   private final SimpleIntegerProperty fileHighlight = new SimpleIntegerProperty(5);
-   private final SimpleIntegerProperty fileLife = new SimpleIntegerProperty(155);
-   private final SimpleIntegerProperty fileDecrement = new SimpleIntegerProperty(-2);
-   private final SimpleIntegerProperty edgeLife = new SimpleIntegerProperty(155);
-   private final SimpleIntegerProperty edgeDecrement = new SimpleIntegerProperty(-2);
-   private final SimpleIntegerProperty edgeLength = new SimpleIntegerProperty(25);
+   private final SimpleIntegerProperty width = new SimpleIntegerProperty(800);
 
    private Config() {
       this.colorAssigner.addRule("Misc", ".*", Color.GRAY);
    }
 
-   public String getGitDirectory() {
-      return gitDirectory;
-   }
-
-   public void setGitDirectory(String gitDirectory) {
-      this.gitDirectory = gitDirectory;
-   }
-
-   public SimpleIntegerProperty getPersonDescrement() {
-      return personDescrement;
-   }
-
-   public SimpleIntegerProperty getPersonLife() {
-      return personLife;
-   }
-
-   public SimpleIntegerProperty getPersonHighlight() {
-      return personHighlight;
-   }
-
-   public SimpleIntegerProperty getEdgeLife() {
-      return edgeLife;
-   }
-
-   public SimpleIntegerProperty getEdgeLength() {
-      return edgeLength;
-   }
-
-   public SimpleIntegerProperty getEdgeDecrement() {
-      return edgeDecrement;
-   }
-
-   public SimpleIntegerProperty getFileLife() {
-      return fileLife;
-   }
-
-   public SimpleIntegerProperty getFileDecrement() {
-      return fileDecrement;
-   }
-
-   public SimpleIntegerProperty getFileHighlight() {
-      return fileHighlight;
-   }
-
-   public SimpleIntegerProperty getFileMass() {
-      return fileMass;
-   }
-
-   public SimpleIntegerProperty getPersonMass() {
-      return personMass;
-   }
-
-   public SimpleStringProperty getScreenshotFileMask() {
-      return screenshotFileMask;
-   }
-
-   public int getFramesPerDay() {
-      return framesPerDay;
-   }
-
-   public void setFramesPerDay(int framesPerDay) {
-      this.framesPerDay = framesPerDay;
-   }
-
-   public SimpleBooleanProperty getDrawNamesHalo() {
-      return drawNamesHalo;
-   }
-
-   public SimpleBooleanProperty getDrawNamesSharp() {
-      return drawNamesSharp;
-   }
-
-   public SimpleIntegerProperty getBoldFontSize() {
-      return boldFontSize;
-   }
-
-   public SimpleIntegerProperty getFontSize() {
-      return fontSize;
+   public SimpleObjectProperty<javafx.scene.paint.Color> getBackground() {
+      return background;
    }
 
    public String getBoldFont() {
       return boldFont;
    }
 
-   public void setBoldFont(String boldFont) {
-      this.boldFont = boldFont;
-   }
-
-   public String getFont() {
-      return font;
-   }
-
-   public void setFont(String font) {
-      this.font = font;
+   public SimpleIntegerProperty getBoldFontSize() {
+      return boldFontSize;
    }
 
    public ColorAssigner getColorAssigner() {
@@ -180,20 +94,84 @@ public final class Config {
       return displayFile;
    }
 
-   public void setDisplayFile(DisplayFile displayFile) {
-      this.displayFile = displayFile;
+   public SimpleBooleanProperty getDrawNamesHalo() {
+      return drawNamesHalo;
    }
 
-   public SimpleBooleanProperty getShowUsername() {
-      return showUsername;
+   public SimpleBooleanProperty getDrawNamesSharp() {
+      return drawNamesSharp;
    }
 
-   public SimpleObjectProperty<javafx.scene.paint.Color> getBackground() {
-      return background;
+   public SimpleIntegerProperty getEdgeDecrement() {
+      return edgeDecrement;
+   }
+
+   public SimpleIntegerProperty getEdgeLength() {
+      return edgeLength;
+   }
+
+   public SimpleIntegerProperty getEdgeLife() {
+      return edgeLife;
+   }
+
+   public SimpleIntegerProperty getFileDecrement() {
+      return fileDecrement;
+   }
+
+   public SimpleIntegerProperty getFileHighlight() {
+      return fileHighlight;
+   }
+
+   public SimpleIntegerProperty getFileLife() {
+      return fileLife;
+   }
+
+   public SimpleIntegerProperty getFileMass() {
+      return fileMass;
+   }
+
+   public String getFont() {
+      return font;
    }
 
    public SimpleObjectProperty<javafx.scene.paint.Color> getFontColor() {
       return fontColor;
+   }
+
+   public SimpleIntegerProperty getFontSize() {
+      return fontSize;
+   }
+
+   public int getFramesPerDay() {
+      return framesPerDay;
+   }
+
+   public String getGitDirectory() {
+      return gitDirectory;
+   }
+
+   public SimpleIntegerProperty getHeight() {
+      return height;
+   }
+
+   public SimpleIntegerProperty getPersonDescrement() {
+      return personDescrement;
+   }
+
+   public SimpleIntegerProperty getPersonHighlight() {
+      return personHighlight;
+   }
+
+   public SimpleIntegerProperty getPersonLife() {
+      return personLife;
+   }
+
+   public SimpleIntegerProperty getPersonMass() {
+      return personMass;
+   }
+
+   public SimpleStringProperty getScreenshotFileMask() {
+      return screenshotFileMask;
    }
 
    public SimpleBooleanProperty getShowDate() {
@@ -216,16 +194,36 @@ public final class Config {
       return showPopular;
    }
 
-   public SimpleIntegerProperty getWidth() {
-      return width;
-   }
-
-   public SimpleIntegerProperty getHeight() {
-      return height;
+   public SimpleBooleanProperty getShowUsername() {
+      return showUsername;
    }
 
    public SimpleBooleanProperty getTakeSnapshots() {
       return takeSnapshots;
+   }
+
+   public SimpleIntegerProperty getWidth() {
+      return width;
+   }
+
+   public void setBoldFont(String boldFont) {
+      this.boldFont = boldFont;
+   }
+
+   public void setDisplayFile(DisplayFile displayFile) {
+      this.displayFile = displayFile;
+   }
+
+   public void setFont(String font) {
+      this.font = font;
+   }
+
+   public void setFramesPerDay(int framesPerDay) {
+      this.framesPerDay = framesPerDay;
+   }
+
+   public void setGitDirectory(String gitDirectory) {
+      this.gitDirectory = gitDirectory;
    }
 
    public void setHeight(int height) {
