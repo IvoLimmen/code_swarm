@@ -7,16 +7,17 @@ import javax.vecmath.Vector2f;
  */
 public abstract class Node extends Drawable {
 
-   private String name;
-   protected Vector2f position;
-   protected Vector2f lastPosition;
-   protected float friction;
    protected float currentWidth;
-
-   /**
-    * mass of the node
-    */
+   
+   protected float friction;
+   
+   protected Vector2f lastPosition;
+   
    protected int mass;
+   
+   protected String name;
+   
+   protected Vector2f position;
 
    /**
     * 1) constructor.
@@ -28,22 +29,6 @@ public abstract class Node extends Drawable {
       friction = 1.0f;
    }
 
-   public String getName() {
-      return name;
-   }
-
-   public void setName(String name) {
-      this.name = name;
-   }
-
-   public int getMass() {
-      return mass;
-   }
-
-   public Vector2f getPosition() {
-      return position;
-   }
-
    public float getFriction() {
       return friction;
    }
@@ -52,8 +37,24 @@ public abstract class Node extends Drawable {
       return lastPosition;
    }
 
+   public int getMass() {
+      return mass;
+   }
+
+   public String getName() {
+      return name;
+   }
+
+   public Vector2f getPosition() {
+      return position;
+   }
+
    public void setLastPosition(Vector2f lastPosition) {
       this.lastPosition = lastPosition;
+   }
+
+   public void setName(String name) {
+      this.name = name;
    }
 
    public void setPosition(Vector2f position) {

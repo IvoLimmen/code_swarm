@@ -544,7 +544,7 @@ public class GitSwarm extends PApplet {
    private int commitIndex = 0;
    private Commit currentCommit;
    private int emptyDate = 0;
-   
+
    /**
     * Update the particle positions
     */
@@ -558,64 +558,21 @@ public class GitSwarm extends PApplet {
       if (commitIndex + 1 >= commits.size()) {
          exit();
       }
-      
+
       currentCommit = commits.get(commitIndex);
 
       if (currentCommit.getDate().before(nextDate)) {
          emptyDate = 0;
-         commitIndex = commitIndex + 1;         
+         commitIndex = commitIndex + 1;
          currentCommit.getEvents().stream().map((event) -> {
             FileNode file = findNode(event.getPath() + event.getFilename());
-            if (file == null) {
-               int dec = Config.getInstance().getFileDecrement().getValue();
-               int life = Config.getInstance().getFileLife().getValue();
-               int highlight = Config.getInstance().getFileHighlight().getValue();
-               int mass = Config.getInstance().getFileMass().getValue();
-               file = new FileNode(event, life, dec, highlight, mass, Config.getInstance().getColorAssigner().getColor(event.getPath() + event.getFilename()), maxTouches);
-               physicsEngine.startLocation(file);
-               physicsEngine.startVelocity(file);
-               colorMode(RGB);
-               nodes.put(event.getPath() + event.getFilename(), file);
-            } else {
-               file.freshen();
-            }
             // add to histogram
             colorList.add(file.getNodeHue());
             PersonNode person = findPerson(event.getAuthor());
-            if (person == null) {
-               int mass = Config.getInstance().getPersonMass().getValue();
-               int dec = Config.getInstance().getPersonDescrement().getValue();
-               int life = Config.getInstance().getPersonLife().getValue();
-               int highlight = Config.getInstance().getPersonHighlight().getValue();
-               person = new PersonNode(event.getAuthor(), life, dec, highlight, mass, color(0));
-
-               String iconFile = avatarFetcher.fetchUserImage(person.getName());
-               if (iconFile != null) {
-                  PImage icon = loadImage(iconFile, "unknown");
-                  icon.resize(avatarFetcher.getSize(), avatarFetcher.getSize());
-                  icon.mask(avatarMask);
-                  person.setIcon(icon);
-               }
-
-               physicsEngine.startLocation(person);
-               physicsEngine.startVelocity(person);
-               people.put(event.getAuthor(), person);
-            } else {
-               person.freshen();
-            }
             colorMode(RGB);
             person.setFlavor(lerpColor(person.getFlavor(), file.getNodeHue(), 1.0f / person.getColorCount()));
             person.setColorCount(person.getColorCount() + 1);
             Edge edge = findEdge(file, person);
-            if (edge == null) {
-               float length = Config.getInstance().getEdgeLength().getValue();
-               int dec = Config.getInstance().getEdgeDecrement().getValue();
-               int life = Config.getInstance().getEdgeLife().getValue();
-               edge = new Edge(file, person, life, dec, length);
-               edges.put(new MutablePair<>(file, person), edge);
-            } else {
-               edge.freshen();
-            }
             file.setEditor(person);
             return file;
          }).forEachOrdered((file) -> {
@@ -692,28 +649,58 @@ public class GitSwarm extends PApplet {
     * @return FileNode with matching name or null if not found.
     */
    private FileNode findNode(String name) {
-      return nodes.get(name);
+      FileNode file = nodes.get(name);
+
+      if (file == null) {
+         file = new FileNode(name, maxTouches);
+         physicsEngine.startLocation(file);
+         physicsEngine.startVelocity(file);
+         colorMode(RGB);
+         nodes.put(name, file);
+      } else {
+         file.freshen();
+      }
+      
+      return file;
    }
 
    /**
     * Searches for the Edge connecting the given nodes
-    *
-    * @param n1 From
-    * @param n2 To
-    * @return Edge connecting n1 to n2 or null if not found
     */
-   private Edge findEdge(FileNode n1, PersonNode n2) {
-      return edges.get(new MutablePair<>(n1, n2));
+   private Edge findEdge(FileNode file, PersonNode person) {
+      Edge edge = edges.get(new MutablePair<>(file, person));
+
+      if (edge == null) {
+         edge = new Edge(file, person);
+         edges.put(new MutablePair<>(file, person), edge);
+      } else {
+         edge.freshen();
+      }
+      return edge;
    }
 
    /**
     * Searches for the PersonNode with a given name.
-    *
-    * @param name
-    * @return PersonNode for given name or null if not found.
     */
    private PersonNode findPerson(String name) {
-      return people.get(name);
+      PersonNode person = people.get(name);
+      if (person == null) {
+         person = new PersonNode(name);
+         String iconFile = avatarFetcher.fetchUserImage(person.getName());
+         if (iconFile != null) {
+            PImage icon = loadImage(iconFile, "unknown");
+            icon.resize(avatarFetcher.getSize(), avatarFetcher.getSize());
+            icon.mask(avatarMask);
+            person.setIcon(icon);
+         }
+         physicsEngine.startLocation(person);
+         physicsEngine.startVelocity(person);
+         people.put(name, person);
+      } else {
+         person.freshen();
+      }
+
+      return person;
    }
 
    /**

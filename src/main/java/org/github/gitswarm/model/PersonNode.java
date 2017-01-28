@@ -2,6 +2,7 @@ package org.github.gitswarm.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.github.gitswarm.Config;
 import processing.core.PImage;
 
 /**
@@ -19,12 +20,13 @@ public class PersonNode extends Node {
    /**
     * 1) constructor.
     */
-   public PersonNode(String n, int initialLife, int decrementLife, int highlightPercent, int mass, int flavor) {
-      super(initialLife, decrementLife);
-      setName(n);
-      this.flavor = flavor;
-      this.minBold = (int) (getInitialLife() * (1 - (highlightPercent / 100.0)));
-      this.mass = mass;
+   public PersonNode(String name) {
+      super(Config.getInstance().getPersonLife().getValue(), Config.getInstance().getPersonDescrement().getValue());
+      
+      this.name = name;
+      this.flavor = 0;
+      this.minBold = (int) (initialLife * (1 - (Config.getInstance().getPersonHighlight().getValue() / 100.0)));
+      this.mass = Config.getInstance().getPersonMass().getValue();
       this.touches = 1;
       this.friction = 0.99f;
    }

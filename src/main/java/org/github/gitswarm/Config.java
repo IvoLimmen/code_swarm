@@ -45,7 +45,6 @@ public final class Config {
    private final SimpleBooleanProperty drawNamesHalo = new SimpleBooleanProperty(false);
    private final SimpleBooleanProperty drawNamesSharp = new SimpleBooleanProperty(true);
    private final SimpleIntegerProperty edgeDecrement = new SimpleIntegerProperty(-2);
-   private final SimpleIntegerProperty edgeLength = new SimpleIntegerProperty(25);
    private final SimpleIntegerProperty edgeLife = new SimpleIntegerProperty(155);
    private final SimpleIntegerProperty fileDecrement = new SimpleIntegerProperty(-2);
    private final SimpleIntegerProperty fileHighlight = new SimpleIntegerProperty(5);
@@ -109,10 +108,6 @@ public final class Config {
 
    public SimpleIntegerProperty getEdgeDecrement() {
       return edgeDecrement;
-   }
-
-   public SimpleIntegerProperty getEdgeLength() {
-      return edgeLength;
    }
 
    public SimpleIntegerProperty getEdgeLife() {

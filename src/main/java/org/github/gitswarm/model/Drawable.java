@@ -7,11 +7,11 @@ package org.github.gitswarm.model;
  */
 public abstract class Drawable {
 
-   private int life;
+   protected int life;
 
-   private int initialLife;
+   protected int initialLife;
 
-   private int decrementLife;
+   protected int decrementLife;
    
    /**
     * 1) constructor(s)

@@ -1,6 +1,6 @@
 package org.github.gitswarm.model;
 
-import org.github.gitswarm.FileEvent;
+import org.github.gitswarm.Config;
 
 /**
  * A node describing a file
@@ -16,14 +16,15 @@ public class FileNode extends Node implements Comparable<FileNode> {
    /**
     * 1) constructor.
     */
-   public FileNode(FileEvent fe, int initialLife, int decrementLife, int highlightPercent, int mass, int hue, int maxTouches) {
-      super(initialLife, decrementLife);
-      setName(fe.getPath() + fe.getFilename());
-      touches = 1;      
-      minBold = (int) (getInitialLife() * ((100.0f - highlightPercent) / 100));
-      this.nodeHue = hue;
-      this.mass = mass;
-      friction = 0.9f;
+   public FileNode(String name, int maxTouches) {
+      super(Config.getInstance().getFileLife().getValue(), Config.getInstance().getFileDecrement().getValue());
+      
+      this.name = name;
+      this.touches = 1;      
+      this.minBold = (int) (initialLife * ((100.0f - Config.getInstance().getFileHighlight().getValue()) / 100));
+      this.nodeHue = Config.getInstance().getColorAssigner().getColor(name);
+      this.mass = Config.getInstance().getFileMass().getValue();
+      this.friction = 0.9f;
       this.maxTouches = maxTouches;
    }
 

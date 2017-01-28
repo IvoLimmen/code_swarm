@@ -53,9 +53,9 @@ public class MainConfigPanel extends Application {
 
    private ChoiceBox<String> screenSizeCb;
 
-   private TextField framesPerDayTf;
+   private IntegerField framesPerDayTf;
 
-   private TextField allowedEmptyFramesTf;
+   private IntegerField allowedEmptyFramesTf;
    
    private ColorPicker backgroundCp;
 
@@ -151,7 +151,7 @@ public class MainConfigPanel extends Application {
       String current = Config.getInstance().getWidth().getValue() + "x" + Config.getInstance().getHeight().getValue();
       screenSizeCb.getSelectionModel().select(current);
 
-      this.framesPerDayTf = new TextField();
+      this.framesPerDayTf = new IntegerField();
       framesPerDayTf.setText("" + Config.getInstance().getFramesPerDay());
       GridPane.setHalignment(framesPerDayTf, HPos.LEFT);
       gridPane.add(framesPerDayTf, 1, 2);
@@ -160,7 +160,7 @@ public class MainConfigPanel extends Application {
       GridPane.setHalignment(framesPerDayLbl, HPos.RIGHT);
       gridPane.add(framesPerDayLbl, 0, 2);
 
-      this.allowedEmptyFramesTf = new TextField();
+      this.allowedEmptyFramesTf = new IntegerField();
       allowedEmptyFramesTf.setText("" + Config.getInstance().getAllowedEmptyFrames());
       allowedEmptyFramesTf.setTooltip(new Tooltip("Amount of empty frames before we skip to the next filled date..."));
       GridPane.setHalignment(allowedEmptyFramesTf, HPos.LEFT);
@@ -366,15 +366,6 @@ public class MainConfigPanel extends Application {
       edgeDec.textProperty().bindBidirectional(Config.getInstance().getEdgeDecrement(), new NumberStringConverter());
       GridPane.setHalignment(edgeDec, HPos.LEFT);
       gridPane.add(edgeDec, 1, 2);
-
-      Label edgeHighlightLbl = new Label("Length");
-      GridPane.setHalignment(edgeHighlightLbl, HPos.RIGHT);
-      gridPane.add(edgeHighlightLbl, 0, 3);
-
-      IntegerField edgeHighlight = new IntegerField();
-      edgeHighlight.textProperty().bindBidirectional(Config.getInstance().getEdgeLength(), new NumberStringConverter());
-      GridPane.setHalignment(edgeHighlight, HPos.LEFT);
-      gridPane.add(edgeHighlight, 1, 3);
 
       return tab;
    }
