@@ -23,6 +23,7 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BorderPane;
@@ -54,6 +55,8 @@ public class MainConfigPanel extends Application {
 
    private TextField framesPerDayTf;
 
+   private TextField allowedEmptyFramesTf;
+   
    private ColorPicker backgroundCp;
 
    private EnhancedChoiceBox fontTypeCb;
@@ -157,35 +160,45 @@ public class MainConfigPanel extends Application {
       GridPane.setHalignment(framesPerDayLbl, HPos.RIGHT);
       gridPane.add(framesPerDayLbl, 0, 2);
 
+      this.allowedEmptyFramesTf = new TextField();
+      allowedEmptyFramesTf.setText("" + Config.getInstance().getAllowedEmptyFrames());
+      allowedEmptyFramesTf.setTooltip(new Tooltip("Amount of empty frames before we skip to the next filled date..."));
+      GridPane.setHalignment(allowedEmptyFramesTf, HPos.LEFT);
+      gridPane.add(allowedEmptyFramesTf, 1, 3);
+
+      Label allowedEmptyFramesLbl = new Label("Allowed empty frames");
+      GridPane.setHalignment(allowedEmptyFramesLbl, HPos.RIGHT);
+      gridPane.add(allowedEmptyFramesLbl, 0, 3);
+            
       CheckBox legend = new CheckBox("Show legend");
       legend.selectedProperty().bindBidirectional(Config.getInstance().getShowLegend());
       GridPane.setHalignment(legend, HPos.LEFT);
-      gridPane.add(legend, 1, 3);
+      gridPane.add(legend, 1, 4);
 
       CheckBox histogram = new CheckBox("Show histogram");
       histogram.selectedProperty().bindBidirectional(Config.getInstance().getShowHistogram());
       GridPane.setHalignment(histogram, HPos.LEFT);
-      gridPane.add(histogram, 1, 4);
+      gridPane.add(histogram, 1, 5);
 
       CheckBox userName = new CheckBox("Show username");
       userName.selectedProperty().bindBidirectional(Config.getInstance().getShowUsername());
       GridPane.setHalignment(userName, HPos.LEFT);
-      gridPane.add(userName, 1, 5);
+      gridPane.add(userName, 1, 6);
 
       CheckBox popular = new CheckBox("Show popular");
       popular.selectedProperty().bindBidirectional(Config.getInstance().getShowPopular());
       GridPane.setHalignment(popular, HPos.LEFT);
-      gridPane.add(popular, 1, 6);
+      gridPane.add(popular, 1, 7);
 
       CheckBox date = new CheckBox("Show date");
       date.selectedProperty().bindBidirectional(Config.getInstance().getShowDate());
       GridPane.setHalignment(date, HPos.LEFT);
-      gridPane.add(date, 1, 7);
+      gridPane.add(date, 1, 8);
 
       CheckBox edges = new CheckBox("Show edges");
       edges.selectedProperty().bindBidirectional(Config.getInstance().getShowEdges());
       GridPane.setHalignment(edges, HPos.LEFT);
-      gridPane.add(edges, 1, 8);
+      gridPane.add(edges, 1, 9);
 
       return tab;
    }
@@ -607,6 +620,7 @@ public class MainConfigPanel extends Application {
       });
 
       Config.getInstance().setFramesPerDay(Integer.parseInt(framesPerDayTf.getText()));
+      Config.getInstance().setAllowedEmptyFrames(Integer.parseInt(allowedEmptyFramesTf.getText()));
 
       String screenSize = this.screenSizeCb.getSelectionModel().getSelectedItem();
       Config.getInstance().setWidth(Integer.parseInt(screenSize.split("x")[0]));

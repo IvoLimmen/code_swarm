@@ -543,7 +543,8 @@ public class GitSwarm extends PApplet {
 
    private int commitIndex = 0;
    private Commit currentCommit;
-
+   private int emptyDate = 0;
+   
    /**
     * Update the particle positions
     */
@@ -561,6 +562,7 @@ public class GitSwarm extends PApplet {
       currentCommit = commits.get(commitIndex);
 
       if (currentCommit.getDate().before(nextDate)) {
+         emptyDate = 0;
          commitIndex = commitIndex + 1;         
          currentCommit.getEvents().stream().map((event) -> {
             FileNode file = findNode(event.getPath() + event.getFilename());
@@ -619,6 +621,11 @@ public class GitSwarm extends PApplet {
          }).forEachOrdered((file) -> {
             prevNode = file;
          });
+      } else {
+         emptyDate++;
+         if (emptyDate > Config.getInstance().getAllowedEmptyFrames()) {
+            nextDate = currentCommit.getDate();
+         }
       }
 
       prevDate = nextDate;

@@ -35,7 +35,8 @@ public final class Config {
    public static Config getInstance() {
       return CURRENT;
    }
-
+   
+   private int allowedEmptyFrames = 50;
    private final SimpleObjectProperty<javafx.scene.paint.Color> background = new SimpleObjectProperty<>(javafx.scene.paint.Color.BLACK);
    private String boldFont;
    private final SimpleIntegerProperty boldFontSize = new SimpleIntegerProperty(12);
@@ -72,6 +73,10 @@ public final class Config {
 
    private Config() {
       this.colorAssigner.addRule("Misc", ".*", Color.GRAY);
+   }
+
+   public int getAllowedEmptyFrames() {
+      return allowedEmptyFrames;
    }
 
    public SimpleObjectProperty<javafx.scene.paint.Color> getBackground() {
@@ -204,6 +209,10 @@ public final class Config {
 
    public SimpleIntegerProperty getWidth() {
       return width;
+   }
+
+   public void setAllowedEmptyFrames(int allowedEmptyFrames) {
+      this.allowedEmptyFrames = allowedEmptyFrames;
    }
 
    public void setBoldFont(String boldFont) {
