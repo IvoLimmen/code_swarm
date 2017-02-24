@@ -474,6 +474,7 @@ public class MainConfigPanel extends Application {
       TableView<ColorAssignerProperties> tableView = new TableView<>();
 
       Button analyzeButton = new Button("Analyze");
+	  analyzeButton.setTooltip(new Tooltip("Analyze the first 500 commits on filetypes..."));
       analyzeButton.setOnAction((event) -> {
          ProgressDialog dialog = new ProgressDialog("Analyzing code...");
 

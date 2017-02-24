@@ -12,7 +12,7 @@ import javafx.stage.StageStyle;
 public class ProgressDialog {
    
    private final Stage dialogStage;
-   private final ProgressBar progressBar = new ProgressBar();
+   private final ProgressBar progressBar = new ProgressBar(0);
    
    public ProgressDialog(String title) {
       dialogStage = new Stage();
@@ -21,7 +21,7 @@ public class ProgressDialog {
       dialogStage.initModality(Modality.APPLICATION_MODAL);
       dialogStage.setTitle(title);
       
-      progressBar.setProgress(1);  
+      progressBar.setProgress(0);  
       progressBar.setPrefSize(200d, 15d);
       
       final HBox hb = new HBox();

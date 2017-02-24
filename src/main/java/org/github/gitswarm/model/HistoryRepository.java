@@ -4,5 +4,5 @@ import java.util.List;
 
 public interface HistoryRepository {
 
-   List<Commit> getHistory();
+   List<Commit> getHistory(long limit);
 }

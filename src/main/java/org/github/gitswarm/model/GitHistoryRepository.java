@@ -22,14 +22,14 @@ public class GitHistoryRepository implements HistoryRepository {
 
    private final String path;
 
-   private static final DateTimeFormatter dateTimeFormatter = new DateTimeFormatterBuilder().appendPattern("yyyy-MM-dd").toFormatter();
+   private static final DateTimeFormatter DATETIME_FORMATTER = new DateTimeFormatterBuilder().appendPattern("yyyy-MM-dd").toFormatter();
 
    public static void main(String[] args) {
       HistoryRepository hr = new GitHistoryRepository("/home/ivo/projects/java/git_swarm/.git");
-      hr.getHistory().forEach((c) -> {
+      hr.getHistory(-1).forEach((c) -> {
          LocalDateTime dt = LocalDateTime.ofInstant(c.getDate().toInstant(), ZoneId.systemDefault());
          c.getEvents().forEach((f) -> {
-            System.out.println(dateTimeFormatter.format(dt) + " Author: " + f.getAuthor() + " File: " + f.getFilename() + " Path: " + f.getPath());
+            System.out.println(DATETIME_FORMATTER.format(dt) + " Author: " + f.getAuthor() + " File: " + f.getFilename() + " Path: " + f.getPath());
          });
       });
    }
@@ -39,7 +39,7 @@ public class GitHistoryRepository implements HistoryRepository {
    }
 
    @Override
-   public List<Commit> getHistory() {
+   public List<Commit> getHistory(long limit) {
       SortedSet<Commit> events = new TreeSet<>();
       try {
 
@@ -48,6 +48,7 @@ public class GitHistoryRepository implements HistoryRepository {
          Git git = new Git(repository);
 
          Iterable<RevCommit> log = git.log().all().call();
+		 long count = 0;
          for (RevCommit commit : log) {
             List<FileEvent> files = new ArrayList<>();
             RevTree tree = commit.getTree();
@@ -61,19 +62,23 @@ public class GitHistoryRepository implements HistoryRepository {
                treeWalk.setPostOrderTraversal(false);
                treeWalk.setOperationType(TreeWalk.OperationType.CHECKIN_OP);
 
-               String path = null;
+               String subPath = null;
                while (treeWalk.next()) {
                   if (treeWalk.isSubtree()) {
-                     path = treeWalk.getPathString();
+                     subPath = treeWalk.getPathString();
                      treeWalk.enterSubtree();
                   } else {
-                     files.add(new FileEvent(when, person, path, treeWalk.getPathString()));
+                     files.add(new FileEvent(when, person, subPath, treeWalk.getPathString()));
                   }
                }
             }
 
             events.add(new Commit(files, new Date(when)));
             commit.disposeBody();
+			count++;
+			if (limit > 0 && count == limit) {
+				break;
+			}
          }
       }
       catch (Exception ex) {

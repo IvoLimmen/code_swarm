@@ -41,12 +41,12 @@ public class GitHistoryAnalyzer extends Task<List<ColorTest>> {
    @Override
    protected List<ColorTest> call() throws Exception {
       List<ColorTest> colorList = new ArrayList<>();
-      List<Commit> commits = new GitHistoryRepository(Config.getInstance().getGitDirectory()).getHistory();
-
+      List<Commit> commits = new GitHistoryRepository(Config.getInstance().getGitDirectory()).getHistory(500);
+	  
       Set<FileTypeCount> extentions = new TreeSet<>();
       currentCommit = 0;
       
-      commits.forEach((c) -> {         
+      for (Commit c : commits) {
          updateProgress(currentCommit++, commits.size());
          c.getEvents().forEach((f) -> {
             String ext = determineExtention(f.getFilename());
@@ -57,7 +57,7 @@ public class GitHistoryAnalyzer extends Task<List<ColorTest>> {
                ftc.get().add();
             }
          });         
-      });
+      }
 
       extentions.stream().forEach(e -> {
          if (!e.getExt().equals("")) {

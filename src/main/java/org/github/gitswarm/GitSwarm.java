@@ -115,7 +115,6 @@ public class GitSwarm extends PApplet {
    // Data storage
    HistoryRepository historyRepository;
    List<Commit> commits = new ArrayList<>();
-   boolean showUserName = false;
 
    LinkedList<List<Integer>> history;
    boolean finishedLoading = false;
@@ -171,8 +170,6 @@ public class GitSwarm extends PApplet {
     */
    @Override
    public void setup() {
-
-      showUserName = Config.getInstance().getShowUsername().getValue();
 
       int maxBackgroundThreads = 4;
       backgroundExecutor = new ThreadPoolExecutor(1, maxBackgroundThreads, Long.MAX_VALUE, TimeUnit.NANOSECONDS, new ArrayBlockingQueue<>(4 * maxBackgroundThreads), new ThreadPoolExecutor.CallerRunsPolicy());
@@ -393,13 +390,13 @@ public class GitSwarm extends PApplet {
          }
 
          fill(fontColor, p.getLife());
-         if (showUserName) {
+         if (Config.getInstance().getShowUsername().getValue()) {
             text(p.getName(), p.getPosition().x, p.getPosition().y + 10);
          }
          if (p.getIcon() != null) {
             colorMode(RGB);
             tint(255, 255, 255, max(0, p.getLife() - 80));
-            image(p.getIcon(), p.getPosition().x - (avatarFetcher.getSize() / 2), p.getPosition().y - (avatarFetcher.getSize() - (showUserName ? 5 : 15)));
+            image(p.getIcon(), p.getPosition().x - (avatarFetcher.getSize() / 2), p.getPosition().y - (avatarFetcher.getSize() - (Config.getInstance().getShowUsername().getValue() ? 5 : 15)));
          }
       }
    }
@@ -707,6 +704,6 @@ public class GitSwarm extends PApplet {
     * Load the standard event-formatted file.
     */
    public void loadRepEvents() {
-      this.commits = new GitHistoryRepository(Config.getInstance().getGitDirectory()).getHistory();
+      this.commits = new GitHistoryRepository(Config.getInstance().getGitDirectory()).getHistory(-1);
    }
 }
